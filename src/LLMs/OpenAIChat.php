@@ -4,6 +4,7 @@ namespace LLPhant\LLMs;
 
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Message;
+use Mockery\Exception;
 use OpenAI;
 use OpenAI\Client;
 use LLPhant\LLMs\Enums\OpenAIChatModel;
@@ -23,6 +24,9 @@ class OpenAIChat extends BaseLLM
         parent::__construct();
 
         $apiKey = getenv('OPENAI_API_KEY');
+        if (!$apiKey) {
+            throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
+        }
         $this->client = OpenAI::client($apiKey);
         $this->model = OpenAIChatModel::Gpt4;
 
