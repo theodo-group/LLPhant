@@ -1,41 +1,32 @@
 <?php
 
-namespace LLPhant\LLMs;
+namespace LLPhant\Chat;
 
 use LLPhant\Chat\Enums\ChatRole;
-use LLPhant\Chat\Message;
+use LLPhant\Chat\Enums\OpenAIChatModel;
 use Mockery\Exception;
 use OpenAI;
 use OpenAI\Client;
-use LLPhant\LLMs\Enums\OpenAIChatModel;
-
 use OpenAI\Responses\Chat\CreateResponse;
 use function getenv;
 
 
-class OpenAIChat extends BaseLLM
+class OpenAIChat extends Chat
 {
     private Client $client;
-    private OpenAIChatModel $model;
+    private string|OpenAIChatModel $model;
 
     private Message $systemMessage;
 
-    public function __construct() {
+    public function __construct(OpenAIChatConfig $config=null){
         parent::__construct();
 
-        $apiKey = getenv('OPENAI_API_KEY');
+        $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
         if (!$apiKey) {
             throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
         }
         $this->client = OpenAI::client($apiKey);
-        $this->model = OpenAIChatModel::Gpt4;
-
-
-//        if (isset($config['model_name'])) {
-//            $this->model = OpenAIChatModel::from($config['model_name']);
-//        } else {
-//            $this->model = OpenAIChatModel::Gpt35Turbo;
-//        }
+        $this->model = $config->model ?? OpenAIChatModel::Gpt4;
     }
 
     /**

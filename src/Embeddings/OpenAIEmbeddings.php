@@ -56,6 +56,6 @@ class OpenAIEmbeddings implements Embeddings
             'input' => $text,
         ]);
 
-        return $response->embeddings;
+        return $response->embeddings[0]->embedding;
     }
 }

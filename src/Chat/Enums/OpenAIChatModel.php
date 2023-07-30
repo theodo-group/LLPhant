@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\LLMs\Enums;
+namespace LLPhant\Chat\Enums;
 
 enum OpenAIChatModel
 {
