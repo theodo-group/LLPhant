@@ -18,7 +18,11 @@ We want thanks few amazing projects that we use here or inspired us:
 
 > **Requires [PHP 8.1+](https://php.net/releases/)**
 
-First, install OpenAI via the [Composer](https://getcomposer.org/) package manager:
+First, install LLPhant via the [Composer](https://getcomposer.org/) package manager:
+
+```bash
+composer require theodo-group/llphant
+```
 
 ## Usage
 
