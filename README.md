@@ -39,9 +39,9 @@ export OPENAI_API_KEY=sk-XXXXXX
 You can also create an OpenAIConfig object and pass it to the constructor of the OpenAIChat or OpenAIEmbeddings.
 
 ```php
-    $config = new OpenAIConfig();
-    $config->apiKey = 'fakeapikey';
-    $chat = new OpenAIChat($config);
+$config = new OpenAIConfig();
+$config->apiKey = 'fakeapikey';
+$chat = new OpenAIChat($config);
 ```
 
 ### Chat
@@ -53,16 +53,16 @@ We can use it to simply generate text from a prompt.
 
 This will ask directly an answer from the LLM.
 ```php
-    $chat = new OpenAIChat();
-    $response = $chat->generateText('what is one + one ?'); // will return something like "Two"
+$chat = new OpenAIChat();
+$response = $chat->generateText('what is one + one ?'); // will return something like "Two"
 ```
 
 You can add instruction so the LLM will behave in a specific manner.
 
 ```php
-    $chat = new OpenAIChat();
-    $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
-    $response = $chat->generateText('what is one + one ?'); // will return "ok"
+$chat = new OpenAIChat();
+$chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
+$response = $chat->generateText('what is one + one ?'); // will return "ok"
 ```
 
 ### Embeddings
@@ -71,9 +71,9 @@ It is a float array of 1536 elements for OpenAI.
 This vector representation can be used to compare two texts and see how similar they are.
 
 ```php
-    $llm = new OpenAIEmbeddings();
-    $embedding = $llm->embedText('I love food');
-    // You can then use the embedding to store it in a vector store or perform a similarity search
+$llm = new OpenAIEmbeddings();
+$embedding = $llm->embedText('I love food');
+//You can then use the embedding to store it in a vectorStore or perform a similarity search
 ```
 
 ### VectorStores
@@ -149,7 +149,9 @@ $vectorStore->saveEmbedding($embedding, $france);
 // Once the embedding are saved you can perform a similarity search
 $embedding = $llm->embedText('I live in Asia');
 /** @var ExampleEmbeddingEntity[] $result */
-$result = $vectorStore->similaritySearch($embedding, ExampleEmbeddingEntity::class, 2, ['type' => 'city']);
+$result = $vectorStore->similaritySearch(
+    $embedding, ExampleEmbeddingEntity::class, 2, ['type' => 'city']
+);
 
 $result[0]->data // 'I live in Paris';
 ```
