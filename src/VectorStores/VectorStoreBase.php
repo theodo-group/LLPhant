@@ -8,16 +8,15 @@ namespace LLPhant\VectorStores;
 abstract class VectorStoreBase
 {
     /**
-     * @param  array  $embedding embedding to save to the vectorstore.
-     * @param  array  $additionalArguments vectorstore specific parameters
-     * @return array List of ids from adding the texts into the vectorstore.
+     * @param  float[]  $embedding
      */
     abstract public function saveEmbedding(array $embedding, EmbeddingEntityBase $entity): void;
 
     /**
-     * Return docs most similar to query.
+     * Return docs most similar to the query.
      *
-     * @param  array  $additionalArguments vectorstore specific parameters
+     * @param  array<string, string|int>  $additionalArguments
+     * @return mixed[]
      */
     abstract public function similaritySearch(string $query, int $k = 4, array $additionalArguments = []): array;
 }

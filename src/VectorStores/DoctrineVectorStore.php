@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 final class DoctrineVectorStore
 {
@@ -14,8 +15,10 @@ final class DoctrineVectorStore
     }
 
     /**
+     * @param  float[]  $embedding
+     *
      * @throws ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      */
     public function saveEmbedding(array $embedding, EmbeddingEntityBase $entity): void
     {
@@ -25,6 +28,12 @@ final class DoctrineVectorStore
     }
 
     /**
+     * @param  float[]  $embedding
+     *
+     * @template T of EmbeddingEntityBase
+     *
+     * @param  class-string<T>  $entityClassName
+     * @param  array<string, string|int>  $additionalArguments
      * @return EmbeddingEntityBase[]
      *
      * @throws Exception
@@ -72,7 +81,7 @@ final class DoctrineVectorStore
         $result = [];
         foreach ($ids as $id) {
             $entity = $this->getEntityById($entities, $id);
-            if ($entity instanceof \LLPhant\VectorStores\EmbeddingEntityBase) {
+            if ($entity instanceof EmbeddingEntityBase) {
                 $result[] = $entity;
             }
         }

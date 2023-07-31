@@ -41,6 +41,8 @@ final class OpenAIEmbeddings implements Embeddings
 
     /**
      * Call out to OpenAI's embedding endpoint.
+     *
+     * @return float[]
      */
     public function embedText(string $text): array
     {
