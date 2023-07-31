@@ -10,11 +10,11 @@ use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
 
-class OpenAIChat extends Chat
+final class OpenAIChat extends Chat
 {
-    private Client $client;
+    private readonly Client $client;
 
-    private string|OpenAIChatModel $model;
+    private readonly string|OpenAIChatModel $model;
 
     private Message $systemMessage;
 
@@ -53,12 +53,10 @@ class OpenAIChat extends Chat
         $userMessage->content = $prompt;
         $messages[] = $userMessage;
 
-        $response = $this->client->chat()->create(
+        return $this->client->chat()->create(
             ['model' => $this->model->getModelName(),
                 'messages' => $messages,
             ]
         );
-
-        return $response;
     }
 }

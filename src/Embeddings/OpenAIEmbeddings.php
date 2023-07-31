@@ -11,7 +11,7 @@ use function str_replace;
 /**
  * Wrapper around OpenAI embedding models.
  */
-class OpenAIEmbeddings implements Embeddings
+final class OpenAIEmbeddings implements Embeddings
 {
     public Client $client;
 

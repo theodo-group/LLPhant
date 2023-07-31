@@ -9,9 +9,5 @@ use OpenAI\Responses\Chat\CreateResponse;
  */
 abstract class Chat
 {
-    public function __construct(
-    ) {
-    }
-
     abstract public function generate(string $prompt): CreateResponse;
 }

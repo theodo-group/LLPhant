@@ -2,7 +2,7 @@
 
 namespace LLPhant\Chat;
 
-class ChatConfig
+final class ChatConfig
 {
     public string $apiKey;
 

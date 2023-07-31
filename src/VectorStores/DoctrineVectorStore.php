@@ -7,13 +7,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 
-class DoctrineVectorStore
+final class DoctrineVectorStore
 {
-    private EntityManager $entityManager;
-
-    public function __construct($entityManager)
+    public function __construct(private readonly \Doctrine\ORM\EntityManager $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -22,9 +19,7 @@ class DoctrineVectorStore
      */
     public function saveEmbedding(array $embedding, EmbeddingEntityBase $entity): void
     {
-        $embeddingString = $this->getEmbeddingString($embedding);
-
-        $entity->embedding = $embeddingString;
+        $entity->embedding = $this->getEmbeddingString($embedding);
         $this->entityManager->persist($entity);
         $this->entityManager->flush();
     }
@@ -61,7 +56,7 @@ class DoctrineVectorStore
             $params[$paramName] = $value;
         }
 
-        if (! empty($whereClauses)) {
+        if ($whereClauses !== []) {
             $sql .= ' WHERE '.implode(' AND ', $whereClauses);
         }
         $sql .= ' ORDER BY embedding <=> :embeddingString ASC LIMIT :limitCount';
@@ -77,7 +72,7 @@ class DoctrineVectorStore
         $result = [];
         foreach ($ids as $id) {
             $entity = $this->getEntityById($entities, $id);
-            if ($entity) {
+            if ($entity instanceof \LLPhant\VectorStores\EmbeddingEntityBase) {
                 $result[] = $entity;
             }
         }

@@ -4,7 +4,7 @@ namespace LLPhant\Chat;
 
 use LLPhant\Chat\Enums\OpenAIChatModel;
 
-class OpenAIChatConfig
+final class OpenAIChatConfig
 {
     public string $apiKey;
 
