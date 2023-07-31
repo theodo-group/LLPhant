@@ -26,8 +26,8 @@ it('Create one embedding and store it in a postgresql database', function () {
     $connection = DriverManager::getConnection($connectionParams);
     $connection->executeQuery('TRUNCATE TABLE embeddings');
     $entityManager = new EntityManager($connection, $config);
-    $vectorStore = new DoctrineVectorStore($entityManager);
 
+    $vectorStore = new DoctrineVectorStore($entityManager);
     $llm = new OpenAIEmbeddings();
 
     $food = new ExampleEmbeddingEntity();

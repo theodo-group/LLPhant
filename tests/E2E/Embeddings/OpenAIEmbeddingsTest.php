@@ -4,6 +4,6 @@ use LLPhant\Embeddings\OpenAIEmbeddings;
 
 it('can embed some stuff', function () {
     $llm = new OpenAIEmbeddings();
-    $response = $llm->embedText('I love food');
-    expect($response[0])->toBeFloat();
+    $embedding = $llm->embedText('I love food');
+    expect($embedding[0])->toBeFloat();
 });
