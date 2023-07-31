@@ -4,7 +4,9 @@ namespace LLPhant\Chat;
 
 use LLPhant\Chat\Enums\ChatRole;
 
-class Message {
+class Message
+{
     public ChatRole $role;
+
     public string $content;
 }

@@ -9,10 +9,9 @@ enum OpenAIChatModel
 
     public function getModelName(): string
     {
-        return match($this)
-        {
-            OpenAIChatModel::Gpt35Turbo => "gpt-3.5-turbo",
-            OpenAIChatModel::Gpt4 => "gpt-4",
+        return match ($this) {
+            OpenAIChatModel::Gpt35Turbo => 'gpt-3.5-turbo',
+            OpenAIChatModel::Gpt4 => 'gpt-4',
         };
     }
 }

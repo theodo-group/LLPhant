@@ -2,27 +2,28 @@
 
 namespace LLPhant\Chat;
 
+use function getenv;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
 use Mockery\Exception;
 use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
-use function getenv;
-
 
 class OpenAIChat extends Chat
 {
     private Client $client;
+
     private string|OpenAIChatModel $model;
 
     private Message $systemMessage;
 
-    public function __construct(OpenAIChatConfig $config=null){
+    public function __construct(OpenAIChatConfig $config = null)
+    {
         parent::__construct();
 
         $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
-        if (!$apiKey) {
+        if (! $apiKey) {
             throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
         }
         $this->client = OpenAI::client($apiKey);
@@ -31,9 +32,6 @@ class OpenAIChat extends Chat
 
     /**
      * We only need one system message in most of the case
-     *
-     * @param string $message
-     * @return void
      */
     public function setSystemMessage(string $message): void
     {
@@ -57,7 +55,7 @@ class OpenAIChat extends Chat
 
         $response = $this->client->chat()->create(
             ['model' => $this->model->getModelName(),
-                'messages' => $messages
+                'messages' => $messages,
             ]
         );
 

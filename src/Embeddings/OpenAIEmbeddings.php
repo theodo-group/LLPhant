@@ -3,10 +3,9 @@
 namespace LLPhant\Embeddings;
 
 use Exception;
+use function getenv;
 use OpenAI;
 use OpenAI\Client;
-
-use function getenv;
 use function str_replace;
 
 /**
@@ -34,7 +33,7 @@ class OpenAIEmbeddings implements Embeddings
     public function __construct(
     ) {
         $apiKey = getenv('OPENAI_API_KEY');
-        if (!$apiKey) {
+        if (! $apiKey) {
             throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
         }
         $this->client = OpenAI::client($apiKey);
@@ -42,10 +41,6 @@ class OpenAIEmbeddings implements Embeddings
 
     /**
      * Call out to OpenAI's embedding endpoint.
-     *
-     * @param string $text
-     *
-     * @return array
      */
     public function embedText(string $text): array
     {

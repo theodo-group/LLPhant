@@ -10,7 +10,7 @@ use Tests\E2E\VectorStores\ExampleEmbeddingEntity;
 
 it('Create one embedding and store it in a postgresql database', function () {
     $config = ORMSetup::createAttributeMetadataConfiguration(
-        paths: array(__DIR__."/src"),
+        paths: [__DIR__.'/src'],
     );
 
     Type::addType('uuid', 'Ramsey\Uuid\Doctrine\UuidType');
@@ -24,15 +24,15 @@ it('Create one embedding and store it in a postgresql database', function () {
     ];
 
     $connection = DriverManager::getConnection($connectionParams);
-    $connection->executeQuery("TRUNCATE TABLE embeddings");
+    $connection->executeQuery('TRUNCATE TABLE embeddings');
     $entityManager = new EntityManager($connection, $config);
     $vectorStore = new DoctrineVectorStore($entityManager);
 
     $llm = new OpenAIEmbeddings();
 
     $food = new ExampleEmbeddingEntity();
-    $food->data = "I love food";
-    $food->type = "food";
+    $food->data = 'I love food';
+    $food->type = 'food';
     $embedding = $llm->embedText($food->data);
     $vectorStore->saveEmbedding($embedding, $food);
 
@@ -40,21 +40,21 @@ it('Create one embedding and store it in a postgresql database', function () {
     expect($food->embedding)->toBeString();
 
     $paris = new ExampleEmbeddingEntity();
-    $paris->data = "I live in Paris";
-    $paris->type = "city";
+    $paris->data = 'I live in Paris';
+    $paris->type = 'city';
     $embedding = $llm->embedText($paris->data);
     $vectorStore->saveEmbedding($embedding, $paris);
 
     $france = new ExampleEmbeddingEntity();
-    $france->data = "I live in France";
-    $france->type = "country";
+    $france->data = 'I live in France';
+    $france->type = 'country';
     $embedding = $llm->embedText($france->data);
     $vectorStore->saveEmbedding($embedding, $france);
 
-    $embedding = $llm->embedText("I live in Asia");
+    $embedding = $llm->embedText('I live in Asia');
     /** @var ExampleEmbeddingEntity[] $result */
     $result = $vectorStore->similaritySearch($embedding, ExampleEmbeddingEntity::class, 2, ['type' => 'city']);
 
     // We check that the search return the correct entities in the right order
-    expect($result[0]->data)->toBe("I live in Paris");
+    expect($result[0]->data)->toBe('I live in Paris');
 });

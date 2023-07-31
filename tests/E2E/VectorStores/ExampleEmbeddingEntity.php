@@ -14,12 +14,14 @@ use Ramsey\Uuid\Doctrine\UuidGenerator;
 class ExampleEmbeddingEntity extends EmbeddingEntityBase
 {
     #[ORM\Id]
-    #[ORM\Column(type: "uuid", unique: true)]
-    #[ORM\GeneratedValue(strategy: "CUSTOM")]
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     public string $id;
+
     #[ORM\Column(type: Types::TEXT)]
     public string $data;
+
     #[ORM\Column(type: Types::STRING)]
     public string $type;
 

@@ -17,9 +17,6 @@ class DoctrineVectorStore
     }
 
     /**
-     * @param array $embedding
-     * @param EmbeddingEntityBase $entity
-     * @return void
      * @throws ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
@@ -32,13 +29,9 @@ class DoctrineVectorStore
         $this->entityManager->flush();
     }
 
-
     /**
-     * @param array $embedding
-     * @param string $entityClassName
-     * @param int $k
-     * @param array $additionalArguments
      * @return EmbeddingEntityBase[]
+     *
      * @throws Exception
      * @throws NotSupported
      */
@@ -58,20 +51,20 @@ class DoctrineVectorStore
         ];
 
         foreach ($additionalArguments as $key => $value) {
-            if (!is_scalar($value)) {
+            if (! is_scalar($value)) {
                 throw new \InvalidArgumentException("Non-scalar value provided for key {$key}");
             }
             // Appending parameter name with a prefix to avoid conflicts with existing parameters
-            $paramName = 'where_' . $key;
-            $whereClauses[] = $key . " = :" . $paramName;
+            $paramName = 'where_'.$key;
+            $whereClauses[] = $key.' = :'.$paramName;
             // Binding the parameter to its value
             $params[$paramName] = $value;
         }
 
-        if (!empty($whereClauses)) {
-            $sql .= " WHERE " . implode(" AND ", $whereClauses);
+        if (! empty($whereClauses)) {
+            $sql .= ' WHERE '.implode(' AND ', $whereClauses);
         }
-        $sql .= " ORDER BY embedding <=> :embeddingString ASC LIMIT :limitCount";
+        $sql .= ' ORDER BY embedding <=> :embeddingString ASC LIMIT :limitCount';
         $resultIds = $this->entityManager->getConnection()->executeQuery($sql, $params)->fetchAllAssociative();
         /** @var string[]|int[] $ids */
         $ids = array_column($resultIds, 'id');
@@ -82,7 +75,7 @@ class DoctrineVectorStore
 
         // We need to sort the entities by the order of the ids from the first query
         $result = [];
-        foreach ($ids as $id){
+        foreach ($ids as $id) {
             $entity = $this->getEntityById($entities, $id);
             if ($entity) {
                 $result[] = $entity;
@@ -93,39 +86,35 @@ class DoctrineVectorStore
     }
 
     /**
-     * @param EmbeddingEntityBase[] $entities
-     * @param string|int $id
-     * @return EmbeddingEntityBase|null
+     * @param  EmbeddingEntityBase[]  $entities
      */
-    private function getEntityById(array $entities, string|int $id): EmbeddingEntityBase|null
+    private function getEntityById(array $entities, string|int $id): ?EmbeddingEntityBase
     {
         foreach ($entities as $entity) {
             echo $entity->getId()."\n";
             echo $id."\n";
-            echo "plop"."\n";
+            echo 'plop'."\n";
 
             if ($entity->getId() === $id) {
                 return $entity;
             }
         }
+
         return null;
     }
 
     /**
      * We need to convert the embedding array to a vector compatible string for postgresql
-     * @param float[] $embedding
-     * @return string
+     *
+     * @param  float[]  $embedding
      */
     private function getEmbeddingString(array $embedding): string
     {
-        return "[" . implode(",", $embedding) . "]";
+        return '['.implode(',', $embedding).']';
     }
 
-    /**
-     * @param string $table_name
-     * @return string|null
-     */
-    private function sanitize_table_name(string $table_name): string|null {
+    private function sanitize_table_name(string $table_name): ?string
+    {
         return preg_replace('/[^a-zA-Z0-9_]/', '', $table_name);
     }
 }
