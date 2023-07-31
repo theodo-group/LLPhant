@@ -1,5 +1,8 @@
-# LLPhant - A comprehensive PHP Framework to build Generative AI apps.
+# LLPhant - A comprehensive PHP Generative AI Framework
 
+<div align="center">
+    <img src="doc/assets/llphant-logo.png" alt="LLPhant" width="40%"  style="border-radius: 50%; padding-bottom: 20px"/>
+</div>
 
 We designed this framework to be as simple as possible, while still providing you with the tools you need to build powerful apps.
 For the moment only OpenAI is supported, but we some project like [genossGPT](https://github.com/OpenGenenerativeAI/GenossGPT) the open source LLMs will be supported too.
