@@ -9,9 +9,6 @@ use LLPhant\VectorStores\DoctrineVectorStore;
 use Tests\E2E\VectorStores\ExampleEmbeddingEntity;
 
 it('Create one embedding and store it in a postgresql database', function () {
-    $llm = new OpenAIEmbeddings();
-    $embedding = $llm->embedText("I love food");
-
     $config = ORMSetup::createAttributeMetadataConfiguration(
         paths: array(__DIR__."/src"),
     );
@@ -27,12 +24,37 @@ it('Create one embedding and store it in a postgresql database', function () {
     ];
 
     $connection = DriverManager::getConnection($connectionParams);
+    $connection->executeQuery("TRUNCATE TABLE embeddings");
     $entityManager = new EntityManager($connection, $config);
     $vectorStore = new DoctrineVectorStore($entityManager);
-    $entity = new ExampleEmbeddingEntity();
-    $entity->data = "I love food";
 
-    $vectorStore->saveEmbedding($embedding, $entity);
+    $llm = new OpenAIEmbeddings();
 
-    expect($entity->embedding)->toBeString();
+    $food = new ExampleEmbeddingEntity();
+    $food->data = "I love food";
+    $food->type = "food";
+    $embedding = $llm->embedText($food->data);
+    $vectorStore->saveEmbedding($embedding, $food);
+
+    // We check that the embedding is saved in the database
+    expect($food->embedding)->toBeString();
+
+    $paris = new ExampleEmbeddingEntity();
+    $paris->data = "I live in Paris";
+    $paris->type = "city";
+    $embedding = $llm->embedText($paris->data);
+    $vectorStore->saveEmbedding($embedding, $paris);
+
+    $france = new ExampleEmbeddingEntity();
+    $france->data = "I live in France";
+    $france->type = "country";
+    $embedding = $llm->embedText($france->data);
+    $vectorStore->saveEmbedding($embedding, $france);
+
+    $embedding = $llm->embedText("I live in Asia");
+    /** @var ExampleEmbeddingEntity[] $result */
+    $result = $vectorStore->similaritySearch($embedding, ExampleEmbeddingEntity::class, 2, ['type' => 'city']);
+
+    // We check that the search return the correct entities in the right order
+    expect($result[0]->data)->toBe("I live in Paris");
 });

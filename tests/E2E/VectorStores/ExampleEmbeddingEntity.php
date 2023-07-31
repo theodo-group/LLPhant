@@ -20,4 +20,11 @@ class ExampleEmbeddingEntity extends EmbeddingEntityBase
     public string $id;
     #[ORM\Column(type: Types::TEXT)]
     public string $data;
+    #[ORM\Column(type: Types::STRING)]
+    public string $type;
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
 }

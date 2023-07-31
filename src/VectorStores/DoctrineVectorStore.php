@@ -2,7 +2,9 @@
 
 namespace LLPhant\VectorStores;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 
 class DoctrineVectorStore
@@ -14,7 +16,6 @@ class DoctrineVectorStore
         $this->entityManager = $entityManager;
     }
 
-
     /**
      * @param array $embedding
      * @param EmbeddingEntityBase $entity
@@ -24,8 +25,7 @@ class DoctrineVectorStore
      */
     public function saveEmbedding(array $embedding, EmbeddingEntityBase $entity): void
     {
-        // We need to convert the embedding array to a vector compatible string for postgresql
-        $embeddingString = "[" . implode(",", $embedding) . "]";
+        $embeddingString = $this->getEmbeddingString($embedding);
 
         $entity->embedding = $embeddingString;
         $this->entityManager->persist($entity);
@@ -34,13 +34,98 @@ class DoctrineVectorStore
 
 
     /**
-     * @param string $query
+     * @param array $embedding
+     * @param string $entityClassName
      * @param int $k
      * @param array $additionalArguments
-     * @return array
+     * @return EmbeddingEntityBase[]
+     * @throws Exception
+     * @throws NotSupported
      */
-    public function similaritySearch(string $query, int $k = 4, array $additionalArguments = []): array
+    public function similaritySearch(array $embedding, string $entityClassName = EmbeddingEntityBase::class, int $k = 4, array $additionalArguments = []): array
     {
-        return [];
+        // Get the table name from the entity class
+        $classMetadata = $this->entityManager->getClassMetadata($entityClassName);
+        $tableNameSanitized = $this->sanitize_table_name($classMetadata->getTableName());
+
+        $embeddingString = $this->getEmbeddingString($embedding);
+
+        $sql = "SELECT id FROM {$tableNameSanitized}";
+        $whereClauses = [];
+        $params = [
+            'embeddingString' => $embeddingString,
+            'limitCount' => $k,
+        ];
+
+        foreach ($additionalArguments as $key => $value) {
+            if (!is_scalar($value)) {
+                throw new \InvalidArgumentException("Non-scalar value provided for key {$key}");
+            }
+            // Appending parameter name with a prefix to avoid conflicts with existing parameters
+            $paramName = 'where_' . $key;
+            $whereClauses[] = $key . " = :" . $paramName;
+            // Binding the parameter to its value
+            $params[$paramName] = $value;
+        }
+
+        if (!empty($whereClauses)) {
+            $sql .= " WHERE " . implode(" AND ", $whereClauses);
+        }
+        $sql .= " ORDER BY embedding <=> :embeddingString ASC LIMIT :limitCount";
+        $resultIds = $this->entityManager->getConnection()->executeQuery($sql, $params)->fetchAllAssociative();
+        /** @var string[]|int[] $ids */
+        $ids = array_column($resultIds, 'id');
+
+        $repository = $this->entityManager->getRepository($entityClassName);
+        /** @var EmbeddingEntityBase[] $entities */
+        $entities = $repository->findBy(['id' => $ids]);
+
+        // We need to sort the entities by the order of the ids from the first query
+        $result = [];
+        foreach ($ids as $id){
+            $entity = $this->getEntityById($entities, $id);
+            if ($entity) {
+                $result[] = $entity;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param EmbeddingEntityBase[] $entities
+     * @param string|int $id
+     * @return EmbeddingEntityBase|null
+     */
+    private function getEntityById(array $entities, string|int $id): EmbeddingEntityBase|null
+    {
+        foreach ($entities as $entity) {
+            echo $entity->getId()."\n";
+            echo $id."\n";
+            echo "plop"."\n";
+
+            if ($entity->getId() === $id) {
+                return $entity;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * We need to convert the embedding array to a vector compatible string for postgresql
+     * @param float[] $embedding
+     * @return string
+     */
+    private function getEmbeddingString(array $embedding): string
+    {
+        return "[" . implode(",", $embedding) . "]";
+    }
+
+    /**
+     * @param string $table_name
+     * @return string|null
+     */
+    private function sanitize_table_name(string $table_name): string|null {
+        return preg_replace('/[^a-zA-Z0-9_]/', '', $table_name);
     }
 }
