@@ -1,7 +1,6 @@
 <?php
 
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use LLPhant\Embeddings\OpenAIEmbeddings;
@@ -12,8 +11,6 @@ it('Create one embedding and store it in a postgresql database', function () {
     $config = ORMSetup::createAttributeMetadataConfiguration(
         paths: [__DIR__.'/src'],
     );
-
-    Type::addType('uuid', 'Ramsey\Uuid\Doctrine\UuidType');
 
     $connectionParams = [
         'dbname' => 'postgres',
