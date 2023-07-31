@@ -1,4 +1,5 @@
-**LLPhant** is a community-maintained Web PHP Framework that allows you to build Generative AI apps.
+# LLPhant - A comprehensive PHP Framework that allows you to build Generative AI apps.
+
 
 We designed this framework to be as simple as possible, while still providing you with the tools you need to build powerful apps.
 For the moment only OpenAI is supported, but we some project like [genossGPT](https://github.com/OpenGenenerativeAI/GenossGPT) the open source LLMs will be supported too.
@@ -13,6 +14,8 @@ We want thanks few amazing projects that we use here or inspired us:
   - [Chat](#Chat)
   - [Embeddings](#Embeddings)
   - [VectorStore and Search](#VectorStores)
+- [Contributors](#Contributors)
+- [Sponsor](#Sponsor)
 
 ## Get Started
 
@@ -24,8 +27,9 @@ First, install LLPhant via the [Composer](https://getcomposer.org/) package mana
 composer require theodo-group/llphant
 ```
 
-## Usage
+You may also want to check the requirements for [OpenAI PHP SDK](https://github.com/openai-php/client) as it is the main client.
 
+## Usage
 ### Chat
 
 The API to generate text using OpenAI will only be from the chat API.
@@ -136,5 +140,21 @@ $result = $vectorStore->similaritySearch($embedding, ExampleEmbeddingEntity::cla
 $result[0]->data // 'I live in Paris';
 ```
 
-You can find us on Twitter: 
-- [Maxime Thoonsen](https://twitter.com/maxthoon).
+## Contributors
+
+Thanks to our contributors:
+
+
+<a href="https://github.com/theodo-group/llphant/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=theodo-group/llphant" />
+</a>
+
+## Sponsor
+
+LLPhant is sponsored by [Theodo](https://www.theodo.fr/) a leading digital agency building web application with Generative AI.
+
+<div align="center">
+  <a href="https://www.theodo.fr/" />
+    <img alt="Theodo logo" src="https://cdn2.hubspot.net/hub/2383597/hubfs/Website/Logos/Logo_Theodo_cropped.svg" width="200"/>
+  </a>
+</div>
