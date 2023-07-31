@@ -9,7 +9,7 @@ use Doctrine\ORM\Exception\ORMException;
 
 final class DoctrineVectorStore
 {
-    public function __construct(private readonly \Doctrine\ORM\EntityManager $entityManager)
+    public function __construct(private readonly EntityManager $entityManager)
     {
     }
 

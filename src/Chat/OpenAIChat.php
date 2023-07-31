@@ -20,8 +20,6 @@ final class OpenAIChat extends Chat
 
     public function __construct(OpenAIChatConfig $config = null)
     {
-        parent::__construct();
-
         $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
         if (! $apiKey) {
             throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
