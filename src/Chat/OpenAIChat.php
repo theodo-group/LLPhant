@@ -14,7 +14,7 @@ final class OpenAIChat extends Chat
 {
     private readonly Client $client;
 
-    private readonly string|OpenAIChatModel $model;
+    private readonly string $model;
 
     private Message $systemMessage;
 
@@ -25,7 +25,7 @@ final class OpenAIChat extends Chat
             throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
         }
         $this->client = OpenAI::client($apiKey);
-        $this->model = $config->model ?? OpenAIChatModel::Gpt4;
+        $this->model = $config->model ?? OpenAIChatModel::Gpt4->getModelName();
     }
 
     /**
@@ -52,7 +52,8 @@ final class OpenAIChat extends Chat
         $messages[] = $userMessage;
 
         return $this->client->chat()->create(
-            ['model' => $this->model->getModelName(),
+            [
+                'model' => $this->model,
                 'messages' => $messages,
             ]
         );
