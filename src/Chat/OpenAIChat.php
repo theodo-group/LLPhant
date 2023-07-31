@@ -5,6 +5,7 @@ namespace LLPhant\Chat;
 use function getenv;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
+use LLPhant\OpenAIConfig;
 use Mockery\Exception;
 use OpenAI;
 use OpenAI\Client;
@@ -18,7 +19,7 @@ final class OpenAIChat extends Chat
 
     private Message $systemMessage;
 
-    public function __construct(OpenAIChatConfig $config = null)
+    public function __construct(OpenAIConfig $config = null)
     {
         $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
         if (! $apiKey) {

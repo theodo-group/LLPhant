@@ -1,4 +1,4 @@
-# LLPhant - A comprehensive PHP Framework that allows you to build Generative AI apps.
+# LLPhant - A comprehensive PHP Framework to build Generative AI apps.
 
 
 We designed this framework to be as simple as possible, while still providing you with the tools you need to build powerful apps.
@@ -30,6 +30,20 @@ composer require theodo-group/llphant
 You may also want to check the requirements for [OpenAI PHP SDK](https://github.com/openai-php/client) as it is the main client.
 
 ## Usage
+The most simple to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
+
+```bash
+export OPENAI_API_KEY=sk-XXXXXX
+```
+
+You can also create an OpenAIConfig object and pass it to the constructor of the OpenAIChat or OpenAIEmbeddings.
+
+```php
+    $config = new OpenAIConfig();
+    $config->apiKey = 'fakeapikey';
+    $chat = new OpenAIChat($config);
+```
+
 ### Chat
 
 The API to generate text using OpenAI will only be from the chat API.

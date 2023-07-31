@@ -1,8 +1,8 @@
 <?php
 
-namespace LLPhant\Chat;
+namespace LLPhant;
 
-final class ChatConfig
+final class OpenAIConfig
 {
     public string $apiKey;
 

@@ -3,7 +3,7 @@
 namespace Tests\E2E;
 
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Chat\OpenAIChatConfig;
+use LLPhant\OpenAIConfig;
 
 it('can generate some stuff', function () {
     $chat = new OpenAIChat();
@@ -19,7 +19,7 @@ it('can generate some stuff with a system prompt', function () {
 });
 
 it('can load any existing model', function () {
-    $config = new OpenAIChatConfig();
+    $config = new OpenAIConfig();
     $config->model = 'gpt-3.5-turbo-16k';
     $chat = new OpenAIChat($config);
     $response = $chat->generateText('one + one ?');
