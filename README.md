@@ -13,7 +13,6 @@ This projects leverage:
   - [Chat](#Chat)
   - [Embeddings](#Embeddings)
   - [VectorStore and Search](#VectorStores)
-- 
 
 ## Get Started
 
@@ -27,11 +26,21 @@ First, install OpenAI via the [Composer](https://getcomposer.org/) package manag
 
 The API to generate text using OpenAI will only be from the chat API.
 So even if you want to generate a completion for a simple question under the hood it will use the chat API.
+This is why this class is called OpenAIChat.
+We can use it to simply generate text from a prompt.
+
+This will ask directly an answer from the LLM.
+```php
+    $chat = new OpenAIChat();
+    $response = $chat->generateText('what is one + one ?'); // will return something like "Two"
+```
+
+You can add instruction so the LLM will behave in a specific manner.
 
 ```php
     $chat = new OpenAIChat();
-    $response = $chat->generate('what is one + one ?');
-    $response->choices[0]->message->content; // will return something like "Two"
+    $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
+    $response = $chat->generateText('what is one + one ?'); // will return "ok"
 ```
 
 ### Embeddings

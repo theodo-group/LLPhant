@@ -39,7 +39,14 @@ final class OpenAIChat extends Chat
         $this->systemMessage = $systemMessage;
     }
 
-    public function generate(string $prompt): CreateResponse
+    public function generateText(string $prompt): string
+    {
+        $answer = $this->generate($prompt);
+
+        return $answer->choices[0]->message->content ?? '';
+    }
+
+    private function generate(string $prompt): CreateResponse
     {
         $messages = [];
         if (isset($this->systemMessage)) {
