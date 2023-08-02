@@ -3,6 +3,18 @@
 Contributions are welcome, and are accepted via pull requests.
 Please review these guidelines before submitting any pull requests.
 
+
+## Setup
+Clone your fork, then install the dev dependencies:
+```bash
+composer install
+```
+
+You can use the `devx/docker-compose.yml` file to run a local postgresql database with the pgvector extension available.
+```bash
+docker-compose up -d
+```
+
 ## Process
 
 1. Fork the project
@@ -16,13 +28,6 @@ Please review these guidelines before submitting any pull requests.
 * Send a coherent commit history, making sure each individual commit in your pull request is meaningful.
 * You may need to [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) to avoid merge conflicts.
 * Please remember that we follow [SemVer](http://semver.org/).
-
-## Setup
-
-Clone your fork, then install the dev dependencies:
-```bash
-composer install
-```
 
 ## Refactor
 

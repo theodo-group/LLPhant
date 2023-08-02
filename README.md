@@ -13,6 +13,7 @@ We want to thank few amazing projects that we use here or inspired us:
 
 ## Table of Contents
 - [Get Started](#get-started)
+  - [Database](#database)
 - [Usage](#usage)
   - [Chat](#Chat)
   - [Embeddings](#Embeddings)
@@ -31,6 +32,33 @@ composer require theodo-group/llphant
 ```
 
 You may also want to check the requirements for [OpenAI PHP SDK](https://github.com/openai-php/client) as it is the main client.
+
+### Database
+
+If you want to store some embeddings and perform a similarity search you will need a database.
+One simple solution for web developers is to use a postgresql database **with the pgvector extension**.
+You can find all the information on the pgvector extension on its [github repository](https://github.com/pgvector/pgvector).
+
+We suggest you 3 simple solutions to get a postgresql database with the extension enabled:
+- use docker with the [docker-compose.yml](devx/docker-compose.yml) file
+- use [Supabase](https://supabase.com/)
+- use [Neon](https://neon.tech/)
+
+In any case you will need to activate the extension:
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+Then you can create a table and store vectors.
+This sql query will create the table from the example entity that we use later in [VectorStore](#VectorStores) section.
+```sql
+CREATE TABLE IF NOT EXISTS embeddings (
+                                          id SERIAL PRIMARY KEY,
+                                          data text,
+                                          type text,
+                                          embedding vector
+)
+```
 
 ## Usage
 The most simple to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
