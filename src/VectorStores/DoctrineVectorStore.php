@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use LLPhant\Doctrine\PgVectorCosineOperatorDql;
+use LLPhant\Doctrine\PgVectorL2OperatorDql;
 
 final class DoctrineVectorStore
 {
@@ -42,12 +42,12 @@ final class DoctrineVectorStore
      */
     public function similaritySearch(array $embedding, string $entityClassName = EmbeddingEntityBase::class, int $k = 4, array $additionalArguments = []): array
     {
-        $this->entityManager->getConfiguration()->addCustomStringFunction('COSINE_DISTANCE', PgVectorCosineOperatorDql::class);
+        $this->entityManager->getConfiguration()->addCustomStringFunction('L2_DISTANCE', PgVectorL2OperatorDql::class);
 
         $repository = $this->entityManager->getRepository($entityClassName);
         $qb = $repository
             ->createQueryBuilder('e')
-            ->orderBy('COSINE_DISTANCE(e.embedding, :embeddingString)', 'ASC')
+            ->orderBy('L2_DISTANCE(e.embedding, :embeddingString)', 'ASC')
             ->setParameter('embeddingString', $this->getEmbeddingString($embedding))
             ->setMaxResults($k);
 
@@ -57,7 +57,7 @@ final class DoctrineVectorStore
                 ->andWhere(sprintf('e.%s = :%s', $key, $paramName))
                 ->setParameter($paramName, $value);
         }
-
+        /** @var EmbeddingEntityBase[] */
         return $qb->getQuery()->getResult();
     }
 
