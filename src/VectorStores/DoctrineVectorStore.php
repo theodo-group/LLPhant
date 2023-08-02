@@ -95,10 +95,6 @@ final class DoctrineVectorStore
     private function getEntityById(array $entities, string|int $id): ?EmbeddingEntityBase
     {
         foreach ($entities as $entity) {
-            echo $entity->getId()."\n";
-            echo $id."\n";
-            echo 'plop'."\n";
-
             if ($entity->getId() === $id) {
                 return $entity;
             }

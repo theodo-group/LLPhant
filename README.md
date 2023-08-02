@@ -7,7 +7,7 @@
 We designed this framework to be as simple as possible, while still providing you with the tools you need to build powerful apps.
 For the moment only OpenAI is supported, but we some project like [genossGPT](https://github.com/OpenGenenerativeAI/GenossGPT) the open source LLMs will be supported too.
 
-We want thanks few amazing projects that we use here or inspired us:
+We want to thank few amazing projects that we use here or inspired us:
 - the learnings from using [LangChain](https://www.langchain.com/) and [LLamaIndex](https://www.llamaindex.ai/)
 - the excellent work from the [OpenAI PHP SDK](https://github.com/openai-php/client).
 
