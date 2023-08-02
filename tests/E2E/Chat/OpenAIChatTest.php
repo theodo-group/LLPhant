@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\E2E;
-
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
 
