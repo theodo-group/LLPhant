@@ -9,7 +9,8 @@ use Tests\E2E\VectorStores\ExampleEmbeddingEntity;
 
 it('Create one embedding and store it in a postgresql database', function () {
     $config = ORMSetup::createAttributeMetadataConfiguration(
-        paths: [__DIR__.'/src'],
+        [__DIR__.'/src'],
+        true
     );
 
     $connectionParams = [
