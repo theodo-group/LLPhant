@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\E2E\VectorStores;
+namespace LLPhant\VectorStores;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
-use LLPhant\VectorStores\EmbeddingEntityBase;
 
 #[Entity]
 #[Table(name: 'embeddings', schema: 'public')]

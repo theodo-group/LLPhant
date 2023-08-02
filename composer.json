@@ -60,7 +60,7 @@
         "test:types": "phpstan analyse --ansi",
         "test:type-coverage": "pest ./tests --type-coverage --min=100",
         "test:unit": "pest ./tests/Unit --colors=always",
-        "test:e2e": "pest ./tests/E2E --colors=always",
+        "test:int": "pest ./tests/Integration --colors=always",
         "test": [
             "@test:lint",
             "@test:refactor",

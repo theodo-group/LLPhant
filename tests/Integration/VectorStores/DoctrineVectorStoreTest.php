@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use LLPhant\Embeddings\OpenAIEmbeddings;
 use LLPhant\VectorStores\DoctrineVectorStore;
-use Tests\E2E\VectorStores\ExampleEmbeddingEntity;
+use LLPhant\VectorStores\ExampleEmbeddingEntity;
 
 it('Create one embedding and store it in a postgresql database', function () {
     $config = ORMSetup::createAttributeMetadataConfiguration(
