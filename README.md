@@ -91,6 +91,12 @@ $chat = new OpenAIChat();
 $response = $chat->generateText('what is one + one ?'); // will return something like "Two"
 ```
 
+If you want to display in your frontend a stream of text like in ChatGPT you can use the following method.
+```php
+$chat = new OpenAIChat();
+return $chat->generateStreamOfText('can you write me a poem of 10 lines about life ?');
+```
+
 You can add instruction so the LLM will behave in a specific manner.
 
 ```php
