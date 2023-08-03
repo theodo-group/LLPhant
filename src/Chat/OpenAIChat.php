@@ -10,6 +10,8 @@ use Mockery\Exception;
 use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
+use OpenAI\Responses\Chat\CreateStreamedResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final class OpenAIChat extends Chat
 {
@@ -47,7 +49,49 @@ final class OpenAIChat extends Chat
         return $answer->choices[0]->message->content ?? '';
     }
 
+    public function generateStreamOfText(string $prompt): StreamedResponse
+    {
+        $messages = $this->createOpenAIMessages($prompt);
+        $stream = $this->client->chat()->createStreamed(
+            [
+                'model' => $this->model,
+                'messages' => $messages,
+            ]
+        );
+        $response = new StreamedResponse();
+        //We need this to make the streaming works
+        //It may not work with Symfony: https://stackoverflow.com/questions/76362863/why-streamedresponse-from-symfony-6-is-sent-at-once
+        @ob_end_clean();
+
+        $response->setCallback(function () use ($stream): void {
+            /** @var CreateStreamedResponse $partialResponse */
+            foreach ($stream as $partialResponse) {
+                if (! ($partialResponse->choices[0]->delta->content)) {
+                    continue;
+                }
+                echo $partialResponse->choices[0]->delta->content;
+            }
+        });
+
+        return $response->send();
+    }
+
     private function generate(string $prompt): CreateResponse
+    {
+        $messages = $this->createOpenAIMessages($prompt);
+
+        return $this->client->chat()->create(
+            [
+                'model' => $this->model,
+                'messages' => $messages,
+            ]
+        );
+    }
+
+    /**
+     * @return Message[]
+     */
+    private function createOpenAIMessages(string $prompt): array
     {
         $messages = [];
         if (isset($this->systemMessage)) {
@@ -59,11 +103,6 @@ final class OpenAIChat extends Chat
         $userMessage->content = $prompt;
         $messages[] = $userMessage;
 
-        return $this->client->chat()->create(
-            [
-                'model' => $this->model,
-                'messages' => $messages,
-            ]
-        );
+        return $messages;
     }
 }

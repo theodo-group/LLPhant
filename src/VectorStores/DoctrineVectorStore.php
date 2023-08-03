@@ -2,7 +2,6 @@
 
 namespace LLPhant\VectorStores;
 
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
@@ -37,7 +36,6 @@ final class DoctrineVectorStore
      * @param  array<string, string|int>  $additionalArguments
      * @return EmbeddingEntityBase[]
      *
-     * @throws Exception
      * @throws NotSupported
      */
     public function similaritySearch(array $embedding, string $entityClassName = EmbeddingEntityBase::class, int $k = 4, array $additionalArguments = []): array

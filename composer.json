@@ -17,7 +17,7 @@
         "psr/http-client-implementation": "^1.0.1",
         "psr/http-factory-implementation": "*",
         "psr/http-message": "^1.1.0|^2.0.0",
-        "symfony/cache": "^6.3"
+        "symfony/http-foundation": "^6.3"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.7.0",
