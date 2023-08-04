@@ -10,7 +10,8 @@
     ],
     "require": {
         "php": "^8.1.0",
-        "doctrine/orm": "^2.15",
+        "doctrine/orm": "^2.13.0",
+        "symfony/cache": "*",
         "openai-php/client": "^0.6.4",
         "symfony/http-foundation": "^6.0.0"
     },

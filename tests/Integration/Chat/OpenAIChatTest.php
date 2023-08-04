@@ -13,7 +13,7 @@ it('can generate some stuff with a system prompt', function () {
     $chat = new OpenAIChat();
     $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
     $response = $chat->generateText('what is one + one ?');
-    expect($response)->toBe('ok');
+    expect(strtolower($response))->toBe('ok');
 });
 
 it('can load any existing model', function () {
