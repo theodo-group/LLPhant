@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use LLPhant\Doctrine\PgVectorL2OperatorDql;
+use LLPhant\VectorStores\Doctrine\PgVectorL2OperatorDql;
 
 final class DoctrineVectorStore
 {

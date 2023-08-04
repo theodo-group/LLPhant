@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\Doctrine;
+namespace LLPhant\VectorStores\Doctrine;
 
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
 use Doctrine\ORM\Query\AST\Node;
