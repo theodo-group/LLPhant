@@ -17,6 +17,7 @@ We want to thank few amazing projects that we use here or inspired us:
 ## Table of Contents
 - [Get Started](#get-started)
   - [Database](#database)
+- [Use Case](#use-case)
 - [Usage](#usage)
   - [Chat](#Chat)
   - [Embeddings](#Embeddings)
@@ -62,6 +63,21 @@ CREATE TABLE IF NOT EXISTS embeddings (
                                           embedding vector
 )
 ```
+## Use Case
+There are plenty use cases for Generative AI and new ones are creating every day. Let's see the most common ones.
+Based on a [survey from the MLOPS community](https://mlops.community/surveys/llm/) and [this survey from Mckinsey](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-in-2023-generative-ais-breakout-year) 
+the most common use case of AI are the following:
+- Create semantic search that can find relevant information in a lot of data. Example: [Slite](https://slite.com/)
+- Create chatbots / augmented FAQ that use semantic search and text summarization to answer customer questions. Example: [Quivr](https://www.quivr.app/) is using such similar technology.
+- Create personalized content for your customers (product page, emails, messages,...). Example [Carrefour](https://www.carrefour.com/en/news/2023/carrefour-integrates-openai-technologies-and-launches-generative-ai-powered-shopping).
+- Create a text summarizer that can summarize a long text into a short one.
+
+Not widely spread yet but with increasing adoption:
+- Create personal shopper for augmented ecommerce experience. Example: [Madeline](https://www.knxt-madeline.com/)
+- Create AI agent to perform various task autonomously. Example: [AutoGpt](https://github.com/Significant-Gravitas/Auto-GPT)
+- Create coding tool that can help you write or revie code. Example: [Code Review GPT](https://github.com/mattzcarey/code-review-gpt)
+
+If you want to discover more usage from the community, you can see here a list of [GenAI Meetups](https://www.genaidays.org/events/).
 
 ## Usage
 The most simple to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
@@ -79,6 +95,7 @@ $chat = new OpenAIChat($config);
 ```
 
 ### Chat
+> 💡 This class can be used to generate content, to create a chatbot or to create a text summarizer.
 
 The API to generate text using OpenAI will only be from the chat API.
 So even if you want to generate a completion for a simple question under the hood it will use the chat API.
@@ -106,10 +123,11 @@ $response = $chat->generateText('what is one + one ?'); // will return "ok"
 ```
 
 ### Embeddings
+> 💡 Embeddings are used to compare two texts and see how similar they are. This is the base of semantic search.
 An embedding is a vector representation of a text that captures the meaning of the text.
 It is a float array of 1536 elements for OpenAI.
-This vector representation can be used to compare two texts and see how similar they are.
 
+You can create a embedding from a text using the following code:
 ```php
 $llm = new OpenAIEmbeddings();
 $embedding = $llm->embedText('I love food');
@@ -117,6 +135,8 @@ $embedding = $llm->embedText('I love food');
 ```
 
 ### VectorStores
+> 💡 Once you have embeddings you need to store them in a vector store. 
+The vector store is a database that can store vectors and perform a similarity search.
 
 This a simple example of how to use the vector store with Doctrine ORM to perform a similarity search.
 
@@ -192,6 +212,12 @@ $result = $vectorStore->similaritySearch(
 
 $result[0]->data // 'I live in Paris';
 ```
+
+## FAQ
+*Why use LLPhant and not directly the OpenAI PHP SDK ?*
+The OpenAI PHP SDK is a great tool to interact with the OpenAI API.
+LLphant will allow you to perform complex tasks like storing embeddings and perform a similarity search.
+It also simplifies the usage of the OpenAI API by providing a much more simple API for everyday usage.
 
 ## Contributors
 
