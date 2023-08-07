@@ -4,6 +4,7 @@ namespace LLPhant\Embeddings;
 
 use Exception;
 use function getenv;
+use LLPhant\DataReader\Document;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
@@ -39,5 +40,13 @@ final class OpenAIEmbeddings implements Embeddings
         ]);
 
         return $response->embeddings[0]->embedding;
+    }
+
+    /**
+     * @return float[]
+     */
+    public function embedDocument(Document $document): array
+    {
+        return $this->embedText($document->content);
     }
 }
