@@ -1,7 +1,7 @@
 # LLPhant - A comprehensive PHP Generative AI Framework
 
 <div align="center">
-    <img src="doc/assets/llphant-logo.png" alt="LLPhant" width="40%"  style="border-radius: 50%; padding-bottom: 20px"/>
+    <img src="doc/assets/llphant-logo.png" alt="LLPhant" style="border-radius: 50%; padding-bottom: 20px"/>
 </div>
 
 We designed this framework to be as simple as possible, while still providing you with the tools you need to build powerful apps.
@@ -126,6 +126,12 @@ $response = $chat->generateText('what is one + one ?'); // will return "ok"
 > 💡 Embeddings are used to compare two texts and see how similar they are. This is the base of semantic search.
 An embedding is a vector representation of a text that captures the meaning of the text.
 It is a float array of 1536 elements for OpenAI.
+
+To manipulate embeddings we use the `Document` class that contains the text and some metadata useful for the vector store.
+The creation of an embedding follow the following flow:
+<div align="center">
+    <img src="doc/assets/embeddings-flow.png" alt="Embeddings flow" style="padding-bottom: 20px"/>
+</div>
 
 You can create a embedding from a text using the following code:
 ```php
