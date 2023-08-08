@@ -6,11 +6,11 @@ final class Document
 {
     public string $content;
 
-    public string $sourceType;
+    public ?string $sourceType = null;
 
-    public string $sourceName;
+    public ?string $sourceName = null;
 
-    public string $hash;
+    public ?string $hash = null;
 
-    public string $id;
+    public ?string $id = null;
 }

@@ -5,7 +5,7 @@ namespace Tests\Integration\DataReader;
 use LLPhant\Embeddings\DataReader\TextFileDataReader;
 
 it('read some text files in a directory', function () {
-    $filePath = getcwd().'/tests/Unit/DataReader/TextFilesTestDirectory';
+    $filePath = getcwd().'/tests/Unit/Embeddings/DataReader/TextFilesTestDirectory';
     $reader = new TextFileDataReader($filePath);
     $documents = $reader->getDocuments();
 
@@ -13,7 +13,7 @@ it('read some text files in a directory', function () {
 });
 
 it('read one specific file', function () {
-    $filePath = getcwd().'/tests/Unit/DataReader/TextFilesTestDirectory/hello.txt';
+    $filePath = getcwd().'/tests/Unit/Embeddings/DataReader/TextFilesTestDirectory/hello.txt';
     $reader = new TextFileDataReader($filePath);
     $documents = $reader->getDocuments();
 
