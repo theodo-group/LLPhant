@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\VectorStores;
+namespace LLPhant\Embeddings\VectorStores;
 
 /**
  * Common parent for all vectorstores.

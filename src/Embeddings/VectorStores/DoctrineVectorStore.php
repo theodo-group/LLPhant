@@ -1,12 +1,12 @@
 <?php
 
-namespace LLPhant\VectorStores;
+namespace LLPhant\Embeddings\VectorStores;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\NotSupported;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use LLPhant\VectorStores\Doctrine\PgVectorL2OperatorDql;
+use LLPhant\Embeddings\VectorStores\Doctrine\PgVectorL2OperatorDql;
 
 final class DoctrineVectorStore
 {

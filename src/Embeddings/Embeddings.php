@@ -2,7 +2,7 @@
 
 namespace LLPhant\Embeddings;
 
-use LLPhant\DataReader\Document;
+use LLPhant\Embeddings\DataReader\Document;
 
 interface Embeddings
 {

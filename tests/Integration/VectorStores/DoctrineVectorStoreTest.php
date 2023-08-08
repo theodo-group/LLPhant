@@ -4,8 +4,8 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use LLPhant\Embeddings\OpenAIEmbeddings;
-use LLPhant\VectorStores\DoctrineVectorStore;
-use LLPhant\VectorStores\ExampleEmbeddingEntity;
+use LLPhant\Embeddings\VectorStores\DoctrineVectorStore;
+use LLPhant\Embeddings\VectorStores\ExampleEmbeddingEntity;
 
 it('Create one embedding and store it in a postgresql database', function () {
     $config = ORMSetup::createAttributeMetadataConfiguration(

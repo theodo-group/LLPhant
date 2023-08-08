@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\DataReader;
+namespace LLPhant\Embeddings\DataReader;
 
 final class Document
 {

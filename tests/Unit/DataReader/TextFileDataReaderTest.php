@@ -2,7 +2,7 @@
 
 namespace Tests\Integration\DataReader;
 
-use LLPhant\DataReader\TextFileDataReader;
+use LLPhant\Embeddings\DataReader\TextFileDataReader;
 
 it('read some text files in a directory', function () {
     $filePath = getcwd().'/tests/Unit/DataReader/TextFilesTestDirectory';

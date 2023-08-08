@@ -4,7 +4,7 @@ namespace LLPhant\Embeddings;
 
 use Exception;
 use function getenv;
-use LLPhant\DataReader\Document;
+use LLPhant\Embeddings\DataReader\Document;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
