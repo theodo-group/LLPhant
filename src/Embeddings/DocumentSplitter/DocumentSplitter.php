@@ -2,7 +2,7 @@
 
 namespace LLPhant\Embeddings\DocumentSplitter;
 
-use LLPhant\Embeddings\DataReader\Document;
+use LLPhant\Embeddings\Document;
 
 final class DocumentSplitter
 {

@@ -2,6 +2,8 @@
 
 namespace LLPhant\Embeddings\DataReader;
 
+use LLPhant\Embeddings\Document;
+
 final class TextFileDataReader implements DataReader
 {
     public string $sourceType = 'files';

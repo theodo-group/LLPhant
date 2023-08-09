@@ -1,6 +1,6 @@
 <?php
 
-use LLPhant\Embeddings\DataReader\Document;
+use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 
 it('splits a document by max length without separator', function () {

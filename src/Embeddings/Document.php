@@ -1,10 +1,14 @@
 <?php
 
-namespace LLPhant\Embeddings\DataReader;
+declare(strict_types=1);
+
+namespace LLPhant\Embeddings;
 
 final class Document
 {
     public string $content;
+
+    public ?string $formattedContent = null;
 
     public ?string $sourceType = null;
 

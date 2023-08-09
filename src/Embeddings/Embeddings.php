@@ -1,8 +1,8 @@
 <?php
 
-namespace LLPhant\Embeddings;
+declare(strict_types=1);
 
-use LLPhant\Embeddings\DataReader\Document;
+namespace LLPhant\Embeddings;
 
 interface Embeddings
 {

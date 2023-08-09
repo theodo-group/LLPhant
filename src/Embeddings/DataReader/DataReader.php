@@ -2,6 +2,8 @@
 
 namespace LLPhant\Embeddings\DataReader;
 
+use LLPhant\Embeddings\Document;
+
 interface DataReader
 {
     /**
