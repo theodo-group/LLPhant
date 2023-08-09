@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace LLPhant\Embeddings;
+namespace LLPhant\Embeddings\EmbeddingGenerator;
 
 use Exception;
 use function getenv;
+use LLPhant\Embeddings\Document;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
 use function str_replace;
 
-final class OpenAIEmbeddings implements Embeddings
+final class OpenAIEmbeddingGenerator
 {
     public Client $client;
 

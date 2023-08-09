@@ -3,7 +3,7 @@
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
-use LLPhant\Embeddings\OpenAIEmbeddings;
+use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\DoctrineVectorStore;
 use LLPhant\Embeddings\VectorStores\ExampleEmbeddingEntity;
 
@@ -26,7 +26,7 @@ it('Create one embedding and store it in a postgresql database', function () {
     $entityManager = new EntityManager($connection, $config);
 
     $vectorStore = new DoctrineVectorStore($entityManager);
-    $llm = new OpenAIEmbeddings();
+    $llm = new OpenAIEmbeddingGenerator();
 
     $food = new ExampleEmbeddingEntity();
     $food->data = 'I love food';
