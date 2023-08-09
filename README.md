@@ -57,11 +57,11 @@ Then you can create a table and store vectors.
 This sql query will create the table from the example entity that we use later in [VectorStore](#VectorStores) section.
 ```sql
 CREATE TABLE IF NOT EXISTS embeddings (
-                                          id SERIAL PRIMARY KEY,
-                                          data text,
-                                          type text,
-                                          embedding vector
-)
+    id SERIAL PRIMARY KEY,
+    data TEXT,
+    type TEXT,
+    embedding VECTOR
+);
 ```
 ## Use Case
 There are plenty use cases for Generative AI and new ones are creating every day. Let's see the most common ones.
