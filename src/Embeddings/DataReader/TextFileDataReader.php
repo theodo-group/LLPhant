@@ -8,7 +8,12 @@ final class TextFileDataReader implements DataReader
 {
     public string $sourceType = 'files';
 
-    public function __construct(public string $filePath)
+    /**
+     * @template T of Document
+     *
+     * @param  class-string<T>  $documentClassName
+     */
+    public function __construct(public string $filePath, public readonly string $documentClassName = Document::class)
     {
     }
 
@@ -31,7 +36,7 @@ final class TextFileDataReader implements DataReader
                     if ($entry != '.' && $entry != '..' && is_file($this->filePath.'/'.$entry)) {
                         $content = file_get_contents($this->filePath.'/'.$entry);
                         if ($content !== false) {
-                            $document = new Document();
+                            $document = new $this->documentClassName();
                             $document->content = $content;
                             $document->sourceType = $this->sourceType;
                             $document->hash = md5($content);
@@ -52,7 +57,7 @@ final class TextFileDataReader implements DataReader
         if ($content === false) {
             return [];
         }
-        $document = new Document();
+        $document = new $this->documentClassName();
         $document->content = $content;
         $document->sourceType = $this->sourceType;
         $document->hash = md5($content);

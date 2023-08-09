@@ -49,7 +49,8 @@ final class DocumentSplitter
         }
         $splittedDocuments = [];
         foreach ($chunks as $chunk) {
-            $newDocument = new Document();
+            $className = $document::class;
+            $newDocument = new $className();
             $newDocument->content = $chunk;
             $newDocument->hash = md5($chunk);
             $newDocument->sourceType = $document->sourceType;
