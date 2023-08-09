@@ -9,7 +9,7 @@ final class DocumentSplitter
     /**
      * @return Document[]
      */
-    public static function splitDocument(Document $document, int $maxLength, string $separator = ' '): array
+    public static function splitDocument(Document $document, int $maxLength = 1000, string $separator = ' '): array
     {
         $text = $document->content;
         if (empty($text)) {
