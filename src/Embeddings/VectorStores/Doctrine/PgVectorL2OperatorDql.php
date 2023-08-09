@@ -9,7 +9,7 @@ use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 
 /**
- * CosineDistanceFunction ::=
+ * L2DistanceFunction ::=
  *     "L2_DISTANCE" "(" VectorPrimary "," VectorPrimary ")"
  */
 final class PgVectorL2OperatorDql extends FunctionNode

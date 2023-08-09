@@ -18,6 +18,9 @@ final class OpenAIEmbeddingGenerator
 
     public string $modelName = 'text-embedding-ada-002';
 
+    /**
+     * @throws Exception
+     */
     public function __construct(OpenAIConfig $config = null)
     {
         $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
@@ -44,11 +47,25 @@ final class OpenAIEmbeddingGenerator
         return $response->embeddings[0]->embedding;
     }
 
-    /**
-     * @return float[]
-     */
-    public function embedDocument(Document $document): array
+    public function embedDocument(Document $document): Document
     {
-        return $this->embedText($document->content);
+        $text = $document->formattedContent ?? $document->content;
+        $document->embedding = $this->embedText($text);
+
+        return $document;
+    }
+
+    /**
+     * @param  Document[]  $documents
+     * @return Document[]
+     */
+    public function embedDocuments(array $documents): array
+    {
+        $embedDocuments = [];
+        foreach ($documents as $document) {
+            $embedDocuments[] = $this->embedDocument($document);
+        }
+
+        return $embedDocuments;
     }
 }

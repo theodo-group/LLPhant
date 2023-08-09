@@ -64,3 +64,24 @@ Unit tests:
 ```bash
 composer test:unit
 ```
+
+### Integration tests
+
+You'll need a API key from OPENAI and export it as a env var.
+You also need to have a postgresql database running with the same parameters 
+as in the `docker-compose.yaml` file from `devx` folder.
+
+Then run this sql query to create the table for the tests:
+
+```postgresql
+CREATE TABLE IF NOT EXISTS test_place (
+                                          id SERIAL PRIMARY KEY,
+                                          content text,
+                                          type text,
+                                          sourcetype text,
+                                          sourcename text,
+                                          pgembedding vector
+)
+
+```
+

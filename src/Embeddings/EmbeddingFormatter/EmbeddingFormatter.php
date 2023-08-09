@@ -12,7 +12,7 @@ final class EmbeddingFormatter
      *  You can pass here a lot of valuable information in the header like
      *  the author of the document, the date of the document, etc.
      */
-    public static function formatEmbedding(Document $document, string $header): Document
+    public static function formatEmbedding(Document $document, string $header = ''): Document
     {
         $header .= $document->sourceName !== null
             ? "The name of the source is: {$document->sourceName}."
@@ -21,5 +21,19 @@ final class EmbeddingFormatter
         $document->formattedContent = $header.$document->content;
 
         return $document;
+    }
+
+    /**
+     * @param  Document[]  $documents
+     * @return Document[]
+     */
+    public static function formatEmbeddings(array $documents, string $header = ''): array
+    {
+        $formattedDocuments = [];
+        foreach ($documents as $document) {
+            $formattedDocuments[] = self::formatEmbedding($document, $header);
+        }
+
+        return $formattedDocuments;
     }
 }

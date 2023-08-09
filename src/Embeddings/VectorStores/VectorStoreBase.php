@@ -1,22 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LLPhant\Embeddings\VectorStores;
 
+use LLPhant\Embeddings\Document;
+
 /**
- * Common parent for all vectorstores.
+ * Common parent for all vectorStores.
  */
 abstract class VectorStoreBase
 {
-    /**
-     * @param  float[]  $embedding
-     */
-    abstract public function saveEmbedding(array $embedding, EmbeddingEntityBase $entity): void;
+    abstract public function addDocument(Document $document): void;
 
     /**
-     * Return docs most similar to the query.
+     * @param  Document[]  $documents
+     */
+    abstract public function addDocuments(array $documents): void;
+
+    /**
+     * Return docs most similar to the embedding.
      *
+     * @param  float[]  $embedding
      * @param  array<string, string|int>  $additionalArguments
      * @return mixed[]
      */
-    abstract public function similaritySearch(string $query, int $k = 4, array $additionalArguments = []): array;
+    abstract public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array;
 }
