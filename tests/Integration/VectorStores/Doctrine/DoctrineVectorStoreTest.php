@@ -28,7 +28,7 @@ it('Create one embedding and store it in a postgresql database', function () {
     $entityManager = new EntityManager($connection, $config);
 
     $vectorStore = new DoctrineVectorStore($entityManager, PlaceEntity::class);
-    $llm = new OpenAIEmbeddingGenerator();
+    $embeddingGenerator = new OpenAIEmbeddingGenerator();
 
     $paris = new PlaceEntity();
     $paris->content = 'I live in Paris';
@@ -37,11 +37,11 @@ it('Create one embedding and store it in a postgresql database', function () {
     $france->content = 'I live in France';
     $france->type = 'country';
 
-    $embededDocuments = $llm->embedDocuments([$paris, $france]);
+    $embededDocuments = $embeddingGenerator->embedDocuments([$paris, $france]);
 
     $vectorStore->addDocuments($embededDocuments);
 
-    $embedding = $llm->embedText('I live in Asia');
+    $embedding = $embeddingGenerator->embedText('I live in Asia');
     /** @var PlaceEntity[] $result */
     $result = $vectorStore->similaritySearch($embedding, 2, ['type' => 'city']);
 
