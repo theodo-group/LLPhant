@@ -204,7 +204,7 @@ $embedding = $embeddingGenerator->embedText('France the country');
 $result = $vectorStore->similaritySearch($embedding, 2);
 ```
 
-To get full example you can have a look at [Doctrine integration tests files]('https://github.com/theodo-group/LLPhant/blob/main/tests/Integration/Embeddings/VectorStores/Doctrine/DoctrineVectorStoreTest.php').
+To get full example you can have a look at [Doctrine integration tests files](https://github.com/theodo-group/LLPhant/blob/main/tests/Integration/Embeddings/VectorStores/Doctrine/DoctrineVectorStoreTest.php).
 
 ## FAQ
 *Why use LLPhant and not directly the OpenAI PHP SDK ?*
