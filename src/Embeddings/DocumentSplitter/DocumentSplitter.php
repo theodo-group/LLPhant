@@ -65,7 +65,7 @@ final class DocumentSplitter
      * @param  Document[]  $documents
      * @return Document[]
      */
-    public static function splitDocuments(array $documents, int $maxLength = 1000, string $separator = ' '): array
+    public static function splitDocuments(array $documents, int $maxLength = 1000, string $separator = '.'): array
     {
         $splittedDocuments = [];
         foreach ($documents as $document) {

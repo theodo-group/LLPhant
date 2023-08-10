@@ -13,7 +13,7 @@ use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-final class OpenAIChat extends Chat
+final class OpenAIChat
 {
     private readonly Client $client;
 

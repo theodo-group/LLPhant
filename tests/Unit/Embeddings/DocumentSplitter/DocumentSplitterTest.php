@@ -28,12 +28,10 @@ it('returns the whole document if max length is greater than content', function 
 
 it('splits multiple documents', function () {
     $document1 = new Document();
-    $document1->content = 'This is a test';
+    $document1->content = 'This is a test.';
     $document2 = new Document();
-    $document2->content = 'Hello World';
+    $document2->content = 'Hello World!';
     $result = DocumentSplitter::splitDocuments([$document1, $document2], 5);
-    expect($result[0]->content)->toBe('This');
-    expect($result[1]->content)->toBe('is a');
-    expect($result[2]->content)->toBe('test');
-    expect($result[3]->content)->toBe('Hello');
+    expect($result[0]->content)->toBe('This is a test');
+    expect($result[1]->content)->toBe('Hello World!');
 });

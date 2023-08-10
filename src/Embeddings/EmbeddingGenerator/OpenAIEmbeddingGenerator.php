@@ -12,7 +12,7 @@ use OpenAI;
 use OpenAI\Client;
 use function str_replace;
 
-final class OpenAIEmbeddingGenerator
+final class OpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
 {
     public Client $client;
 
