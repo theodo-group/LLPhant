@@ -82,7 +82,7 @@ it('tests a full embedding flow with Doctrine', function () {
     $vectorStore = new DoctrineVectorStore($entityManager, PlaceEntity::class);
     $vectorStore->addDocuments($embededDocuments);
 
-    $embedding = $embeddingGenerator->embedText('France pronunciation');
+    $embedding = $embeddingGenerator->embedText('France the country');
     /** @var PlaceEntity[] $result */
     $result = $vectorStore->similaritySearch($embedding, 2);
 

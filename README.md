@@ -133,87 +133,78 @@ The creation of an embedding follow the following flow:
     <img src="doc/assets/embeddings-flow.png" alt="Embeddings flow" style="padding-bottom: 20px"/>
 </div>
 
-You can create a embedding from a text using the following code:
+#### Read data
+The first part of the flow is to read data from a source.
+This can be a database, a csv file, a json file, a text file, a website, a pdf, a word document, an excel file, ...
+The only requirement is that you can read the data and that you can extract the text from it.
+For now we only support text data but we plan to support other data type in the future.
+To read data you need to create a class that implements the `DataReader` interface.
+
+You can use the `TextFileDataReader` class to read a text file. It takes a path to a file or a directory as parameter.
+The second parameter is the class name of the entity that will be used to store the embedding. 
+The class needs to extend the `Document` class 
+and even the `DoctrineEmbeddingEntityBase` class (that extends the `Document` class) if you want to use the Doctrine vector store.
+
 ```php
-$llm = new OpenAIEmbeddings();
+$filePath = __DIR__.'/PlacesTextFiles';
+$reader = new TextFileDataReader($filePath, PlaceEntity::class);
+$documents = $reader->getDocuments();
+```
+
+#### Document Splitter
+The embeddings models have a limit of string size that they can process.
+To avoid this problem we split the document into smaller chunks.
+The `DocumentSplitter` class is used to split the document into smaller chunks.
+
+```php
+$splittedDocuments = DocumentSplitter::splitDocuments($documents, 800);
+```
+
+#### Embedding Formatter
+The `EmbeddingFormatter` is an optional step to format each chunk of text into a format with the most context.
+Adding a header and links to other documents can help the LLM to understand the context of the text.
+
+```php
+$formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
+```
+
+#### Embedding Generator
+This is the step where we generate the embedding for each chunk of text by calling the LLM.
+
+You can embed the documents using the following code:
+```php
+$embeddingGenerator = new OpenAIEmbeddingGenerator();
+$embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
+```
+
+You can also create a embedding from a text using the following code:
+```php
+$llm = new OpenAIEmbeddingGenerator();
 $embedding = $llm->embedText('I love food');
-//You can then use the embedding to store it in a vectorStore or perform a similarity search
+//You can then use the embedding to perform a similarity search
 ```
 
-### VectorStores
-> 💡 Once you have embeddings you need to store them in a vector store. 
+#### VectorStores
+Once you have embeddings you need to store them in a vector store.
 The vector store is a database that can store vectors and perform a similarity search.
+To store the documents you need to create a class that implements the `VectorStoreBase` class.
 
-This a simple example of how to use the vector store with Doctrine ORM to perform a similarity search.
-
-First you need an entity where you want to store the embedding to extend the EmbeddingEntityBase class.
-One simple example is the following class.
+You can use the `DoctrineVectorStore` class to store the embeddings in a database:
 
 ```php
-<?php
-
-use Doctrine\DBAL\Types\Types;use Doctrine\ORM\Mapping as ORM;use Doctrine\ORM\Mapping\Entity;use Doctrine\ORM\Mapping\Table;use LLPhant\Embeddings\VectorStores\EmbeddingEntityBase;
-
-#[Entity]
-#[Table(name: 'embeddings', schema: 'public')]
-class ExampleEmbeddingEntity extends EmbeddingEntityBase
-{
-    #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    public string $id;
-
-    #[ORM\Column(type: Types::TEXT)]
-    public string $data;
-
-    #[ORM\Column(type: Types::STRING)]
-    public string $type;
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-}
-
-
+$vectorStore = new DoctrineVectorStore($entityManager, PlaceEntity::class);
+$vectorStore->addDocuments($embededDocuments);
 ```
 
-Then you can use the vector store to save the embedding and perform a similarity search.
-
+Once you have done that you can perform a similarity search over your data.
+You need to pass the embedding of the text you want to search and the number of results you want to get.
 ```php
-
-// Before doing a search you need to save the embedding in the vector store
-$vectorStore = new DoctrineVectorStore($entityManager);
-$llm = new OpenAIEmbeddings();
-
-$food = new ExampleEmbeddingEntity();
-$food->data = 'I love food';
-$food->type = 'food';
-$embedding = $llm->embedText($food->data);
-$vectorStore->saveEmbedding($embedding, $food);
-
-$paris = new ExampleEmbeddingEntity();
-$paris->data = 'I live in Paris';
-$paris->type = 'city';
-$embedding = $llm->embedText($paris->data);
-$vectorStore->saveEmbedding($embedding, $paris);
-
-$france = new ExampleEmbeddingEntity();
-$france->data = 'I live in France';
-$france->type = 'country';
-$embedding = $llm->embedText($france->data);
-$vectorStore->saveEmbedding($embedding, $france);
-
-// Once the embedding are saved you can perform a similarity search
-$embedding = $llm->embedText('I live in Asia');
-/** @var ExampleEmbeddingEntity[] $result */
-$result = $vectorStore->similaritySearch(
-    $embedding, ExampleEmbeddingEntity::class, 2, ['type' => 'city']
-);
-
-$result[0]->data // 'I live in Paris';
+$embedding = $embeddingGenerator->embedText('France the country');
+/** @var PlaceEntity[] $result */
+$result = $vectorStore->similaritySearch($embedding, 2);
 ```
+
+To get full example you can have a look at [Doctrine integration tests files]('https://github.com/theodo-group/LLPhant/blob/main/tests/Integration/Embeddings/VectorStores/Doctrine/DoctrineVectorStoreTest.php').
 
 ## FAQ
 *Why use LLPhant and not directly the OpenAI PHP SDK ?*
