@@ -10,3 +10,5 @@ phpstan.neon.dist  export-ignore
 phpunit.xml.dist   export-ignore
 README.md          export-ignore
 rector.php         export-ignore
+devx               export-ignore
+examples           export-ignore
