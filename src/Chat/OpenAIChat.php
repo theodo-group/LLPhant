@@ -31,6 +31,28 @@ final class OpenAIChat
         $this->model = $config->model ?? OpenAIChatModel::Gpt4->getModelName();
     }
 
+    public function generateText(string $prompt): string
+    {
+        $answer = $this->generate($prompt);
+
+        return $answer->choices[0]->message->content ?? '';
+    }
+
+    public function generateStreamOfText(string $prompt): StreamedResponse
+    {
+        $messages = $this->createOpenAIMessagesFromPrompt($prompt);
+
+        return $this->createStreamedResponse($messages);
+    }
+
+    /**
+     * @param  Message[]  $messages
+     */
+    public function generateChatStream(array $messages): StreamedResponse
+    {
+        return $this->createStreamedResponse($messages);
+    }
+
     /**
      * We only need one system message in most of the case
      */
@@ -42,16 +64,51 @@ final class OpenAIChat
         $this->systemMessage = $systemMessage;
     }
 
-    public function generateText(string $prompt): string
+    private function generate(string $prompt): CreateResponse
     {
-        $answer = $this->generate($prompt);
+        $messages = $this->createOpenAIMessagesFromPrompt($prompt);
+        $messages = $this->addSystemMessageToMessages($messages);
 
-        return $answer->choices[0]->message->content ?? '';
+        return $this->client->chat()->create(
+            [
+                'model' => $this->model,
+                'messages' => $messages,
+            ]
+        );
     }
 
-    public function generateStreamOfText(string $prompt): StreamedResponse
+    /**
+     * @return Message[]
+     */
+    private function createOpenAIMessagesFromPrompt(string $prompt): array
     {
-        $messages = $this->createOpenAIMessages($prompt);
+        $userMessage = new Message();
+        $userMessage->role = ChatRole::User;
+        $userMessage->content = $prompt;
+
+        return [$userMessage];
+    }
+
+    /**
+     * @param  Message[]  $messages
+     * @return Message[]
+     */
+    private function addSystemMessageToMessages(array $messages = []): array
+    {
+        $finalMessages = [];
+        if (isset($this->systemMessage)) {
+            $finalMessages[] = $this->systemMessage;
+        }
+
+        return array_merge($finalMessages, $messages);
+    }
+
+    /**
+     * @param  Message[]  $messages
+     */
+    private function createStreamedResponse(array $messages): StreamedResponse
+    {
+        $messages = $this->addSystemMessageToMessages($messages);
         $stream = $this->client->chat()->createStreamed(
             [
                 'model' => $this->model,
@@ -74,35 +131,5 @@ final class OpenAIChat
         });
 
         return $response->send();
-    }
-
-    private function generate(string $prompt): CreateResponse
-    {
-        $messages = $this->createOpenAIMessages($prompt);
-
-        return $this->client->chat()->create(
-            [
-                'model' => $this->model,
-                'messages' => $messages,
-            ]
-        );
-    }
-
-    /**
-     * @return Message[]
-     */
-    private function createOpenAIMessages(string $prompt): array
-    {
-        $messages = [];
-        if (isset($this->systemMessage)) {
-            $messages[] = $this->systemMessage;
-        }
-
-        $userMessage = new Message();
-        $userMessage->role = ChatRole::User;
-        $userMessage->content = $prompt;
-        $messages[] = $userMessage;
-
-        return $messages;
     }
 }
