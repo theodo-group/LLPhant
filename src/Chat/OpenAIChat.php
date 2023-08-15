@@ -2,7 +2,6 @@
 
 namespace LLPhant\Chat;
 
-use function getenv;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\OpenAIConfig;
@@ -12,6 +11,8 @@ use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
+use function getenv;
 
 final class OpenAIChat
 {
