@@ -10,12 +10,15 @@
     ],
     "require": {
         "php": "^8.1.0",
-        "doctrine/orm": "^2.13.0",
         "symfony/cache": "*",
         "openai-php/client": "^0.6.4",
         "symfony/http-foundation": "^6.0.0"
     },
+    "suggest": {
+        "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0"
+    },
     "require-dev": {
+        "doctrine/orm": "^2.13.0",
         "guzzlehttp/guzzle": "^7.7.0",
         "guzzlehttp/psr7": "^2.5.0",
         "laravel/pint": "^1.10.3",
