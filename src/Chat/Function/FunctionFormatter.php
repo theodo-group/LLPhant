@@ -5,9 +5,27 @@ namespace LLPhant\Chat\Function;
 class FunctionFormatter
 {
     /**
+     * @param  FunctionInfo[]  $functions
+     * @return mixed[]
+     */
+    public static function formatFunctionsToOpenAI(array $functions): array
+    {
+        if ($functions === []) {
+            return [];
+        }
+
+        $functionsOpenAI = [];
+        foreach ($functions as $function) {
+            $functionsOpenAI[] = self::formatOneFunctionToOpenAI($function);
+        }
+
+        return $functionsOpenAI;
+    }
+
+    /**
      * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, array{type: string, description: string, enum?: mixed[], format?: string}>, required: string[]}}
      */
-    public static function formatToOpenAI(FunctionInfo $functionInfo): array
+    public static function formatOneFunctionToOpenAI(FunctionInfo $functionInfo): array
     {
         $parametersOpenAI = [];
         foreach ($functionInfo->parameters as $parameter) {

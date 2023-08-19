@@ -37,5 +37,5 @@ it('can format function info to OpenAI format', function () {
         ],
     ];
 
-    expect(FunctionFormatter::formatToOpenAI($functionInfo))->toBe($expected);
+    expect(FunctionFormatter::formatOneFunctionToOpenAI($functionInfo))->toBe($expected);
 });

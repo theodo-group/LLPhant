@@ -4,6 +4,8 @@ namespace LLPhant\Chat;
 
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
+use LLPhant\Chat\Function\FunctionFormatter;
+use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\OpenAIConfig;
 use Mockery\Exception;
 use OpenAI;
@@ -21,6 +23,9 @@ final class OpenAIChat
     private readonly string $model;
 
     private Message $systemMessage;
+
+    /** @var FunctionInfo[] */
+    private array $functions = [];
 
     public function __construct(OpenAIConfig $config = null)
     {
@@ -65,17 +70,25 @@ final class OpenAIChat
         $this->systemMessage = $systemMessage;
     }
 
+    /**
+     * @param  FunctionInfo[]  $functions
+     */
+    public function setFunctions(array $functions): void
+    {
+        $this->functions = $functions;
+    }
+
+    public function addFunction(FunctionInfo $functionInfo): void
+    {
+        $this->functions[] = $functionInfo;
+    }
+
     private function generate(string $prompt): CreateResponse
     {
         $messages = $this->createOpenAIMessagesFromPrompt($prompt);
-        $messages = $this->addSystemMessageToMessages($messages);
+        $openAiArgs = $this->getOpenAiArgs($messages);
 
-        return $this->client->chat()->create(
-            [
-                'model' => $this->model,
-                'messages' => $messages,
-            ]
-        );
+        return $this->client->chat()->create($openAiArgs);
     }
 
     /**
@@ -92,30 +105,12 @@ final class OpenAIChat
 
     /**
      * @param  Message[]  $messages
-     * @return Message[]
-     */
-    private function addSystemMessageToMessages(array $messages = []): array
-    {
-        $finalMessages = [];
-        if (isset($this->systemMessage)) {
-            $finalMessages[] = $this->systemMessage;
-        }
-
-        return array_merge($finalMessages, $messages);
-    }
-
-    /**
-     * @param  Message[]  $messages
      */
     private function createStreamedResponse(array $messages): StreamedResponse
     {
-        $messages = $this->addSystemMessageToMessages($messages);
-        $stream = $this->client->chat()->createStreamed(
-            [
-                'model' => $this->model,
-                'messages' => $messages,
-            ]
-        );
+        $openAiArgs = $this->getOpenAiArgs($messages);
+
+        $stream = $this->client->chat()->createStreamed($openAiArgs);
         $response = new StreamedResponse();
         //We need this to make the streaming works
         //It may not work with Symfony: https://stackoverflow.com/questions/76362863/why-streamedresponse-from-symfony-6-is-sent-at-once
@@ -132,5 +127,31 @@ final class OpenAIChat
         });
 
         return $response->send();
+    }
+
+    /**
+     * @param  Message[]  $messages
+     * @return array{model: string, messages: Message[], functions?: mixed[]}
+     */
+    private function getOpenAiArgs(array $messages): array
+    {
+        // The system message should be the first
+        $finalMessages = [];
+        if (isset($this->systemMessage)) {
+            $finalMessages[] = $this->systemMessage;
+        }
+
+        $finalMessages = array_merge($finalMessages, $messages);
+
+        $openAiArgs = [
+            'model' => $this->model,
+            'messages' => $finalMessages,
+        ];
+
+        if ($this->functions !== []) {
+            $openAiArgs['functions'] = FunctionFormatter::formatFunctionsToOpenAI($this->functions);
+        }
+
+        return $openAiArgs;
     }
 }
