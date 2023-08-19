@@ -5,10 +5,10 @@ namespace LLPhant\Chat\Function;
 class FunctionFormatter
 {
     /**
-     * @param FunctionInfo $functionInfo
-     * @return mixed[]
+     * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, array{type: string, description: string, enum?: mixed[], format?: string}>, required: string[]}}
      */
-    static public function formatToOpenAI(FunctionInfo $functionInfo): array {
+    public static function formatToOpenAI(FunctionInfo $functionInfo): array
+    {
         $parametersOpenAI = [];
         foreach ($functionInfo->parameters as $parameter) {
             $param = [
