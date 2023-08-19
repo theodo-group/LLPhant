@@ -7,7 +7,7 @@ namespace Tests\Unit\Embeddings\EmbeddingFormatter;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 
-it('format a content from a document by adding a header in the formatted content', function () {
+it('formats a content from a document by adding a header in the formatted content', function () {
     $document = new Document();
     $document->content = 'This is the content';
     $document->sourceName = 'source';
