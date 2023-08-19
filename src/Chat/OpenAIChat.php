@@ -11,6 +11,7 @@ use Mockery\Exception;
 use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
+use OpenAI\Responses\Chat\CreateResponseFunctionCall;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -40,6 +41,7 @@ final class OpenAIChat
     public function generateText(string $prompt): string
     {
         $answer = $this->generate($prompt);
+        $this->handleFunctionCall($answer);
 
         return $answer->choices[0]->message->content ?? '';
     }
@@ -153,5 +155,30 @@ final class OpenAIChat
         }
 
         return $openAiArgs;
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    private function handleFunctionCall(CreateResponse $answer): void
+    {
+        if ($answer->choices[0]->message->functionCall instanceof CreateResponseFunctionCall) {
+            $functionName = $answer->choices[0]->message->functionCall->name;
+            $arguments = json_decode($answer->choices[0]->message->functionCall->arguments, true, 512, JSON_THROW_ON_ERROR);
+
+            $functionToCall = null;
+            foreach ($this->functions as $function) {
+                if ($function->name === $functionName) {
+                    $functionToCall = $function;
+                    break;
+                }
+            }
+
+            if (! $functionToCall instanceof FunctionInfo) {
+                throw new Exception("OpenAI tried to call $functionName which doesn't exist");
+            }
+
+            $functionToCall->instance->{$functionToCall->name}(...$arguments);
+        }
     }
 }
