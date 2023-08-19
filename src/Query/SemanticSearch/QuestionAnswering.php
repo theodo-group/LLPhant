@@ -19,16 +19,18 @@ class QuestionAnswering
 
     public function answerQuestion(string $question): string
     {
-        $prompt = $this->searchDocumentAndCreateSystemMessage($question);
+        $systemMessage = $this->searchDocumentAndCreateSystemMessage($question);
+        $this->openAIChat->setSystemMessage($systemMessage);
 
-        return $this->openAIChat->generateText($prompt);
+        return $this->openAIChat->generateText($question);
     }
 
     public function answerQuestionStream(string $question): string
     {
-        $prompt = $this->searchDocumentAndCreateSystemMessage($question);
+        $systemMessage = $this->searchDocumentAndCreateSystemMessage($question);
+        $this->openAIChat->setSystemMessage($systemMessage);
 
-        return $this->openAIChat->generateStreamOfText($prompt);
+        return $this->openAIChat->generateStreamOfText($question);
     }
 
     /**

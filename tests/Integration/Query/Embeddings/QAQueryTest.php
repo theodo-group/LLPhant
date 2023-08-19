@@ -30,5 +30,6 @@ it('generates a answer based on private knowledge', function () {
     );
 
     $answer = $qa->answerQuestion('what is the secret of Alice?');
+
     expect($answer)->toContain('cheese');
 });
