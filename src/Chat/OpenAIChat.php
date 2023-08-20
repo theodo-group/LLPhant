@@ -13,6 +13,7 @@ use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Chat\CreateResponseFunctionCall;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
+use OpenAI\Responses\Chat\CreateStreamedResponseFunctionCall;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use function getenv;
@@ -119,8 +120,27 @@ final class OpenAIChat
         @ob_end_clean();
 
         $response->setCallback(function () use ($stream): void {
+            $arguments = '';
+            $functionName = null;
             /** @var CreateStreamedResponse $partialResponse */
             foreach ($stream as $partialResponse) {
+                $responseFunctionCall = $partialResponse->choices[0]->delta->functionCall;
+                if ($responseFunctionCall instanceof CreateStreamedResponseFunctionCall) {
+                    if (! is_null($responseFunctionCall->name)) {
+                        $functionName = $responseFunctionCall->name;
+                    }
+                    if (! is_null($responseFunctionCall->arguments)) {
+                        $arguments .= $responseFunctionCall->arguments;
+                    }
+                }
+                // $functionName should be always set if finishReason is function_call
+                if ($partialResponse->choices[0]->finishReason === 'function_call' && $functionName) {
+                    $this->callFunction($functionName, $arguments);
+                }
+                if (! is_null($partialResponse->choices[0]->finishReason)) {
+                    ob_start();
+                    break;
+                }
                 if (! ($partialResponse->choices[0]->delta->content)) {
                     continue;
                 }
@@ -164,21 +184,28 @@ final class OpenAIChat
     {
         if ($answer->choices[0]->message->functionCall instanceof CreateResponseFunctionCall) {
             $functionName = $answer->choices[0]->message->functionCall->name;
-            $arguments = json_decode($answer->choices[0]->message->functionCall->arguments, true, 512, JSON_THROW_ON_ERROR);
+            $arguments = $answer->choices[0]->message->functionCall->arguments;
 
-            $functionToCall = null;
-            foreach ($this->functions as $function) {
-                if ($function->name === $functionName) {
-                    $functionToCall = $function;
-                    break;
-                }
-            }
-
-            if (! $functionToCall instanceof FunctionInfo) {
-                throw new Exception("OpenAI tried to call $functionName which doesn't exist");
-            }
-
-            $functionToCall->instance->{$functionToCall->name}(...$arguments);
+            $this->callFunction($functionName, $arguments);
         }
+    }
+
+    private function callFunction(string $functionName, string $arguments): void
+    {
+
+        $arguments = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
+        $functionToCall = null;
+        foreach ($this->functions as $function) {
+            if ($function->name === $functionName) {
+                $functionToCall = $function;
+                break;
+            }
+        }
+
+        if (! $functionToCall instanceof FunctionInfo) {
+            throw new Exception("OpenAI tried to call $functionName which doesn't exist");
+        }
+
+        $functionToCall->instance->{$functionToCall->name}(...$arguments);
     }
 }
