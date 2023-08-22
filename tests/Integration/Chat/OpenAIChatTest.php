@@ -32,7 +32,7 @@ it('can call a function', function () {
 
     $subject = new Parameter('subject', 'string', 'the subject of the mail');
     $body = new Parameter('body', 'string', 'the body of the mail');
-    $email = new Parameter('email', 'string', 'the email adress');
+    $email = new Parameter('email', 'string', 'the email address');
 
     $mockMailerExample = Mockery::mock(MailerExample::class);
     $mockMailerExample->shouldReceive('sendMail')->once()->andReturn(null);
