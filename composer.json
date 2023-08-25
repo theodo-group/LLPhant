@@ -10,8 +10,9 @@
     ],
     "require": {
         "php": "^8.1.0",
-        "symfony/cache": "*",
         "openai-php/client": "^0.6.4",
+        "smalot/pdfparser": "^2.7",
+        "symfony/cache": "*",
         "symfony/http-foundation": "^6.0.0"
     },
     "suggest": {
