@@ -17,7 +17,7 @@ it('can read pdf', function () {
     $reader = new TextFileDataReader($filePath);
     $documents = $reader->getDocuments();
 
-    expect($documents[0]->content)->toBe("This data is from a pdf");
+    expect($documents[0]->content)->toBe('This data is from a pdf');
 });
 
 it('can read pdf and texts ', function () {
@@ -28,7 +28,7 @@ it('can read pdf and texts ', function () {
     $foundPDF = false;
     $foundText = false;
     foreach ($documents as $document) {
-        if ($document->content === "This data is from a pdf") {
+        if ($document->content === 'This data is from a pdf') {
             $foundPDF = true;
         }
         if ($document->content === "hello test!\n") {

@@ -35,7 +35,7 @@ final class TextFileDataReader implements DataReader
             if ($handle = opendir($this->filePath)) {
                 // Read the directory contents
                 while (($entry = readdir($handle)) !== false) {
-                    $fullPath = $this->filePath . '/' . $entry;
+                    $fullPath = $this->filePath.'/'.$entry;
                     if ($entry != '.' && $entry != '..' && is_file($fullPath)) {
                         $content = $this->getContentFromFile($fullPath);
                         if ($content !== false) {
@@ -70,8 +70,6 @@ final class TextFileDataReader implements DataReader
     }
 
     /**
-     * @param string $path
-     * @return string|false
      * @throws Exception
      */
     public function getContentFromFile(string $path): string|false
@@ -79,10 +77,10 @@ final class TextFileDataReader implements DataReader
         if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'pdf') {
             $parser = new Parser();
             $pdf = $parser->parseFile($path);
-            $content = $pdf->getText();
-        } else {
-            $content = file_get_contents($path);
+
+            return $pdf->getText();
         }
-        return $content;
+
+        return file_get_contents($path);
     }
 }
