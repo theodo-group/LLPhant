@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tests\Integration\Query\Embeddings;
 
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Embeddings\DataReader\TextFileDataReader;
+use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Memory\MemoryVectorStore;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 
 it('generates a answer based on private knowledge', function () {
-    $dataReader = new TextFileDataReader(__DIR__.'/private-data.txt');
+    $dataReader = new FileDataReader(__DIR__.'/private-data.txt');
     $documents = $dataReader->getDocuments();
 
     $splittedDocuments = DocumentSplitter::splitDocuments($documents, 500);

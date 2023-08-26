@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.1.0",
         "openai-php/client": "^0.6.4",
+        "phpoffice/phpword": "^1.1",
         "smalot/pdfparser": "^2.7",
         "symfony/cache": "*",
         "symfony/http-foundation": "^6.0.0"
