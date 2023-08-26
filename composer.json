@@ -17,10 +17,12 @@
         "symfony/http-foundation": "^6.0.0"
     },
     "suggest": {
-        "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0"
+        "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
+        "hkulekci/qdrant": "This is required for the QdrantVectoreStore."
     },
     "require-dev": {
         "doctrine/orm": "^2.13.0",
+        "hkulekci/qdrant": "*",
         "guzzlehttp/guzzle": "^7.7.0",
         "guzzlehttp/psr7": "^2.5.0",
         "laravel/pint": "^1.11.0",
