@@ -39,32 +39,6 @@ composer require theodo-group/llphant
 
 You may also want to check the requirements for [OpenAI PHP SDK](https://github.com/openai-php/client) as it is the main client.
 
-### Database
-
-If you want to store some embeddings and perform a similarity search you will need a database.
-One simple solution for web developers is to use a postgresql database **with the pgvector extension**.
-You can find all the information on the pgvector extension on its [github repository](https://github.com/pgvector/pgvector).
-
-We suggest you 3 simple solutions to get a postgresql database with the extension enabled:
-- use docker with the [docker-compose.yml](devx/docker-compose.yml) file
-- use [Supabase](https://supabase.com/)
-- use [Neon](https://neon.tech/)
-
-In any case you will need to activate the extension:
-```sql
-CREATE EXTENSION IF NOT EXISTS vector;
-```
-
-Then you can create a table and store vectors.
-This sql query will create the table from the example entity that we use later in [VectorStore](#VectorStores) section.
-```sql
-CREATE TABLE IF NOT EXISTS embeddings (
-    id SERIAL PRIMARY KEY,
-    data TEXT,
-    type TEXT,
-    embedding VECTOR
-);
-```
 ## Use Case
 There are plenty use cases for Generative AI and new ones are creating every day. Let's see the most common ones.
 Based on a [survey from the MLOPS community](https://mlops.community/surveys/llm/) and [this survey from Mckinsey](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-in-2023-generative-ais-breakout-year) 
@@ -265,7 +239,6 @@ There are currently 4 vectorStore class:
 - DoctrineVectorStore stores the embeddings in a postgresql database. (require doctrine/orm) 
 - QdrantVectorStore stores the embeddings in a [Qdrant](https://qdrant.tech/) vectorStore. (require hkulekci/qdrant)
 
-
 Example of usage with the `DoctrineVectorStore` class to store the embeddings in a database:
 
 ```php
@@ -283,6 +256,46 @@ $result = $vectorStore->similaritySearch($embedding, 2);
 ```
 
 To get full example you can have a look at [Doctrine integration tests files](https://github.com/theodo-group/LLPhant/blob/main/tests/Integration/Embeddings/VectorStores/Doctrine/DoctrineVectorStoreTest.php).
+
+
+##### Doctrine VectorStore
+
+One simple solution for web developers is to use a postgresql database as a vectorStore **with the pgvector extension**.
+You can find all the information on the pgvector extension on its [github repository](https://github.com/pgvector/pgvector).
+
+We suggest you 3 simple solutions to get a postgresql database with the extension enabled:
+- use docker with the [docker-compose.yml](devx/docker-compose.yml) file
+- use [Supabase](https://supabase.com/)
+- use [Neon](https://neon.tech/)
+
+In any case you will need to activate the extension:
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+Then you can create a table and store vectors.
+This sql query will create the table corresponding to PlaceEntity in the test folder.
+```sql
+CREATE TABLE IF NOT EXISTS test_place (
+   id SERIAL PRIMARY KEY,
+   content TEXT,
+   type TEXT,
+   sourcetype TEXT,
+   sourcename TEXT,
+   pgembedding VECTOR
+);
+```
+
+The PlaceEntity
+```php
+#[Entity]
+#[Table(name: 'test_place')]
+class PlaceEntity extends DoctrineEmbeddingEntityBase
+{
+#[ORM\Column(type: Types::STRING, nullable: true)]
+public ?string $type;
+}
+```
 
 ### Question Answering
 A popular use case of LLM is to create a chatbot that can answer questions over your private data.
