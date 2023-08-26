@@ -207,10 +207,10 @@ The creation of an embedding follow the following flow:
 The first part of the flow is to read data from a source.
 This can be a database, a csv file, a json file, a text file, a website, a pdf, a word document, an excel file, ...
 The only requirement is that you can read the data and that you can extract the text from it.
-For now we only support text data but we plan to support other data type in the future.
-To read data you need to create a class that implements the `DataReader` interface.
 
-You can use the `TextFileDataReader` class to read a text file. It takes a path to a file or a directory as parameter.
+For now we only support text files, pdf and docx but we plan to support other data type in the future.
+
+You can use the `FileDataReader` class to read a file. It takes a path to a file or a directory as parameter.
 The second parameter is the class name of the entity that will be used to store the embedding. 
 The class needs to extend the `Document` class 
 and even the `DoctrineEmbeddingEntityBase` class (that extends the `Document` class) if you want to use the Doctrine vector store.
@@ -220,6 +220,8 @@ $filePath = __DIR__.'/PlacesTextFiles';
 $reader = new TextFileDataReader($filePath, PlaceEntity::class);
 $documents = $reader->getDocuments();
 ```
+
+To create your own data reader you need to create a class that implements the `DataReader` interface.
 
 #### Document Splitter
 The embeddings models have a limit of string size that they can process.

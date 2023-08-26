@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
-use LLPhant\Embeddings\DataReader\TextFileDataReader;
+use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
@@ -71,7 +71,7 @@ it('tests a full embedding flow with Doctrine', function () {
     $entityManager = new EntityManager($connection, $config);
 
     $filePath = __DIR__.'/PlacesTextFiles';
-    $reader = new TextFileDataReader($filePath, PlaceEntity::class);
+    $reader = new FileDataReader($filePath, PlaceEntity::class);
     $documents = $reader->getDocuments();
     $splittedDocuments = DocumentSplitter::splitDocuments($documents, 200);
     $formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
