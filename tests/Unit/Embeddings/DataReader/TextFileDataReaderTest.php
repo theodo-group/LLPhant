@@ -5,7 +5,7 @@ namespace Tests\Integration\DataReader;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 
 it('read one specific file', function () {
-    $filePath = __DIR__ . '/FilesTestDirectory/hello.txt';
+    $filePath = __DIR__.'/FilesTestDirectory/hello.txt';
     $reader = new FileDataReader($filePath);
     $documents = $reader->getDocuments();
 
@@ -13,7 +13,7 @@ it('read one specific file', function () {
 });
 
 it('can read pdf', function () {
-    $filePath = __DIR__ . '/FilesTestDirectory/data-pdf.pdf';
+    $filePath = __DIR__.'/FilesTestDirectory/data-pdf.pdf';
     $reader = new FileDataReader($filePath);
     $documents = $reader->getDocuments();
 
@@ -21,7 +21,7 @@ it('can read pdf', function () {
 });
 
 it('can read docx', function () {
-    $filePath = __DIR__ . '/FilesTestDirectory/data.docx';
+    $filePath = __DIR__.'/FilesTestDirectory/data.docx';
     $reader = new FileDataReader($filePath);
     $documents = $reader->getDocuments();
 
@@ -29,7 +29,7 @@ it('can read docx', function () {
 });
 
 it('can read pdf and texts ', function () {
-    $filePath = __DIR__ . '/FilesTestDirectory/';
+    $filePath = __DIR__.'/FilesTestDirectory/';
     $reader = new FileDataReader($filePath);
     $documents = $reader->getDocuments();
 
