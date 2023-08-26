@@ -2,7 +2,9 @@
 
 namespace LLPhant\Embeddings\VectorStores\Qdrant;
 
+use Exception;
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 use Qdrant\Config;
@@ -65,14 +67,8 @@ class QdrantVectorStore extends VectorStoreBase
 
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
-
         $vectorStruct = new VectorStruct($embedding, QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME);
         $searchRequest = (new SearchRequest($vectorStruct))
-//            ->setFilter(
-//                (new Filter())->addMust(
-//                    new MatchString('name', 'Palm')
-//                )
-//            )
             ->setLimit($k)
             ->setParams([
                 'hnsw_ef' => 128,
@@ -101,11 +97,18 @@ class QdrantVectorStore extends VectorStoreBase
         return $documents;
     }
 
+    /**
+     * @throws Exception
+     */
     private function createPointFromDocument(PointsStruct $points, Document $document): void
     {
+        if (! is_array($document->embedding)) {
+            throw new Exception('Impossible to save a document without its vectors. You need to call an embeddingGenerator: $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);');
+        }
+
         $points->addPoint(
             new PointStruct(
-                $document->hash,
+                DocumentUtils::getUniqueId($document),
                 new VectorStruct($document->embedding, QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME),
                 [
                     'id' => $document->hash,
