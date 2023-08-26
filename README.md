@@ -259,9 +259,14 @@ $embedding = $llm->embedText('I love food');
 #### VectorStores
 Once you have embeddings you need to store them in a vector store.
 The vector store is a database that can store vectors and perform a similarity search.
-To store the documents you need to create a class that implements the `VectorStoreBase` class.
+There are currently 4 vectorStore class:
+- MemoryVectorStore stores the embeddings in the memory
+- FileSystemVectorStore stores the embeddings in a file
+- DoctrineVectorStore stores the embeddings in a postgresql database. (require doctrine/orm) 
+- QdrantVectorStore stores the embeddings in a [Qdrant](https://qdrant.tech/) vectorStore. (require hkulekci/qdrant)
 
-You can use the `DoctrineVectorStore` class to store the embeddings in a database:
+
+Example of usage with the `DoctrineVectorStore` class to store the embeddings in a database:
 
 ```php
 $vectorStore = new DoctrineVectorStore($entityManager, PlaceEntity::class);
@@ -270,6 +275,7 @@ $vectorStore->addDocuments($embededDocuments);
 
 Once you have done that you can perform a similarity search over your data.
 You need to pass the embedding of the text you want to search and the number of results you want to get.
+
 ```php
 $embedding = $embeddingGenerator->embedText('France the country');
 /** @var PlaceEntity[] $result */

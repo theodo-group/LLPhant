@@ -70,7 +70,7 @@ it('tests a full embedding flow with Doctrine', function () {
     $connection->executeQuery('TRUNCATE TABLE test_place');
     $entityManager = new EntityManager($connection, $config);
 
-    $filePath = __DIR__.'/PlacesTextFiles';
+    $filePath = __DIR__.'/../PlacesTextFiles';
     $reader = new FileDataReader($filePath, PlaceEntity::class);
     $documents = $reader->getDocuments();
     $splittedDocuments = DocumentSplitter::splitDocuments($documents, 200);

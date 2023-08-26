@@ -15,6 +15,8 @@ use function str_replace;
 
 final class OpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
 {
+    public const OPENAI_EMBEDDING_LENGTH = 1536;
+
     public Client $client;
 
     public string $modelName = 'text-embedding-ada-002';
