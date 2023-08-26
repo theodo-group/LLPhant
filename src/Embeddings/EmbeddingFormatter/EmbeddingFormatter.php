@@ -14,9 +14,7 @@ final class EmbeddingFormatter
      */
     public static function formatEmbedding(Document $document, string $header = ''): Document
     {
-        $header .= $document->sourceName !== null
-            ? "The name of the source is: {$document->sourceName}."
-            : '';
+        $header .= "The name of the source is: {$document->sourceName}.";
 
         $document->formattedContent = $header.$document->content;
 

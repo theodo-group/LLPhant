@@ -13,9 +13,11 @@ class Document
     /** @var float[]|null */
     public ?array $embedding = null;
 
-    public ?string $sourceType = null;
+    public string $sourceType = 'manual';
 
-    public ?string $sourceName = null;
+    public string $sourceName = 'manual';
 
-    public ?string $hash = null;
+    public string $hash;
+
+    public int $chunkNumber = 0;
 }

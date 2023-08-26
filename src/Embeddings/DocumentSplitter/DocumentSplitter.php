@@ -48,13 +48,16 @@ final class DocumentSplitter
             $chunks[] = $currentChunk;
         }
         $splittedDocuments = [];
+        $chunkNumber = 0;
         foreach ($chunks as $chunk) {
             $className = $document::class;
             $newDocument = new $className();
             $newDocument->content = $chunk;
-            $newDocument->hash = md5($chunk);
+            $newDocument->hash = hash('sha256', $chunk);
             $newDocument->sourceType = $document->sourceType;
             $newDocument->sourceName = $document->sourceName;
+            $newDocument->chunkNumber = $chunkNumber;
+            $chunkNumber++;
             $splittedDocuments[] = $newDocument;
         }
 

@@ -46,7 +46,6 @@ final class FileDataReader implements DataReader
                             $document = new $this->documentClassName();
                             $document->content = $content;
                             $document->sourceType = $this->sourceType;
-                            $document->hash = md5($content);
                             $document->sourceName = $entry;
                             $documents[] = $document;
                         }
@@ -67,7 +66,6 @@ final class FileDataReader implements DataReader
         $document = new $this->documentClassName();
         $document->content = $content;
         $document->sourceType = $this->sourceType;
-        $document->hash = md5($content);
         $document->sourceName = $this->filePath;
 
         return [$document];

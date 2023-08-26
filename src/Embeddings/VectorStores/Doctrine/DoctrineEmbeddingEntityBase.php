@@ -19,11 +19,11 @@ class DoctrineEmbeddingEntityBase extends Document
     #[ORM\Column(type: Types::TEXT)]
     public string $content;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    public ?string $sourceType = null;
+    #[ORM\Column(type: Types::TEXT)]
+    public string $sourceType = 'manual';
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    public ?string $sourceName = null;
+    #[ORM\Column(type: Types::TEXT)]
+    public string $sourceName = 'manual';
 
     public function getId(): int
     {
