@@ -22,7 +22,7 @@ abstract class VectorStoreBase
      * Return docs most similar to the embedding.
      *
      * @param  float[]  $embedding
-     * @param  array<string, string|int>  $additionalArguments
+     * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
      * @return mixed[]
      */
     abstract public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array;

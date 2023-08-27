@@ -9,6 +9,8 @@ use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 use Qdrant\Config;
 use Qdrant\Http\GuzzleClient;
+use Qdrant\Models\Filter\Condition\ConditionInterface;
+use Qdrant\Models\Filter\Filter;
 use Qdrant\Models\PointsStruct;
 use Qdrant\Models\PointStruct;
 use Qdrant\Models\Request\CreateCollection;
@@ -65,14 +67,40 @@ class QdrantVectorStore extends VectorStoreBase
         $this->client->collections($this->collectionName)->points()->upsert($points);
     }
 
+    /**
+     * @param  float[]  $embedding
+     * @param  array<ConditionInterface[]>  $additionalArguments
+     * @return array|mixed[]
+     */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
         $vectorStruct = new VectorStruct($embedding, QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME);
+        $filter = new Filter();
+
+        if (isset($additionalArguments['must'])) {
+            foreach ($additionalArguments['must'] as $condition) {
+                $filter->addMust($condition);
+            }
+        }
+
+        if (isset($additionalArguments['must_not'])) {
+            foreach ($additionalArguments['must_not'] as $condition) {
+                $filter->addMustNot($condition);
+            }
+        }
+
+        if (isset($additionalArguments['should'])) {
+            foreach ($additionalArguments['should'] as $condition) {
+                $filter->addShould($condition);
+            }
+        }
+
         $searchRequest = (new SearchRequest($vectorStruct))
+            ->setFilter($filter)
             ->setLimit($k)
             ->setParams([
                 'hnsw_ef' => 128,
-                'exact' => false,
+                'exact' => true,
             ])
             ->setWithPayload(true);
 
@@ -106,12 +134,13 @@ class QdrantVectorStore extends VectorStoreBase
             throw new Exception('Impossible to save a document without its vectors. You need to call an embeddingGenerator: $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);');
         }
 
+        $id = DocumentUtils::formatUUIDFromUniqueId(DocumentUtils::getUniqueId($document));
         $points->addPoint(
             new PointStruct(
-                DocumentUtils::getUniqueId($document),
+                $id,
                 new VectorStruct($document->embedding, QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME),
                 [
-                    'id' => $document->hash,
+                    'id' => $id,
                     'content' => $document->content,
                     'hash' => $document->hash,
                     'sourceName' => $document->sourceName,

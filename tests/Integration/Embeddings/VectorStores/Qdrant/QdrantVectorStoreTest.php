@@ -9,6 +9,7 @@ use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Qdrant\QdrantVectorStore;
 use Qdrant\Config;
+use Qdrant\Models\Filter\Condition\MatchString;
 
 it('tests a full embedding flow with Qdrant', function () {
     $filePath = __DIR__.'/../PlacesTextFiles';
@@ -34,4 +35,12 @@ it('tests a full embedding flow with Qdrant', function () {
 
     // We check that the search return the correct entities in the right order
     expect(explode(' ', $result[0]->content)[0])->toBe('France');
+
+    $condition = new MatchString('sourceName', 'paris.txt');
+
+    $filter['must'] = [$condition];
+
+    /** @var Document[] $searchResult2 */
+    $searchResult2 = $vectorStore->similaritySearch($embedding, 2, $filter);
+    expect(explode(' ', $searchResult2[0]->content)[0])->toBe('Paris');
 });

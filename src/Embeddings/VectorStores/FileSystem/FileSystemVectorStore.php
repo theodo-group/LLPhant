@@ -31,7 +31,9 @@ class FileSystemVectorStore extends VectorStoreBase
     }
 
     /**
-     * @throws Exception
+     * @param  float[]  $embedding
+     * @param  array<string, string|int>  $additionalArguments
+     * @return Document[]
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
