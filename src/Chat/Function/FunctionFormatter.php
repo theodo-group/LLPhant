@@ -23,25 +23,13 @@ class FunctionFormatter
     }
 
     /**
-     * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, array{type: string, description: string, enum?: mixed[], format?: string}>, required: string[]}}
+     * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, mixed[]>, required: string[]}}
      */
     public static function formatOneFunctionToOpenAI(FunctionInfo $functionInfo): array
     {
         $parametersOpenAI = [];
         foreach ($functionInfo->parameters as $parameter) {
-            $param = [
-                'type' => $parameter->type,
-                'description' => $parameter->description,
-            ];
-
-            if ($parameter->enum) {
-                $param['enum'] = $parameter->enum;
-            }
-
-            if ($parameter->format) {
-                $param['format'] = $parameter->format;
-            }
-
+            $param = self::formatParameter($parameter);
             $parametersOpenAI[$parameter->name] = $param;
         }
 
@@ -59,5 +47,71 @@ class FunctionFormatter
                 'required' => $requiredParametersOpenAI,
             ],
         ];
+    }
+
+    /**
+     * @return array{type: string, description: string, items?: array{type: string, properties?: array<string, array{type: string, description: string}>}, properties?: array<string, array{type: string, description: string}>, enum?: mixed[], format?: string}
+     *
+     * @throws \Exception
+     */
+    public static function formatParameter(Parameter $parameter): array
+    {
+        $param = [
+            'type' => $parameter->type,
+            'description' => $parameter->description,
+        ];
+
+        if ($parameter->type === 'array') {
+            if ($parameter->itemsOrProperties === null) {
+                throw new \Exception('Array type parameter must have items description. Define a type or use the Parameter class for object.');
+            }
+
+            if (is_string($parameter->itemsOrProperties)) {
+                $param['items'] = [
+                    'type' => $parameter->itemsOrProperties,
+                ];
+            } else {
+                $properties = [];
+                /** @var Parameter $property */
+                foreach ($parameter->itemsOrProperties as $property) {
+                    $properties[$property->name] = [
+                        'type' => $property->type,
+                        'description' => $property->description,
+                    ];
+                }
+
+                $param['items'] = [
+                    'type' => 'object',
+                    'properties' => $properties,
+                ];
+            }
+        }
+
+        if ($parameter->type === 'object') {
+            if (! is_array($parameter->itemsOrProperties)) {
+                throw new \Exception('Object type parameter must have properties description. You need to pass an array of Parameter.');
+            }
+
+            $properties = [];
+            /** @var Parameter $item */
+            foreach ($parameter->itemsOrProperties as $item) {
+                $properties[$item->name] = [
+                    'type' => $item->type,
+                    'description' => $item->description,
+                ];
+            }
+
+            $param['properties'] = $properties;
+        }
+
+        if ($parameter->enum) {
+            $param['enum'] = $parameter->enum;
+        }
+
+        if ($parameter->format) {
+            $param['format'] = $parameter->format;
+        }
+
+        return $param;
     }
 }

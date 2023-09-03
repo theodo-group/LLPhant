@@ -54,6 +54,7 @@ Not widely spread yet but with increasing adoption:
 - Create coding tool that can help you write or revie code. Example: [Code Review GPT](https://github.com/mattzcarey/code-review-gpt)
 
 If you want to discover more usage from the community, you can see here a list of [GenAI Meetups](https://www.genaidays.org/events/).
+You can also see other use cases on [Qdrant's website](https://qdrant.tech/use-cases/).
 
 ## Usage
 The most simple to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
