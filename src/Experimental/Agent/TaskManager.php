@@ -15,6 +15,9 @@ class TaskManager
 
         $tasksObject = [];
         foreach ($tasks as $task) {
+            if (! is_array($task)) {
+                continue;
+            }
             $tasksObject[] = new Task($task['name'], $task['description']);
         }
 
