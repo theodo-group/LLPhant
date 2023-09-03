@@ -13,7 +13,7 @@ class PrioritizationTaskAgent
         $this->openAIChat = $openAIChat ?? new OpenAIChat();
     }
 
-    public function prioritizeTask($objective): ?Task
+    public function prioritizeTask(string $objective): ?Task
     {
         $unachievedTasks = '';
         foreach ($this->taskManager->getUnachievedTasks() as $key => $task) {
