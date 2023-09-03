@@ -10,6 +10,7 @@
     ],
     "require": {
         "php": "^8.1.0",
+        "guzzlehttp/guzzle": "^7.1.0",
         "openai-php/client": "^0.6.4",
         "phpoffice/phpword": "^1.1",
         "smalot/pdfparser": "^2.7",
@@ -23,7 +24,6 @@
     "require-dev": {
         "doctrine/orm": "^2.13.0",
         "hkulekci/qdrant": "^v0.4",
-        "guzzlehttp/guzzle": "^7.7.0",
         "guzzlehttp/psr7": "^2.5.0",
         "laravel/pint": "^1.11.0",
         "nunomaduro/collision": "^7.7.0",

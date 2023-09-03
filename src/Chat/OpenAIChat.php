@@ -2,12 +2,12 @@
 
 namespace LLPhant\Chat;
 
+use Exception;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\Function\FunctionFormatter;
 use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\OpenAIConfig;
-use Mockery\Exception;
 use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -22,12 +22,14 @@ final class OpenAIChat
 {
     private readonly Client $client;
 
-    private readonly string $model;
+    public string $model;
 
     private Message $systemMessage;
 
     /** @var FunctionInfo[] */
     private array $functions = [];
+
+    public ?FunctionInfo $requiredFunction = null;
 
     public function __construct(OpenAIConfig $config = null)
     {
@@ -172,6 +174,11 @@ final class OpenAIChat
 
         if ($this->functions !== []) {
             $openAiArgs['functions'] = FunctionFormatter::formatFunctionsToOpenAI($this->functions);
+        }
+
+        if ($this->requiredFunction instanceof FunctionInfo) {
+            $openAiArgs['function_call'] =
+                ['name' => $this->requiredFunction->name];
         }
 
         return $openAiArgs;
