@@ -2,29 +2,26 @@
 
 namespace LLPhant\Experimental\Agent;
 
-use LLPhant\Chat\Function\FunctionBuilder;
 use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Tool\SerpApiSearch;
+use LLPhant\Tool\ToolBase;
+use LLPhant\Utils\CLIOutputUtils;
 
-class ExecutionTaskAgent
+class ExecutionTaskAgent extends AgentBase
 {
-    private readonly SerpApiSearch $searchApi;
-
     private readonly OpenAIChat $openAIChat;
 
     /**
      * @param  FunctionInfo[]  $functions
      */
-    public function __construct(array $functions, OpenAIChat $openAIChat = null)
+    public function __construct(array $functions, OpenAIChat $openAIChat = null, bool $verbose = false)
     {
+        parent::__construct($verbose);
         $this->openAIChat = $openAIChat ?? new OpenAIChat();
-        $this->searchApi = new SerpApiSearch();
-        FunctionBuilder::buildFunctionInfo($this->searchApi, 'search');
         $this->openAIChat->setFunctions($functions);
     }
 
-    public function executeTask(string $objective, Task $task, string $additionalContext = null): void
+    public function run(string $objective, Task $task, string $additionalContext = null): void
     {
         if ($additionalContext !== null) {
             $additionalContext = "You can use the following information to help you: {$additionalContext}";
@@ -35,6 +32,8 @@ class ExecutionTaskAgent
             If you have enough information, answer with only the relevant information related to the task.
             Your answer:";
 
+        CLIOutputUtils::renderTitleAndMessageGreen('🤖 ExecutionTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
+
         // Send prompt to OpenAI API and retrieve the result
         $res = '';
         try {
@@ -44,7 +43,16 @@ class ExecutionTaskAgent
         }
 
         if ($res === '') {
-            $this->executeTask($objective, $task, $this->searchApi->lastResponse);
+            // $res === '' means that gpt has chosen to call a function
+            // here it means that a tool has been used to gather more information
+            $newContext = $additionalContext;
+            if (! is_null($this->openAIChat->lastFunctionCalled)) { // should be always true
+                $tool = $this->openAIChat->lastFunctionCalled->instance;
+                if ($tool instanceof ToolBase) { // this ensures that the function that has been called is a tool
+                    $newContext = $additionalContext.' '.$tool->lastResponse;
+                }
+            }
+            $this->run($objective, $task, $newContext);
         } else {
             $task->result = $res;
         }

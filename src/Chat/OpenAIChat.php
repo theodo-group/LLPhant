@@ -29,6 +29,8 @@ final class OpenAIChat
     /** @var FunctionInfo[] */
     private array $functions = [];
 
+    public ?FunctionInfo $lastFunctionCalled = null;
+
     public ?FunctionInfo $requiredFunction = null;
 
     public function __construct(OpenAIConfig $config = null)
@@ -214,5 +216,6 @@ final class OpenAIChat
         }
 
         $functionToCall->instance->{$functionToCall->name}(...$arguments);
+        $this->lastFunctionCalled = $functionToCall;
     }
 }
