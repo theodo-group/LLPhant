@@ -4,6 +4,9 @@ namespace LLPhant\Experimental\Agent;
 
 use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\Chat\OpenAIChat;
+use LLPhant\Utils\CLIOutputUtils;
+
+use function Termwind\terminal;
 
 class AutoPHP
 {
@@ -17,33 +20,41 @@ class AutoPHP
 
     public PrioritizationTaskAgent $prioritizationTaskAgent;
 
+    public bool $verbose;
+
     /**
      * @param  FunctionInfo[]  $functions
      */
-    public function __construct(public string $objective, array $functions)
+    public function __construct(public string $objective, array $functions, bool $verbose = false)
     {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
-        $this->executionAgent = new ExecutionTaskAgent($functions);
-        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager);
-        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager);
+        $this->executionAgent = new ExecutionTaskAgent($functions, null, $verbose);
+        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, null, $verbose);
+        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, null, $verbose);
+        $this->verbose = $verbose;
     }
 
     public function run(int $maxIteration = 100): string
     {
+        terminal()->clear();
+        CLIOutputUtils::renderTitle('🐘 AutoPHP 🐘', '🎯 Objective: '.$this->objective, $this->verbose);
         $this->creationTaskAgent->createTasks($this->objective);
+        CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
         $currentTask = $this->prioritizationTaskAgent->prioritizeTask($this->objective);
         $iteration = 1;
         while ($currentTask instanceof Task && $maxIteration >= $iteration) {
-            var_dump($this->taskManager->tasks);
+            CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
             $context = $this->prepareNeededDataForTaskCompletion($currentTask);
-            $this->executionAgent->executeTask($this->objective, $currentTask, $context);
-
+            $this->executionAgent->run($this->objective, $currentTask, $context);
+            CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
             if ($finalResult = $this->getObjectiveResult()) {
+                CLIOutputUtils::renderTitle('🏆️ Success! 🏆️', 'Result: '.$finalResult, true);
+
                 return $finalResult;
             }
 
-            if ($this->taskManager->getUnachievedTasks() === []) {
+            if (count($this->taskManager->getUnachievedTasks()) <= 1) {
                 $this->creationTaskAgent->createTasks($this->objective);
             }
 
@@ -64,6 +75,10 @@ class AutoPHP
         $prompt = "You are a data analyst expert.
         You need to select the data needed to perform the following task from previous tasks: {$task->description}
         Previous tasks: {$previousCompletedTask}";
+
+        if ($this->verbose) {
+            CLIOutputUtils::render('Prepare data from previous tasks. Prompt:'.$prompt, $this->verbose);
+        }
 
         return $this->openAIChat->generateText($prompt);
     }

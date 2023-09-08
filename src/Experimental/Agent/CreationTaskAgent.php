@@ -5,15 +5,16 @@ namespace LLPhant\Experimental\Agent;
 use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\Chat\Function\Parameter;
 use LLPhant\Chat\OpenAIChat;
+use LLPhant\Utils\CLIOutputUtils;
 
-class CreationTaskAgent
+class CreationTaskAgent extends AgentBase
 {
     private readonly OpenAIChat $openAIChat;
 
-    public function __construct(private readonly TaskManager $taskManager, OpenAIChat $openAIChat = null)
+    public function __construct(private readonly TaskManager $taskManager, OpenAIChat $openAIChat = null, bool $verbose = false)
     {
+        parent::__construct($verbose);
         $this->openAIChat = $openAIChat ?? new OpenAIChat();
-
         $nameTask = new Parameter('name', 'string', 'name of the task');
         $descriptionTask = new Parameter('description', 'string', 'description of the task');
         $param = new Parameter('tasks', 'array', 'tasks to be added to the list of tasks to be completed', [], null, [$nameTask, $descriptionTask]);
@@ -31,7 +32,7 @@ class CreationTaskAgent
         $unachievedTasks = implode(', ', array_column($this->taskManager->getUnachievedTasks(), 'name'));
 
         if (empty($this->taskManager->getAchievedTasks())) {
-            $prompt = 'You are a task creation AI that uses the result of an execution agent'
+            $prompt = 'You are a task creation AI that uses the result of an execution agent. '
                 ."The objective is: {$objective},"
                 .' No task has been done yet.'
                 ." These are incomplete tasks: {$unachievedTasks}."
@@ -45,7 +46,9 @@ class CreationTaskAgent
                 .' Based on the result of previous tasks, create new tasks to do the objective but ONLY if needed.'
                 .' You MUST avoid create duplicated tasks.';
         }
+        CLIOutputUtils::renderTitleAndMessageGreen('🤖 CreationTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 
+        // We don't handle the response because the function will be executed
         $this->openAIChat->generateText($prompt);
     }
 }

@@ -5,20 +5,20 @@ namespace LLPhant\Tool;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use LLPhant\Utils\CLIOutputUtils;
 
-class SerpApiSearch
+class SerpApiSearch extends ToolBase
 {
     private readonly string $apiKey;
 
     private readonly Client $client;
 
-    public string $lastResponse = '';
-
     /**
      * @throws Exception
      */
-    public function __construct(string $apiKey = null)
+    public function __construct(string $apiKey = null, bool $verbose = false)
     {
+        parent::__construct($verbose);
         $apiKey ??= getenv('SERP_API_KEY');
         if (! $apiKey) {
             throw new Exception('You have to provide a SERP_API_KEY env var to request SerpApi .');
@@ -34,8 +34,8 @@ class SerpApiSearch
      */
     public function search(string $query): string
     {
-        $e = null;
         $params = ['q' => $query, 'api_key' => $this->apiKey];
+        CLIOutputUtils::renderTitleAndMessageOrange('🔧 Executing tool SerpApi', $query, $this->verbose);
 
         try {
             $response = $this->client->request('GET', '', ['query' => $params]);
@@ -55,6 +55,7 @@ class SerpApiSearch
                 }
             }
 
+            CLIOutputUtils::render('Results from SerpApi: '.$results, $this->verbose);
             $this->lastResponse = $results;
 
             return $this->lastResponse;
