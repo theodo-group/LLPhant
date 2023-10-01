@@ -4,6 +4,8 @@ namespace LLPhant\Chat\Function;
 
 class FunctionInfo
 {
+    public string $jsonArgs;
+
     /**
      * @param  Parameter[]  $parameters
      * @param  Parameter[]  $requiredParameters

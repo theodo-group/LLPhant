@@ -33,6 +33,12 @@ class CLIOutputUtils
         render('<div><div class="px-1 bg-orange-300">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
     }
 
+    public static function renderTitleAndMessageYellow(string $title, string $message, bool $verbose): void
+    {
+        $message = self::truncateString($verbose, $message, $title);
+        render('<div><div class="px-1 bg-yellow-300">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
+    }
+
     /**
      * @param  Task[]  $tasks
      */
@@ -41,19 +47,26 @@ class CLIOutputUtils
         $liItems = '';
         foreach ($tasks as $task) {
             if ($currentTask === $task) {
-                $liItems .= "<li class='font-bold text-pink-400'>⚙️ - {$task->name}</li>";
+                $liItems .= "<li class='font-bold text-pink-400'>⚙️ - {$task->name} ({$task->description})</li>";
 
                 continue;
             }
 
             if (is_null($task->result)) {
-                $liItems .= "<li class='font-bold text-pink-400'>⚪️ - {$task->name}</li>";
+                $liItems .= "<li class='font-bold text-pink-400'>⚪️ - {$task->name} ({$task->description})</li>";
 
+                continue;
+            }
+
+            $result = CLIOutputUtils::truncateString($verbose, $task->result, $task->name);
+
+            if ($task->wasSuccessful) {
+                $liItems .= "<li class='font-bold text-pink-400'>🟢 - {$task->name} ({$task->description}) - {$result}</li>";
             } else {
-                $result = CLIOutputUtils::truncateString($verbose, $task->result, $task->name);
-                $liItems .= "<li class='font-bold text-pink-400'>🟢 - {$task->name} - {$result}</li>";
+                $liItems .= "<li class='font-bold text-pink-400'>🔴 - {$task->name} ({$task->description})</li>";
             }
         }
+
         render('<div class="px-4 mt-2 mb-2">
                         <h1 class="font-bold">List of tasks:</h1>
                         <ul class="list-disc">'.$liItems.'</ul>

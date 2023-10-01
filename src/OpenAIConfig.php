@@ -2,7 +2,7 @@
 
 namespace LLPhant;
 
-final class OpenAIConfig
+class OpenAIConfig
 {
     public string $apiKey;
 
