@@ -57,9 +57,11 @@ class SerpApiSearch extends ToolBase
 
             CLIOutputUtils::render('Results from SerpApi: '.$results, $this->verbose);
             $this->lastResponse = $results;
+            $this->wasSuccessful = true;
 
             return $this->lastResponse;
         } catch (Exception $e) {
+            $this->wasSuccessful = false;
             throw new Exception('Request to SerpApi failed: '.$e->getMessage(), $e->getCode(), $e);
         }
     }

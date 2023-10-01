@@ -51,6 +51,20 @@ final class OpenAIChat
         return $answer->choices[0]->message->content ?? '';
     }
 
+    public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
+    {
+        $answer = $this->generate($prompt);
+        $functionToCall = $this->getFunctionToCall($answer);
+
+        if ($functionToCall instanceof FunctionInfo) {
+            $this->lastFunctionCalled = $functionToCall;
+
+            return $functionToCall;
+        }
+
+        return $answer->choices[0]->message->content ?? '';
+    }
+
     public function generateStreamOfText(string $prompt): StreamedResponse
     {
         $messages = $this->createOpenAIMessagesFromPrompt($prompt);
@@ -199,22 +213,38 @@ final class OpenAIChat
         }
     }
 
-    private function callFunction(string $functionName, string $arguments): void
+    private function getFunctionToCall(CreateResponse $answer): ?FunctionInfo
     {
+        if ($answer->choices[0]->message->functionCall instanceof CreateResponseFunctionCall) {
+            $functionName = $answer->choices[0]->message->functionCall->name;
+            $arguments = $answer->choices[0]->message->functionCall->arguments;
+            $functionInfo = $this->getFunctionInfoFromName($functionName);
+            $functionInfo->jsonArgs = $arguments;
 
-        $arguments = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
-        $functionToCall = null;
+            return $functionInfo;
+        }
+
+        return null;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getFunctionInfoFromName(string $functionName): FunctionInfo
+    {
         foreach ($this->functions as $function) {
             if ($function->name === $functionName) {
-                $functionToCall = $function;
-                break;
+                return $function;
             }
         }
 
-        if (! $functionToCall instanceof FunctionInfo) {
-            throw new Exception("OpenAI tried to call $functionName which doesn't exist");
-        }
+        throw new Exception("OpenAI tried to call $functionName which doesn't exist");
+    }
 
+    private function callFunction(string $functionName, string $arguments): void
+    {
+        $arguments = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
+        $functionToCall = $this->getFunctionInfoFromName($functionName);
         $functionToCall->instance->{$functionToCall->name}(...$arguments);
         $this->lastFunctionCalled = $functionToCall;
     }

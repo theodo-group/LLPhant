@@ -23,13 +23,13 @@ class AutoPHP
     public bool $verbose;
 
     /**
-     * @param  FunctionInfo[]  $functions
+     * @param  FunctionInfo[]  $functionsAvailable
      */
-    public function __construct(public string $objective, array $functions, bool $verbose = false)
+    public function __construct(public string $objective, /* @var FunctionInfo[] */
+        public array $functionsAvailable, bool $verbose = false)
     {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
-        $this->executionAgent = new ExecutionTaskAgent($functions, null, $verbose);
         $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, null, $verbose);
         $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, null, $verbose);
         $this->verbose = $verbose;
@@ -45,8 +45,15 @@ class AutoPHP
         $iteration = 1;
         while ($currentTask instanceof Task && $maxIteration >= $iteration) {
             CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
+
+            // TODO: add a mechanism to retrieve short-term / long-term memory
             $context = $this->prepareNeededDataForTaskCompletion($currentTask);
-            $this->executionAgent->run($this->objective, $currentTask, $context);
+
+            // TODO: add a mechanism to get the best tool for a given Task
+
+            $executionAgent = new ExecutionTaskAgent($this->functionsAvailable, null, $this->verbose);
+            $currentTask->result = $executionAgent->run($this->objective, $currentTask, $context);
+
             CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
             if ($finalResult = $this->getObjectiveResult()) {
                 CLIOutputUtils::renderTitle('🏆️ Success! 🏆️', 'Result: '.$finalResult, true);
@@ -90,7 +97,7 @@ class AutoPHP
         $prompt = "Consider the ultimate objective of your team: {$this->objective}."
             .'Based on the data from previous tasks, you need to determine if the objective has been achieved.'
             ."The previous tasks are: {$achievedTasks}."
-            ."If you have enough data, give the answer to the objective {$this->objective}. If not, simply return 'no'.";
+            ."If you have enough data, give the exact answer to the objective {$this->objective}. If you don't have enought data, simply return 'no'.";
 
         $response = $this->openAIChat->generateText($prompt);
 
