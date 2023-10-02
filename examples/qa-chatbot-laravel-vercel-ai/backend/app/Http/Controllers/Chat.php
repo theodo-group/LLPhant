@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Message;
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Embeddings\DataReader\FileDataReader;
+use LLPhant\Embeddings\DataReader\TextFileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
@@ -25,7 +25,7 @@ class Chat extends Controller
         $embeddingGenerator = new OpenAIEmbeddingGenerator();
 
         if ($filesVectorStore->getNumberOfDocuments() === 0) {
-            $dataReader = new FileDataReader(__DIR__.'/The_Star_H.G_Wells.txt');
+            $dataReader = new TextFileDataReader(__DIR__.'/The_Star_H.G_Wells.txt');
             $documents = $dataReader->getDocuments();
             $splittedDocuments = DocumentSplitter::splitDocuments($documents, 2000);
             $formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
