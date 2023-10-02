@@ -70,7 +70,7 @@ class ExecutionTaskAgent extends AgentBase
     private function refineData(string $objective, Task $task, string $dataToRefine, int $counter = 0): string
     {
         // Naive approach: if the data is not too long, we don't refine it
-        if (strlen($dataToRefine) <= 4000) {
+        if (strlen($dataToRefine) <= 20000) {
             return $dataToRefine;
         }
         if ($counter >= 3) {
@@ -78,7 +78,7 @@ class ExecutionTaskAgent extends AgentBase
         }
         $document = new Document();
         $document->content = $dataToRefine;
-        $splittedDocuments = DocumentSplitter::splitDocument($document, 4000);
+        $splittedDocuments = DocumentSplitter::splitDocument($document, 20000);
 
         $refinedData = '';
 
@@ -86,6 +86,7 @@ class ExecutionTaskAgent extends AgentBase
         $gpt3->model = OpenAIChatModel::Gpt35Turbo->getModelName();
 
         foreach ($splittedDocuments as $splittedDocument) {
+            //TODO: we should ignore part of the data that is not relevant to the task
             $prompt = "You are part of a big project. The main objective is {$objective}. You need to perform the following task: {$task->description}.
                 You MUST be very concise and only extract information that can help for the task and objective.: {$splittedDocument->content}.";
             $refinedData .= $gpt3->generateText($prompt).' ';
