@@ -20,12 +20,13 @@
     },
     "suggest": {
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
-        "hkulekci/qdrant": "This is required for the QdrantVectoreStore."
+        "hkulekci/qdrant": "This is required for the QdrantVectoreStore.",
+        "predis/predis": "This is required for the RedisVectoreStore."
     },
     "require-dev": {
         "doctrine/orm": "^2.13.0",
-        "hkulekci/qdrant": "^v0.4",
         "guzzlehttp/psr7": "^2.5.0",
+        "hkulekci/qdrant": "^v0.4",
         "laravel/pint": "^1.11.0",
         "nunomaduro/collision": "^7.7.0",
         "pestphp/pest": "dev-develop as 2.6.2",
@@ -33,6 +34,7 @@
         "pestphp/pest-plugin-mock": "^2.0.0",
         "pestphp/pest-plugin-type-coverage": "^2.0.0",
         "phpstan/phpstan": "^1.10.25",
+        "predis/predis": "^2.2",
         "rector/rector": "^0.16.0",
         "symfony/var-dumper": "^6.3.1"
     },
