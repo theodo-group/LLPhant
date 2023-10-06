@@ -55,11 +55,9 @@ class RedisVectorStore extends VectorStoreBase
     }
 
     /**
-     * Return docs most similar to the embedding.
+     * {@inheritDoc}
      *
-     * @param  float[]  $embedding
      * @param  array{filters?: string}  $additionalArguments
-     * @return mixed[]
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
@@ -85,14 +83,14 @@ class RedisVectorStore extends VectorStoreBase
                 ->sortBy('distance', 'ASC')
         );
 
-        return $this->formatRedisResults($rawResults);
+        return $this->getDocumentsFromRedisResult($rawResults);
     }
 
     /**
      * @param  array{0: int, 1: string, 2: string[]}  $rawRedisResults
-     * @return array<int, array{id: string, distance: float, data: array{content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, embedding: float[]}}>
+     * @return Document[]
      */
-    private function formatRedisResults(array $rawRedisResults): array
+    private function getDocumentsFromRedisResult(array $rawRedisResults): array
     {
         /*
         ### Example of a rawRedisResults ###
@@ -109,21 +107,16 @@ class RedisVectorStore extends VectorStoreBase
                 ...
         */
 
-        $formattedResults = [];
+        $documents = [];
         $rawRedisResultsCount = count($rawRedisResults);
         for ($i = 1; $i < $rawRedisResultsCount; $i += 2) {
-            $redisIndex = $rawRedisResults[$i];
             [$distanceLabel, $distanceValue, $redisPath, $jsonEncodedDocument] = $rawRedisResults[$i + 1];
-            /** @var array{content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, embedding: float[]} $data */
+            /** @var array{content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, embedding: float[], chunkNumber: int} $data */
             $data = json_decode($jsonEncodedDocument, true, 512, JSON_THROW_ON_ERROR);
-            $formattedResults[] = [
-                'id' => $redisIndex,
-                'distance' => (float) $distanceValue,
-                'data' => $data,
-            ];
+            $documents[] = DocumentUtils::createDocumentFromArray($data);
         }
 
-        return $formattedResults;
+        return $documents;
     }
 
     private function createIndexIfMissing(int $vectorDimension): void

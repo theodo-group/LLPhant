@@ -34,4 +34,35 @@ class DocumentUtils
 
         return $uuid;
     }
+
+    /**
+     * @param  array{content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, embedding: float[], chunkNumber: int}[]  $documentDataArray
+     * @return Document[]
+     */
+    public static function createDocumentsFromArray(array $documentDataArray): array
+    {
+        $documents = [];
+        foreach ($documentDataArray as $documentData) {
+            $documents[] = self::createDocumentFromArray($documentData);
+        }
+
+        return $documents;
+    }
+
+    /**
+     * @param  array{content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, embedding: float[], chunkNumber: int}  $documentData
+     */
+    public static function createDocumentFromArray(array $documentData): Document
+    {
+        $document = new Document();
+        $document->content = $documentData['content'];
+        $document->formattedContent = $documentData['formattedContent'];
+        $document->embedding = $documentData['embedding'];
+        $document->sourceType = $documentData['sourceType'];
+        $document->sourceName = $documentData['sourceName'];
+        $document->hash = $documentData['hash'];
+        $document->chunkNumber = $documentData['chunkNumber'];
+
+        return $document;
+    }
 }
