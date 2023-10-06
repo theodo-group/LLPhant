@@ -240,6 +240,7 @@ There are currently 4 vectorStore class:
 - FileSystemVectorStore stores the embeddings in a file
 - DoctrineVectorStore stores the embeddings in a postgresql database. (require doctrine/orm) 
 - QdrantVectorStore stores the embeddings in a [Qdrant](https://qdrant.tech/) vectorStore. (require hkulekci/qdrant)
+- RedisVectorStore stores the embeddings in a [Redis](https://redis.io/) database. (require predis/predis)
 
 Example of usage with the `DoctrineVectorStore` class to store the embeddings in a database:
 

@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  db:
+  pgvector:
     # In production, you may want to use a managed database service
     image: ankane/pgvector
     environment:
@@ -15,6 +15,12 @@ services:
       # - ./docker/db/data:/var/lib/postgresql/data:rw
     ports:
       - '5432:5432'
+
+  redis:
+    image: redis/redis-stack:latest
+    ports:
+      - 6379:6379
+      - 8001:8001
 
 volumes:
   db-data: {}
