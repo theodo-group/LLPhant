@@ -138,7 +138,7 @@ This PHP script will most likely call the sendMail method that we pass to OpenAI
 ```php
 $chat = new OpenAIChat();
 // This helper will automatically gather information to describe the function
-$functionInfo = FunctionBuilder::buildFunctionInfo(new MailerExample(), 'sendMail');
+$function = FunctionBuilder::buildFunctionInfo(new MailerExample(), 'sendMail');
 $chat->addFunction($function);
 $chat->setSystemMessage('You are an AI that deliver information using the email system. 
 When you have enough information to answer the question of the user you send a mail');
