@@ -2,18 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tests\Integration\Embeddings\VectorStores\Redis;
-
-use LLPhant\Embeddings\Document;
+use Elastic\Elasticsearch\ClientBuilder;
 use LLPhant\Embeddings\DocumentUtils;
-use LLPhant\Embeddings\VectorStores\Redis\RedisVectorStore;
+use LLPhant\Embeddings\VectorStores\Elasticsearch\ElasticsearchVectorStore;
 
-it('tests a full embedding flow with Redis', function () {
+it('tests a full embedding flow with Elasticsearch', function () {
     // Get the already embeded france.txt and paris.txt documents
     $path = __DIR__.'/../EmbeddedMock/francetxt_paristxt.json';
     $rawFileContent = file_get_contents($path);
     if (! $rawFileContent) {
-        throw new \Exception('File not found');
+        throw new Exception('File not found');
     }
 
     $rawDocuments = json_decode($rawFileContent, true);
@@ -23,25 +21,27 @@ it('tests a full embedding flow with Redis', function () {
     $path = __DIR__.'/../EmbeddedMock/france_the_country_embedding.json';
     $rawFileContent = file_get_contents($path);
     if (! $rawFileContent) {
-        throw new \Exception('File not found');
+        throw new Exception('File not found');
     }
     /** @var float[] $embeddingQuery */
     $embeddingQuery = json_decode($rawFileContent, true);
 
-    $redisClient = new Predis\Client([
-        'scheme' => 'tcp',
-        'host' => 'localhost',
-        'port' => 6379,
-    ]);
-    $vectorStore = new RedisVectorStore($redisClient);
+    $client = (new ClientBuilder())::create()
+        ->setHosts(['http://localhost:9200'])
+        ->build();
+    $vectorStore = new ElasticsearchVectorStore($client);
 
     $vectorStore->addDocuments($embeddedDocuments);
 
-    $searchResult1 = $vectorStore->similaritySearch($embeddingQuery, 10);
+    $searchResult1 = $vectorStore->similaritySearch($embeddingQuery, 2);
     expect(DocumentUtils::getFirstWordFromContent($searchResult1[0]))->toBe('France');
 
     $requestParam = [
-        'filters' => '@sourceName:paris.txt',
+        'filter' => [
+            'term' => [
+                'sourceName' => 'paris.txt',
+            ],
+        ],
     ];
     $searchResult2 = $vectorStore->similaritySearch($embeddingQuery, 2, $requestParam);
     expect(DocumentUtils::getFirstWordFromContent($searchResult2[0]))->toBe('Paris');

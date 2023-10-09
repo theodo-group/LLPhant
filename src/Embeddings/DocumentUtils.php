@@ -65,4 +65,9 @@ class DocumentUtils
 
         return $document;
     }
+
+    public static function getFirstWordFromContent(Document $document): string
+    {
+        return explode(' ', $document->content)[0];
+    }
 }
