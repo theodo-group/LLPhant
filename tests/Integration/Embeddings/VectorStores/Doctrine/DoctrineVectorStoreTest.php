@@ -12,7 +12,6 @@ use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Doctrine\DoctrineVectorStore;
-use Tests\Integration\Embeddings\VectorStores\Doctrine\PlaceEntity;
 
 it('creates two entity with their embeddings and perform a similarity search', function () {
     $config = ORMSetup::createAttributeMetadataConfiguration(
