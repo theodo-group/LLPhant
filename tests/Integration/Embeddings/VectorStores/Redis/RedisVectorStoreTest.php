@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Embeddings\VectorStores\Redis;
 
-use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\Redis\RedisVectorStore;
 
