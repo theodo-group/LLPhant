@@ -29,7 +29,7 @@ it('tests a full embedding flow with Elasticsearch', function () {
     $client = (new ClientBuilder())::create()
         ->setHosts(['http://localhost:9200'])
         ->build();
-    $vectorStore = new ElasticsearchVectorStore($client);
+    $vectorStore = new ElasticsearchVectorStore($client, 'llphant_test');
 
     $vectorStore->addDocuments($embeddedDocuments);
 

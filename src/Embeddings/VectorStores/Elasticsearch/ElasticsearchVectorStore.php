@@ -78,6 +78,7 @@ class ElasticsearchVectorStore extends VectorStoreBase
                 'chunkNumber' => $document->chunkNumber,
             ],
         ]);
+        $this->client->indices()->refresh(['index' => $this->indexName]);
     }
 
     /**
@@ -114,6 +115,7 @@ class ElasticsearchVectorStore extends VectorStoreBase
 
         }
         $this->client->bulk($params);
+        $this->client->indices()->refresh(['index' => $this->indexName]);
     }
 
     /**
