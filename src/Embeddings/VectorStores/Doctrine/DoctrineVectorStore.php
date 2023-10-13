@@ -103,6 +103,12 @@ final class DoctrineVectorStore extends VectorStoreBase
             throw new Exception('Trying to save a document in a vectorStore without embedding');
         }
 
+        if (! $document instanceof DoctrineEmbeddingEntityBase) {
+            throw new Exception('Document needs to be an instance of DoctrineEmbeddingEntityBase');
+        }
+
+        $document->pgembedding = $this->formatEmbeddingForPostgresql($document->embedding);
+
         $this->entityManager->persist($document);
     }
 }
