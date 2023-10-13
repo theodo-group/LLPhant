@@ -8,7 +8,6 @@ use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\Chat\Function\Parameter;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
-use Tests\Integration\Chat\MailerExample;
 
 it('can generate some stuff', function () {
     $chat = new OpenAIChat();
