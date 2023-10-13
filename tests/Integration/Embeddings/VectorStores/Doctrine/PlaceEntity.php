@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Integration\Embeddings\VectorStores\Doctrine;
 
 use Doctrine\DBAL\Types\Types;

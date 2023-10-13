@@ -1,6 +1,8 @@
 <?php
 
-namespace Tests\Integration\DataReader;
+declare(strict_types=1);
+
+namespace Tests\Unit\Embeddings\DataReader;
 
 use LLPhant\Embeddings\DataReader\FileDataReader;
 

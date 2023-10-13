@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Tests\Integration\Chat;
+
 use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\Chat\Function\Parameter;
 use LLPhant\Chat\OpenAIChat;

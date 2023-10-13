@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Integration\Embeddings\VectorStores\Qdrant;
 
 use LLPhant\Embeddings\DataReader\FileDataReader;
