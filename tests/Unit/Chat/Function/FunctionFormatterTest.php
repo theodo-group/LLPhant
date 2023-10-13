@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Tests\Unit\Chat\Function;
+
 use LLPhant\Chat\Function\FunctionFormatter;
 use LLPhant\Chat\Function\FunctionInfo;
 use LLPhant\Chat\Function\Parameter;

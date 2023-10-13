@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Tests\Integration\Embeddings\VectorStores\Doctrine;
+
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;

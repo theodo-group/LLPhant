@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Tests\Integration\Embeddings\VectorStores\Redis;
+
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\Redis\RedisVectorStore;
@@ -11,7 +13,7 @@ it('tests a full embedding flow with Redis', function () {
     $path = __DIR__.'/../EmbeddedMock/francetxt_paristxt.json';
     $rawFileContent = file_get_contents($path);
     if (! $rawFileContent) {
-        throw new Exception('File not found');
+        throw new \Exception('File not found');
     }
 
     $rawDocuments = json_decode($rawFileContent, true);
@@ -21,7 +23,7 @@ it('tests a full embedding flow with Redis', function () {
     $path = __DIR__.'/../EmbeddedMock/france_the_country_embedding.json';
     $rawFileContent = file_get_contents($path);
     if (! $rawFileContent) {
-        throw new Exception('File not found');
+        throw new \Exception('File not found');
     }
     /** @var float[] $embeddingQuery */
     $embeddingQuery = json_decode($rawFileContent, true);

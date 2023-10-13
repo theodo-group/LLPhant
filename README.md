@@ -193,7 +193,7 @@ and even the `DoctrineEmbeddingEntityBase` class (that extends the `Document` cl
 
 ```php
 $filePath = __DIR__.'/PlacesTextFiles';
-$reader = new TextFileDataReader($filePath, PlaceEntity::class);
+$reader = new FileDataReader($filePath, PlaceEntity::class);
 $documents = $reader->getDocuments();
 ```
 
@@ -311,7 +311,7 @@ It leverages the vector store to perform a similarity search to get the most rel
 
 Here is one example using the `MemoryVectorStore`:
 ```php
-$dataReader = new TextFileDataReader(__DIR__.'/private-data.txt');
+$dataReader = new FileDataReader(__DIR__.'/private-data.txt');
 $documents = $dataReader->getDocuments();
 
 $splittedDocuments = DocumentSplitter::splitDocuments($documents, 500);
