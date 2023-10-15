@@ -1,6 +1,6 @@
 <?php
 
-use LLPhant\Chat\Function\FunctionBuilder;
+use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Experimental\Agent\AutoPHP;
 use LLPhant\Tool\SerpApiSearch;
 

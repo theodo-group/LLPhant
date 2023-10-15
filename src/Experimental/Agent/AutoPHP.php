@@ -2,7 +2,7 @@
 
 namespace LLPhant\Experimental\Agent;
 
-use LLPhant\Chat\Function\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\Utils\CLIOutputUtils;
 

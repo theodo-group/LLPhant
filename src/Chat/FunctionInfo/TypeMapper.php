@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\Chat\Function;
+namespace LLPhant\Chat\FunctionInfo;
 
 use InvalidArgumentException;
 use ReflectionNamedType;
