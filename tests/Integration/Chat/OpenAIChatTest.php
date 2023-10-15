@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Chat;
 
-use LLPhant\Chat\Function\FunctionInfo;
-use LLPhant\Chat\Function\Parameter;
+use LLPhant\Chat\FunctionInfo\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\Parameter;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
 

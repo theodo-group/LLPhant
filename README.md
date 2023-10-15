@@ -341,7 +341,7 @@ You just need to describe the objective and add the tools you want to use.
 We will add more tools in the future.
 
 ```php
-use LLPhant\Chat\Function\FunctionBuilder;
+use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Experimental\Agent\AutoPHP;
 use LLPhant\Tool\SerpApiSearch;
 

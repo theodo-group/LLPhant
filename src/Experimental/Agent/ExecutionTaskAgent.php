@@ -3,8 +3,8 @@
 namespace LLPhant\Experimental\Agent;
 
 use LLPhant\Chat\Enums\OpenAIChatModel;
-use LLPhant\Chat\Function\FunctionInfo;
-use LLPhant\Chat\Function\FunctionRunner;
+use LLPhant\Chat\FunctionInfo\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\FunctionRunner;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
