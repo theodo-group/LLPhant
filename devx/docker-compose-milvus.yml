@@ -1,53 +1,6 @@
 version: '3.5'
 
 services:
-  pgvector:
-    # In production, you may want to use a managed database service
-    image: ankane/pgvector
-    environment:
-      - POSTGRES_DB=api
-      - POSTGRES_USER=myuser
-      # You should definitely change the password in production
-      - POSTGRES_PASSWORD=!ChangeMe!
-    volumes:
-      - db-data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-    ports:
-      - '5432:5432'
-
-  redis:
-    image: redis/redis-stack:latest
-    ports:
-      - 6379:6379
-      - 8001:8001
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
-    container_name: elasticsearch
-    environment:
-      - xpack.security.enabled=false
-      - node.name=elasticsearch
-      - cluster.name=es-cluster
-      - cluster.routing.allocation.disk.threshold_enabled=false
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    volumes:
-      - es-data:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:8.10.2
-    environment:
-      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
-      SERVER_HOSTS: 0.0.0.0
-    ports:
-      - 5601:5601
-    depends_on:
-      - elasticsearch
-
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5
@@ -111,9 +64,6 @@ networks:
     name: milvus
 
 volumes:
-  db-data: { }
-  es-data:
-    driver: local
   etcd: { }
   minio: { }
   milvus: { }
