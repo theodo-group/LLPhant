@@ -6,6 +6,7 @@ namespace Tests\Integration\Embeddings\VectorStores\Redis;
 
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\Redis\RedisVectorStore;
+use Predis\Client;
 
 it('tests a full embedding flow with Redis', function () {
     // Get the already embeded france.txt and paris.txt documents
@@ -27,7 +28,7 @@ it('tests a full embedding flow with Redis', function () {
     /** @var float[] $embeddingQuery */
     $embeddingQuery = json_decode($rawFileContent, true);
 
-    $redisClient = new Predis\Client([
+    $redisClient = new Client([
         'scheme' => 'tcp',
         'host' => 'localhost',
         'port' => 6379,
