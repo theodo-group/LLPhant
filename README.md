@@ -241,6 +241,9 @@ There are currently 4 vectorStore class:
 - DoctrineVectorStore stores the embeddings in a postgresql database. (require doctrine/orm) 
 - QdrantVectorStore stores the embeddings in a [Qdrant](https://qdrant.tech/) vectorStore. (require hkulekci/qdrant)
 - RedisVectorStore stores the embeddings in a [Redis](https://redis.io/) database. (require predis/predis)
+- ElasticsearchVectorStore stores the embeddings in a [Elasticsearch](https://www.elastic.co/) database. (require
+  elasticsearch/elasticsearch)
+- MilvusVectorStore stores the embeddings in a [Milvus](https://milvus.io/) database.
 
 Example of usage with the `DoctrineVectorStore` class to store the embeddings in a database:
 
@@ -259,7 +262,6 @@ $result = $vectorStore->similaritySearch($embedding, 2);
 ```
 
 To get full example you can have a look at [Doctrine integration tests files](https://github.com/theodo-group/LLPhant/blob/main/tests/Integration/Embeddings/VectorStores/Doctrine/DoctrineVectorStoreTest.php).
-
 
 ##### Doctrine VectorStore
 
@@ -299,6 +301,65 @@ class PlaceEntity extends DoctrineEmbeddingEntityBase
 public ?string $type;
 }
 ```
+
+##### Redis VectorStore
+
+Prerequisites :
+
+- Redis server running (see [Redis quickstart](https://redis.io/topics/quickstart))
+- Predis composer package installed (see [Predis](https://github.com/predis/predis))
+
+Then create a new Redis Client with your server credentials, and pass it to the RedisVectorStore constructor :
+
+```php
+use Predis\Client;
+
+$redisClient = new Client([
+    'scheme' => 'tcp',
+    'host' => 'localhost',
+    'port' => 6379,
+]);
+$vectorStore = new RedisVectorStore($redisClient, 'llphant_custom_index'); // The default index is llphant
+```
+
+You can now use the RedisVectorStore as any other VectorStore.
+
+#### Elasticsearch VectorStore
+
+Prerequisites :
+
+- Elasticsearch server running (
+  see [Elasticsearch quickstart](https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-install.html))
+- Elasticsearch PHP client installed (
+  see [Elasticsearch PHP client](https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/index.html))
+
+Then create a new Elasticsearch Client with your server credentials, and pass it to the ElasticsearchVectorStore
+constructor :
+
+```php
+use Elastic\Elasticsearch\ClientBuilder;
+
+$client = (new ClientBuilder())::create()
+    ->setHosts(['http://localhost:9200'])
+    ->build();
+$vectorStore = new ElasticsearchVectorStore($client, 'llphant_custom_index'); // The default index is llphant
+````
+
+You can now use the ElasticsearchVectorStore as any other VectorStore.
+
+#### Milvus VectorStore
+
+Prerequisites : Milvus server running (see [Milvus docs](https://milvus.io/docs))
+
+Then create a new Milvus client (`LLPhant\Embeddings\VectorStores\Milvus\MiluvsClient`) with your server credentials,
+and pass it to the MilvusVectorStore constructor :
+
+```php
+$client = new MilvusClient('localhost', '19530', 'root', 'milvus');
+$vectorStore = new MilvusVectorStore($client);
+````
+
+You can now use the MilvusVectorStore as any other VectorStore.
 
 ### Question Answering
 A popular use case of LLM is to create a chatbot that can answer questions over your private data.
