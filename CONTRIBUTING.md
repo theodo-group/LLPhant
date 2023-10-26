@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS test_place (
                                           type text,
                                           sourcetype text,
                                           sourcename text,
-                                          pgembedding vector
+                                          embedding vector
 )
 
 ```
