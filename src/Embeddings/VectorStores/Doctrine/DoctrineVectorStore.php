@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LLPhant\Embeddings\VectorStores\Doctrine;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
@@ -24,6 +25,10 @@ final class DoctrineVectorStore extends VectorStoreBase
     {
         if (! class_exists(EntityManager::class)) {
             throw new \RuntimeException('To use this functionality, you must install the `doctrine/orm` package: `composer require doctrine/orm`.');
+        }
+
+        if (! Type::hasType(VectorType::VECTOR)) {
+            Type::addType(VectorType::VECTOR, VectorType::class);
         }
 
         new $this->entityClassName();
@@ -68,8 +73,8 @@ final class DoctrineVectorStore extends VectorStoreBase
         $repository = $this->entityManager->getRepository($this->entityClassName);
         $qb = $repository
             ->createQueryBuilder('e')
-            ->orderBy('L2_DISTANCE(e.pgembedding, :embeddingString)', 'ASC')
-            ->setParameter('embeddingString', $this->formatEmbeddingForPostgresql($embedding))
+            ->orderBy('L2_DISTANCE(e.embedding, :vector)', 'ASC')
+            ->setParameter('vector', $embedding, VectorType::VECTOR)
             ->setMaxResults($k);
 
         foreach ($additionalArguments as $key => $value) {
@@ -81,16 +86,6 @@ final class DoctrineVectorStore extends VectorStoreBase
 
         /** @var DoctrineEmbeddingEntityBase[] */
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * We need to convert the embedding array to a vector compatible string for postgresql
-     *
-     * @param  float[]  $embedding
-     */
-    private function formatEmbeddingForPostgresql(array $embedding): string
-    {
-        return '['.implode(',', $embedding).']';
     }
 
     /**
@@ -106,8 +101,6 @@ final class DoctrineVectorStore extends VectorStoreBase
         if (! $document instanceof DoctrineEmbeddingEntityBase) {
             throw new Exception('Document needs to be an instance of DoctrineEmbeddingEntityBase');
         }
-
-        $document->pgembedding = $this->formatEmbeddingForPostgresql($document->embedding);
 
         $this->entityManager->persist($document);
     }
