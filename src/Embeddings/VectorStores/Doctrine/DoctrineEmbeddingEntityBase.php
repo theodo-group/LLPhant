@@ -13,8 +13,8 @@ class DoctrineEmbeddingEntityBase extends Document
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     public int $id;
 
-    #[ORM\Column(type: Types::TEXT)]
-    public string $pgembedding;
+    #[ORM\Column(type: VectorType::VECTOR, length: 1536)]
+    public array $embedding;
 
     #[ORM\Column(type: Types::TEXT)]
     public string $content;
