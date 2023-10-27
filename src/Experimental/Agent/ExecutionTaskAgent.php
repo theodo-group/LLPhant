@@ -16,18 +16,27 @@ class ExecutionTaskAgent extends AgentBase
 
     private int $iterations = 0;
 
+    private const MAX_REFINEMENT_REQUEST_LENGTH = 5000;
+
     /**
      * @param  FunctionInfo[]  $functions
      */
-    public function __construct(array $functions, OpenAIChat $openAIChat = null, bool $verbose = false)
-    {
+    public function __construct(
+        array $functions,
+        OpenAIChat $openAIChat = null,
+        private readonly int $refinementIterations = 3,
+        bool $verbose = false,
+    ) {
         parent::__construct($verbose);
         $this->openAIChat = $openAIChat ?? new OpenAIChat();
         $this->openAIChat->setFunctions($functions);
     }
 
-    public function run(string $objective, Task $task, string $additionalContext = ''): string
-    {
+    public function run(
+        string $objective,
+        Task $task,
+        string $additionalContext = ''
+    ): string {
         //TODO: add a max length for additionalContext using short term/long term memory
         if ($additionalContext !== '') {
             $additionalContext = "You can use the following information to help you: {$additionalContext}";
@@ -67,18 +76,22 @@ class ExecutionTaskAgent extends AgentBase
         }
     }
 
-    private function refineData(string $objective, Task $task, string $dataToRefine, int $counter = 0): string
-    {
+    private function refineData(
+        string $objective,
+        Task $task,
+        string $dataToRefine,
+        int $counter = 0
+    ): string {
         // Naive approach: if the data is not too long, we don't refine it
-        if (strlen($dataToRefine) <= 20000) {
+        if (strlen($dataToRefine) <= self::MAX_REFINEMENT_REQUEST_LENGTH) {
             return $dataToRefine;
         }
-        if ($counter >= 3) {
+        if ($counter >= $this->refinementIterations) {
             return $dataToRefine;
         }
         $document = new Document();
         $document->content = $dataToRefine;
-        $splittedDocuments = DocumentSplitter::splitDocument($document, 20000);
+        $splittedDocuments = DocumentSplitter::splitDocument($document, self::MAX_REFINEMENT_REQUEST_LENGTH);
 
         $refinedData = '';
 
@@ -88,7 +101,8 @@ class ExecutionTaskAgent extends AgentBase
         foreach ($splittedDocuments as $splittedDocument) {
             //TODO: we should ignore part of the data that is not relevant to the task
             $prompt = "You are part of a big project. The main objective is {$objective}. You need to perform the following task: {$task->description}.
-                You MUST be very concise and only extract information that can help for the task and objective.: {$splittedDocument->content}.";
+                You MUST be very concise and only extract information that can help for the task and objective. The data you have to use: {$splittedDocument->content}.";
+
             $refinedData .= $gpt3->generateText($prompt).' ';
         }
 
