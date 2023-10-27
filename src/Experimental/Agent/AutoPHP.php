@@ -20,19 +20,20 @@ class AutoPHP
 
     public PrioritizationTaskAgent $prioritizationTaskAgent;
 
-    public bool $verbose;
-
     /**
      * @param  FunctionInfo[]  $functionsAvailable
      */
-    public function __construct(public string $objective, /* @var FunctionInfo[] */
-        public array $functionsAvailable, bool $verbose = false)
-    {
+    public function __construct(
+        public string $objective,
+        /* @var FunctionInfo[] */
+        public array $functionsAvailable,
+        public bool $verbose = false,
+        public int $refinementIteration = 3
+    ) {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
         $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, null, $verbose);
         $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, null, $verbose);
-        $this->verbose = $verbose;
     }
 
     public function run(int $maxIteration = 100): string
@@ -51,7 +52,8 @@ class AutoPHP
 
             // TODO: add a mechanism to get the best tool for a given Task
 
-            $executionAgent = new ExecutionTaskAgent($this->functionsAvailable, null, $this->verbose);
+            $executionAgent = new ExecutionTaskAgent($this->functionsAvailable, null, $this->refinementIteration,
+                $this->verbose);
             $currentTask->result = $executionAgent->run($this->objective, $currentTask, $context);
 
             CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
