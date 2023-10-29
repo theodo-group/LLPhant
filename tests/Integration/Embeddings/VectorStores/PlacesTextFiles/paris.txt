@@ -1,9 +1,5 @@
 Dog is eating fruits
 
-
-Paris (English: /ˈpærɪs/; French pronunciation: ​[paʁi] (listen)) is the capital and most populous city of France,
-with an official estimated population of 2,102,650 residents as of 1 January 2023[2] in an area of more than 105 km2 (41 sq mi),
-[5] making it the fourth-most populated city in the European Union as well as the 30th most densely populated city in the world in 2022.[6]
-
+Paris (English: /ˈpærɪs/; French pronunciation: ​[paʁi] (listen)) is the capital and most populous city of France,with an official estimated population of 2,102,650 residents as of 1 January 2023[2] in an area of more than 105 km2 (41 sq mi),[5] making it the fourth-most populated city in the European Union as well as the 30th most densely populated city in the world in 2022.[6]
 
 Grandma is visiting us
