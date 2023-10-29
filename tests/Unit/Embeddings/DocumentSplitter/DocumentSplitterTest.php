@@ -39,3 +39,19 @@ it('splits multiple documents', function () {
     expect($result[0]->content)->toBe('This is a test');
     expect($result[1]->content)->toBe('Hello World!');
 });
+
+it('splits texts with \n in it', function () {
+    $document1 = new Document();
+    $document1->content = 'Burritos are cool
+
+
+France (French: [fʁɑ̃s] Listen), officially the French Republic (French: République française [ʁepyblik fʁɑ̃sɛz]),
+[14] is a country located primarily in Western Europe.
+It also includes overseas regions and territories in the Americas and the Atlantic,
+Pacific and Indian Oceans,[XII] giving it one of the largest discontiguous exclusive economic zones in the world.
+
+
+The house is on fire';
+    $result = DocumentSplitter::splitDocument($document1, 100, "\n");
+    expect($result[0]->content)->toBe('Burritos are cool');
+});
