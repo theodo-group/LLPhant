@@ -29,7 +29,7 @@ final class DoctrineVectorStore extends VectorStoreBase
 
         $conn = $entityManager->getConnection();
         $registeredTypes = Type::getTypesMap();
-        if(!array_key_exists(VectorType::VECTOR, $registeredTypes)) {
+        if (! array_key_exists(VectorType::VECTOR, $registeredTypes)) {
             Type::addType(VectorType::VECTOR, VectorType::class);
             $conn->getDatabasePlatform()->registerDoctrineTypeMapping('vector', VectorType::VECTOR);
         }
@@ -79,7 +79,7 @@ final class DoctrineVectorStore extends VectorStoreBase
             ->setMaxResults($k);
 
         foreach ($additionalArguments as $key => $value) {
-            $paramName = 'where_' . $key;
+            $paramName = 'where_'.$key;
             $qb
                 ->andWhere(sprintf('e.%s = :%s', $key, $paramName))
                 ->setParameter($paramName, $value);

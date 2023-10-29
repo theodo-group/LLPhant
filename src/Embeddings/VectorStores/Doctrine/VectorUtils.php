@@ -5,15 +5,14 @@ namespace LLPhant\Embeddings\VectorStores\Doctrine;
 class VectorUtils
 {
     /**
-     * @param float[] $vector
-     * @return string
+     * @param  float[]  $vector
      */
-    static public function getVectorAsString(array $vector): string
+    public static function getVectorAsString(array $vector): string
     {
-        if (count($vector) === 0) {
-            return "";
+        if ($vector === []) {
+            return '';
         }
 
-        return '[' . implode(',', $vector) . ']';
+        return '['.implode(',', $vector).']';
     }
 }
