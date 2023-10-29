@@ -61,7 +61,6 @@ class VectorType extends Type
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): string
     {
-        //If $value is not a float array throw an exception
         if (! is_array($value)) {
             throw Exception::notSupported('VECTORs must be an array.');
         }

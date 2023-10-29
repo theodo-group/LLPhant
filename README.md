@@ -287,7 +287,7 @@ CREATE TABLE IF NOT EXISTS test_place (
    type TEXT,
    sourcetype TEXT,
    sourcename TEXT,
-   pgembedding VECTOR
+   embedding VECTOR
 );
 ```
 
