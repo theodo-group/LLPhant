@@ -33,11 +33,7 @@ class VectorType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (! is_array($value) || count($value) === 0) {
-            return null;
-        }
-
-        return '[' . implode(',', $value) . ']';
+        return VectorUtils::getVectorAsString($value);
     }
 
     public function getName()

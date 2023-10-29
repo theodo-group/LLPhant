@@ -14,7 +14,7 @@ class DoctrineEmbeddingEntityBase extends Document
     public int $id;
 
     #[ORM\Column(type: VectorType::VECTOR, length: 1536)]
-    public array $embedding;
+    public ?array $embedding;
 
     #[ORM\Column(type: Types::TEXT)]
     public string $content;

@@ -28,11 +28,11 @@ final class DoctrineVectorStore extends VectorStoreBase
         }
 
         $conn = $entityManager->getConnection();
-        $conn->getDatabasePlatform()->registerDoctrineTypeMapping('vector', VectorType::VECTOR);
-
-        Type::addType(VectorType::VECTOR, VectorType::class);
-
-        new $this->entityClassName();
+        $registeredTypes = Type::getTypesMap();
+        if(!array_key_exists(VectorType::VECTOR, $registeredTypes)) {
+            Type::addType(VectorType::VECTOR, VectorType::class);
+            $conn->getDatabasePlatform()->registerDoctrineTypeMapping('vector', VectorType::VECTOR);
+        }
     }
 
     /**
@@ -74,8 +74,8 @@ final class DoctrineVectorStore extends VectorStoreBase
         $repository = $this->entityManager->getRepository($this->entityClassName);
         $qb = $repository
             ->createQueryBuilder('e')
-            ->orderBy('L2_DISTANCE(e.pgembedding, :embeddingString)', 'ASC')
-            ->setParameter('embeddingString', $embedding)
+            ->orderBy('L2_DISTANCE(e.embedding, :embeddingString)', 'ASC')
+            ->setParameter('embeddingString', VectorUtils::getVectorAsString($embedding))
             ->setMaxResults($k);
 
         foreach ($additionalArguments as $key => $value) {

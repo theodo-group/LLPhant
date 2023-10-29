@@ -39,13 +39,13 @@ final class DocumentSplitter
                     $currentChunk .= $separator.$word;
                 }
             } else {
-                $chunks[] = $currentChunk;
+                $chunks[] = trim($currentChunk);
                 $currentChunk = $word;
             }
         }
 
         if (! empty($currentChunk)) {
-            $chunks[] = $currentChunk;
+            $chunks[] = trim($currentChunk);
         }
         $splittedDocuments = [];
         $chunkNumber = 0;
