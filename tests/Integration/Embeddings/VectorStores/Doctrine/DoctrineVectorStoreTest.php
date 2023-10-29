@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Integration\Embeddings\VectorStores\Doctrine;
 
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use LLPhant\Embeddings\DataReader\FileDataReader;
@@ -13,7 +12,6 @@ use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Doctrine\DoctrineVectorStore;
-use LLPhant\Embeddings\VectorStores\Doctrine\VectorType;
 
 it('creates two entity with their embeddings and perform a similarity search', function () {
     $config = ORMSetup::createAttributeMetadataConfiguration(
