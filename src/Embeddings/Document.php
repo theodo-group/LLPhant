@@ -17,7 +17,7 @@ class Document
 
     public string $sourceName = 'manual';
 
-    public string $hash;
+    public string $hash = '';
 
     public int $chunkNumber = 0;
 }
