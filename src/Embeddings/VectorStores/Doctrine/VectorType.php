@@ -12,27 +12,30 @@ class VectorType extends Type
     final public const VECTOR = 'vector';
 
     /**
-     * @param  mixed[]  $fieldDeclaration
+     * @param  mixed[]  $column
      */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform): string
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        if (! $platform instanceof PostgreSQLPlatform) {
+        // getName is deprecated since doctrine/dbal 2.13 see: https://github.com/doctrine/dbal/issues/4749
+        // BUT it is the most stable way to check if the platform is PostgreSQLPlatform in a lot of doctrine versions
+        // so we will use it and add a check for the class name in case it is removed in the future
+        if (method_exists($platform, 'getName') && $platform->getName() !== 'postgresql') {
             throw Exception::notSupported('VECTORs not supported by Platform.');
         }
 
-        if (! isset($fieldDeclaration['length'])) {
+        if (! isset($column['length'])) {
             throw Exception::notSupported('VECTORs must have a length.');
         }
 
-        if ($fieldDeclaration['length'] < 1) {
+        if ($column['length'] < 1) {
             throw Exception::notSupported('VECTORs must have a length greater than 0.');
         }
 
-        if (! is_int($fieldDeclaration['length'])) {
+        if (! is_int($column['length'])) {
             throw Exception::notSupported('VECTORs must have a length that is an integer.');
         }
 
-        return sprintf('vector(%d)', $fieldDeclaration['length']);
+        return sprintf('vector(%d)', $column['length']);
     }
 
     /**
