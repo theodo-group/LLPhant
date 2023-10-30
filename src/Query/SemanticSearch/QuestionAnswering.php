@@ -17,17 +17,23 @@ class QuestionAnswering
     {
     }
 
-    public function answerQuestion(string $question): string
+    /**
+     * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
+     */
+    public function answerQuestion(string $question, int $k = 4, array $additionalArguments = []): string
     {
-        $systemMessage = $this->searchDocumentAndCreateSystemMessage($question);
+        $systemMessage = $this->searchDocumentAndCreateSystemMessage($question, $k, $additionalArguments);
         $this->openAIChat->setSystemMessage($systemMessage);
 
         return $this->openAIChat->generateText($question);
     }
 
-    public function answerQuestionStream(string $question): string
+    /**
+     * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
+     */
+    public function answerQuestionStream(string $question, int $k = 4, array $additionalArguments = []): string
     {
-        $systemMessage = $this->searchDocumentAndCreateSystemMessage($question);
+        $systemMessage = $this->searchDocumentAndCreateSystemMessage($question, $k, $additionalArguments);
         $this->openAIChat->setSystemMessage($systemMessage);
 
         return $this->openAIChat->generateStreamOfText($question);
@@ -35,23 +41,27 @@ class QuestionAnswering
 
     /**
      * @param  Message[]  $messages
+     * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
      */
-    public function answerQuestionFromChat(array $messages): StreamedResponse
+    public function answerQuestionFromChat(array $messages, int $k = 4, array $additionalArguments = []): StreamedResponse
     {
         // First we need to give the context to openAI with the good instructions
         $userQuestion = $messages[count($messages) - 1]->content;
-        $systemMessage = $this->searchDocumentAndCreateSystemMessage($userQuestion);
+        $systemMessage = $this->searchDocumentAndCreateSystemMessage($userQuestion, $k, $additionalArguments);
         $this->openAIChat->setSystemMessage($systemMessage);
 
         // Then we can just give the conversation
         return $this->openAIChat->generateChatStream($messages);
     }
 
-    private function searchDocumentAndCreateSystemMessage(string $question): string
+    /**
+     * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
+     */
+    private function searchDocumentAndCreateSystemMessage(string $question, int $k, array $additionalArguments): string
     {
         $embedding = $this->embeddingGenerator->embedText($question);
         /** @var Document[] $documents */
-        $documents = $this->vectorStoreBase->similaritySearch($embedding);
+        $documents = $this->vectorStoreBase->similaritySearch($embedding, $k, $additionalArguments);
 
         if ($documents === []) {
             return "I don't know. I didn't find any document to answer the question";
