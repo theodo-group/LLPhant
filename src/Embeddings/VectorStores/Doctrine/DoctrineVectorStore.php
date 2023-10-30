@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace LLPhant\Embeddings\VectorStores\Doctrine;
 
 use Doctrine\DBAL\Types\Type;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
@@ -21,9 +21,9 @@ final class DoctrineVectorStore extends VectorStoreBase
      *
      * @throws Exception
      */
-    public function __construct(private readonly EntityManager $entityManager, public readonly string $entityClassName)
+    public function __construct(private readonly EntityManagerInterface $entityManager, public readonly string $entityClassName)
     {
-        if (! class_exists(EntityManager::class)) {
+        if (! class_exists(EntityManagerInterface::class)) {
             throw new \RuntimeException('To use this functionality, you must install the `doctrine/orm` package: `composer require doctrine/orm`.');
         }
 
