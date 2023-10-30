@@ -16,7 +16,9 @@ class ExecutionTaskAgent extends AgentBase
 
     private int $iterations = 0;
 
-    private const MAX_REFINEMENT_REQUEST_LENGTH = 5000;
+    // 7000 character is a little less than 4097 tokens,
+    // 4097 tokens is the default maximum allowed by OpenAI API per request
+    private const MAX_REFINEMENT_REQUEST_LENGTH = 7000;
 
     /**
      * @param  FunctionInfo[]  $functions
@@ -39,7 +41,7 @@ class ExecutionTaskAgent extends AgentBase
     ): string {
         //TODO: add a max length for additionalContext using short term/long term memory
         if ($additionalContext !== '') {
-            $additionalContext = "You can use the following information to help you: {$additionalContext}";
+            $additionalContext = "You should use the following refined informations : (start of the data){$additionalContext}(end of the data).";
         }
 
         $prompt = "You are part of a big project. You need to perform the following task: {$task->description}
@@ -98,10 +100,17 @@ class ExecutionTaskAgent extends AgentBase
         $gpt3 = new OpenAIChat();
         $gpt3->model = OpenAIChatModel::Gpt35Turbo->getModelName();
 
+        $splittedDocumentsTotal = count($splittedDocuments);
+        $splittedDocumentsCounter = 0;
         foreach ($splittedDocuments as $splittedDocument) {
+            $splittedDocumentsCounter++;
+            CLIOutputUtils::render('📄Refining data: '.$splittedDocumentsCounter.' / '.$splittedDocumentsTotal,
+                $this->verbose);
             //TODO: we should ignore part of the data that is not relevant to the task
             $prompt = "You are part of a big project. The main objective is {$objective}. You need to perform the following task: {$task->description}.
-                You MUST be very concise and only extract information that can help for the task and objective. The data you have to use: {$splittedDocument->content}.";
+                You MUST be very concise and only extract information that can help for the task and objective.
+                If you can't find any useful information from the given data, you MUST answer with 'NO DATA.'.
+                The data you must use: (start of the data){$splittedDocument->content}(end of the data).";
 
             $refinedData .= $gpt3->generateText($prompt).' ';
         }
