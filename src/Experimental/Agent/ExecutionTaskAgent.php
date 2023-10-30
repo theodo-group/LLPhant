@@ -16,8 +16,10 @@ class ExecutionTaskAgent extends AgentBase
 
     private int $iterations = 0;
 
-    // 7000 character is a little less than 4097 tokens,
-    // 4097 tokens is the default maximum allowed by OpenAI API per request
+    public int $refinementIterations = 3;
+
+    // 7000 character is around 4000 tokens,
+    // 8000 tokens is the default maximum (input +generation) allowed by OpenAI API per request
     private const MAX_REFINEMENT_REQUEST_LENGTH = 7000;
 
     /**
@@ -26,7 +28,6 @@ class ExecutionTaskAgent extends AgentBase
     public function __construct(
         array $functions,
         OpenAIChat $openAIChat = null,
-        private readonly int $refinementIterations = 3,
         bool $verbose = false,
     ) {
         parent::__construct($verbose);
@@ -111,8 +112,8 @@ class ExecutionTaskAgent extends AgentBase
                 You MUST be very concise and only extract information that can help for the task and objective.
                 If you can't find any useful information from the given data, you MUST answer with 'NO DATA.'.
                 The data you must use: (start of the data){$splittedDocument->content}(end of the data).";
-
-            $refinedData .= $gpt3->generateText($prompt).' ';
+            $refinedContent = $gpt3->generateText($prompt).' ';
+            $refinedData .= $refinedContent;
         }
 
         if ($this->verbose) {

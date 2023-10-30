@@ -16,9 +16,7 @@
         "phpoffice/phpword": "^1.1",
         "smalot/pdfparser": "^2.7",
         "symfony/cache": "*",
-        "symfony/http-foundation": "^6.0.0",
-        "ext-dom": "*",
-        "ext-libxml": "*"
+        "symfony/http-foundation": "^6.0.0"
     },
     "suggest": {
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
