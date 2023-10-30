@@ -6,7 +6,12 @@ use LLPhant\Utils\CLIOutputUtils;
 
 class WebPageTextGetter extends ToolBase
 {
-    public function getWebPageText(string $url): string
+    /**
+     * Get the information content of a web page by its URL.
+     *
+     * @throws \Exception
+     */
+    public static function getWebPageText(string $url): string
     {
         CLIOutputUtils::renderTitleAndMessageOrange('🔧 retrieving web page content', $url, true);
 

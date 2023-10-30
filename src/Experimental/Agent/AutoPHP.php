@@ -28,7 +28,6 @@ class AutoPHP
         /* @var FunctionInfo[] */
         public array $functionsAvailable,
         public bool $verbose = false,
-        public int $refinementIteration = 3
     ) {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
@@ -52,8 +51,7 @@ class AutoPHP
 
             // TODO: add a mechanism to get the best tool for a given Task
 
-            $executionAgent = new ExecutionTaskAgent($this->functionsAvailable, null, $this->refinementIteration,
-                $this->verbose);
+            $executionAgent = new ExecutionTaskAgent($this->functionsAvailable, null, $this->verbose);
             $currentTask->result = $executionAgent->run($this->objective, $currentTask, $context);
 
             CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
