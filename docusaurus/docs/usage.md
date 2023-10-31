@@ -337,4 +337,7 @@ $qa = new QuestionAnswering(
 );
 
 $answer = $qa->answerQuestion('what is the secret of Alice?');
+
+// control the behavior of the underlying vector store, see VectorStoreBase::similaritySearch
+$answer = $qa->answerQuestion('Where does Alice live?', 2, ['type' => 'city']);
 ```
