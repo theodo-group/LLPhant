@@ -45,6 +45,18 @@ $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
 $response = $chat->generateText('what is one + one ?'); // will return "ok"
 ```
 
+You can also provide an entire conversation to the LLM.
+```php
+$messages = [
+    Message::system('You are an experienced PHP developer.'),
+    Message::user('What is the purpose of array_map?'),
+    Message::assistant('The function `array_map` applies a callback to each element ...'),
+    Message::user('Can you please provide an example?'),
+];
+
+$response = $chat->generateChat($messages);
+```
+
 ## Function
 This feature is amazing. 
 OpenAI has refined its model to determine whether a function should be invoked. 
