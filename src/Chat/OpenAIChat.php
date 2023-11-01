@@ -75,6 +75,17 @@ final class OpenAIChat
     /**
      * @param  Message[]  $messages
      */
+    public function generateChat(array $messages): string
+    {
+        $openAiArgs = $this->getOpenAiArgs($messages);
+        $answer = $this->client->chat()->create($openAiArgs);
+
+        return $answer->choices[0]->message->content ?? '';
+    }
+
+    /**
+     * @param  Message[]  $messages
+     */
     public function generateChatStream(array $messages): StreamedResponse
     {
         return $this->createStreamedResponse($messages);
