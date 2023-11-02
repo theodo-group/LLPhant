@@ -37,7 +37,7 @@ final class Message
         return $message;
     }
 
-    public static function functionCall(string $content): self
+    public static function functionResult(string $content): self
     {
         $message = new self();
         $message->role = ChatRole::Function;
