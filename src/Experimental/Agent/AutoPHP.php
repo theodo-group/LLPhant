@@ -21,12 +21,12 @@ class AutoPHP
     public PrioritizationTaskAgent $prioritizationTaskAgent;
 
     /**
-     * @param  FunctionInfo[]  $functionsAvailable
+     * @param  FunctionInfo[]  $tools
      */
     public function __construct(
         public string $objective,
         /* @var FunctionInfo[] */
-        public array $functionsAvailable,
+        public array $tools,
         public bool $verbose = false,
     ) {
         $this->taskManager = new TaskManager();
@@ -39,7 +39,7 @@ class AutoPHP
     {
         terminal()->clear();
         CLIOutputUtils::renderTitle('🐘 AutoPHP 🐘', '🎯 Objective: '.$this->objective, $this->verbose);
-        $this->creationTaskAgent->createTasks($this->objective);
+        $this->creationTaskAgent->createTasks($this->objective, $this->tools);
         CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
         $currentTask = $this->prioritizationTaskAgent->prioritizeTask($this->objective);
         $iteration = 1;
@@ -50,8 +50,7 @@ class AutoPHP
             $context = $this->prepareNeededDataForTaskCompletion($currentTask);
 
             // TODO: add a mechanism to get the best tool for a given Task
-
-            $executionAgent = new ExecutionTaskAgent($this->functionsAvailable, null, $this->verbose);
+            $executionAgent = new ExecutionTaskAgent($this->tools, null, $this->verbose);
             $currentTask->result = $executionAgent->run($this->objective, $currentTask, $context);
 
             CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
@@ -62,7 +61,7 @@ class AutoPHP
             }
 
             if (count($this->taskManager->getUnachievedTasks()) <= 1) {
-                $this->creationTaskAgent->createTasks($this->objective);
+                $this->creationTaskAgent->createTasks($this->objective, $this->tools);
             }
 
             $currentTask = $this->prioritizationTaskAgent->prioritizeTask($this->objective);
