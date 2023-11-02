@@ -25,24 +25,27 @@ class CreationTaskAgent extends AgentBase
 
     /**
      * Generates new tasks using OpenAI API based on previous tasks' results.
+     *
+     * @param  FunctionInfo[]  $tools
      */
-    public function createTasks(string $objective): void
+    public function createTasks(string $objective, array $tools): void
     {
         // Join the task list into a string for the prompt
         $unachievedTasks = implode(', ', array_column($this->taskManager->getUnachievedTasks(), 'name'));
 
         if (empty($this->taskManager->getAchievedTasks())) {
             $prompt = 'You are a task creation AI that uses the result of an execution agent. '
-                ."The objective is: {$objective},"
-                .' No task has been done yet.'
-                ." These are incomplete tasks: {$unachievedTasks}."
-                .' Based on the result, create new tasks to be completed only if needed.';
+                ."The objective is: {$objective}."
+                .'You have the following tools available: '.$this->getToolsDescription($tools)
+                .'You need to create tasks to do the objective.';
+
         } else {
             $achievedTasks = $this->taskManager->getAchievedTasksNameAndResult();
             $prompt = 'You are a task creation AI that uses the result of an execution agent'
                 ."Your objective is: {$objective},"
                 ." The previous tasks are: {$achievedTasks}."
                 ." These are incomplete tasks: {$unachievedTasks}."
+                .'You have the following tools available: '.$this->getToolsDescription($tools)
                 .' Based on the result of previous tasks, create new tasks to do the objective but ONLY if needed.'
                 .' You MUST avoid create duplicated tasks.';
         }
@@ -50,5 +53,18 @@ class CreationTaskAgent extends AgentBase
 
         // We don't handle the response because the function will be executed
         $this->openAIChat->generateText($prompt);
+    }
+
+    /**
+     * @param  FunctionInfo[]  $tools
+     */
+    private function getToolsDescription(array $tools): string
+    {
+        $toolsDescription = '';
+        foreach ($tools as $tool) {
+            $toolsDescription .= "The tool {$tool->name} is used to {$tool->description}.";
+        }
+
+        return $toolsDescription;
     }
 }
