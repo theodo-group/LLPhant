@@ -69,7 +69,7 @@ class QdrantVectorStore extends VectorStoreBase
 
     /**
      * @param  float[]  $embedding
-     * @param  array<ConditionInterface[]>  $additionalArguments
+     * @param  array<string, ConditionInterface[]>  $additionalArguments
      * @return array|mixed[]
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
