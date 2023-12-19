@@ -11,8 +11,6 @@ use LLPhant\Utils\CLIOutputUtils;
 
 class ExecutionTaskAgent extends AgentBase
 {
-    private readonly OpenAIChat $openAIChat;
-
     private int $iterations = 0;
 
     public int $refinementIterations = 3;
@@ -26,11 +24,10 @@ class ExecutionTaskAgent extends AgentBase
      */
     public function __construct(
         array $functions,
-        ?OpenAIChat $openAIChat = null,
+        private readonly OpenAIChat $openAIChat = new OpenAIChat(),
         bool $verbose = false,
     ) {
         parent::__construct($verbose);
-        $this->openAIChat = $openAIChat ?? new OpenAIChat();
         $this->openAIChat->setFunctions($functions);
     }
 
