@@ -35,8 +35,8 @@ class AutoPHP
     ) {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
-        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, null, $verbose);
-        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, null, $verbose);
+        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, new OpenAIChat(), $verbose);
+        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, new OpenAIChat(), $verbose);
         $this->defaultModelName = OpenAIChatModel::Gpt4Turbo->getModelName();
     }
 
@@ -56,7 +56,7 @@ class AutoPHP
             $context = "Previous tasks status: {$previousCompletedTask}";
 
             // TODO: add a mechanism to get the best tool for a given Task
-            $executionAgent = new ExecutionTaskAgent($this->tools, null, $this->verbose);
+            $executionAgent = new ExecutionTaskAgent($this->tools, new OpenAIChat(), $this->verbose);
             $currentTask->result = $executionAgent->run($this->objective, $currentTask, $context);
 
             CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
