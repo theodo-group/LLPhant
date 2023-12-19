@@ -9,12 +9,9 @@ use LLPhant\Utils\CLIOutputUtils;
 
 class CreationTaskAgent extends AgentBase
 {
-    private readonly OpenAIChat $openAIChat;
-
-    public function __construct(private readonly TaskManager $taskManager, ?OpenAIChat $openAIChat = null, bool $verbose = false)
+    public function __construct(private readonly TaskManager $taskManager, private readonly OpenAIChat $openAIChat = new OpenAIChat(), bool $verbose = false)
     {
         parent::__construct($verbose);
-        $this->openAIChat = $openAIChat ?? new OpenAIChat();
         $nameTask = new Parameter('name', 'string', 'name of the task');
         $descriptionTask = new Parameter('description', 'string', 'description of the task');
         $param = new Parameter('tasks', 'array', 'tasks to be added to the list of tasks to be completed', [], null, [$nameTask, $descriptionTask]);

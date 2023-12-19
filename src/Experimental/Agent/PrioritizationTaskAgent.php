@@ -7,12 +7,9 @@ use LLPhant\Utils\CLIOutputUtils;
 
 class PrioritizationTaskAgent extends AgentBase
 {
-    private readonly OpenAIChat $openAIChat;
-
-    public function __construct(private readonly TaskManager $taskManager, ?OpenAIChat $openAIChat = null, bool $verbose = false)
+    public function __construct(private readonly TaskManager $taskManager, private readonly OpenAIChat $openAIChat = new OpenAIChat(), bool $verbose = false)
     {
         parent::__construct($verbose);
-        $this->openAIChat = $openAIChat ?? new OpenAIChat();
     }
 
     public function prioritizeTask(string $objective): ?Task
