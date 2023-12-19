@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use function getenv;
 
-final class OpenAIChat
+class OpenAIChat
 {
     private readonly Client $client;
 
@@ -40,7 +40,7 @@ final class OpenAIChat
             throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
         }
         $this->client = OpenAI::client($apiKey);
-        $this->model = $config->model ?? OpenAIChatModel::Gpt4->getModelName();
+        $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->getModelName();
     }
 
     public function generateText(string $prompt): string

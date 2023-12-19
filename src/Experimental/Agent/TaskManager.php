@@ -74,4 +74,14 @@ class TaskManager
 
         return $previousCompletedTask;
     }
+
+    public function getUnachievedTasksNameAndResult(): string
+    {
+        $unachievedTasks = '';
+        foreach ($this->getUnachievedTasks() as $task) {
+            $unachievedTasks .= "Task: {$task->name}.";
+        }
+
+        return $unachievedTasks;
+    }
 }

@@ -2,8 +2,12 @@
 
 namespace LLPhant\Experimental\Agent;
 
+use LLPhant\Chat\Enums\OpenAIChatModel;
+use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\FunctionRunner;
 use LLPhant\Chat\OpenAIChat;
+use LLPhant\OpenAIConfig;
 use LLPhant\Utils\CLIOutputUtils;
 
 use function Termwind\terminal;
@@ -14,11 +18,11 @@ class AutoPHP
 
     public TaskManager $taskManager;
 
-    public ExecutionTaskAgent $executionAgent;
-
     public CreationTaskAgent $creationTaskAgent;
 
     public PrioritizationTaskAgent $prioritizationTaskAgent;
+
+    public string $defaultModelName;
 
     /**
      * @param  FunctionInfo[]  $tools
@@ -33,6 +37,7 @@ class AutoPHP
         $this->openAIChat = new OpenAIChat();
         $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, null, $verbose);
         $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, null, $verbose);
+        $this->defaultModelName = OpenAIChatModel::Gpt4Turbo->getModelName();
     }
 
     public function run(int $maxIteration = 100): string
@@ -47,7 +52,8 @@ class AutoPHP
             CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
 
             // TODO: add a mechanism to retrieve short-term / long-term memory
-            $context = $this->prepareNeededDataForTaskCompletion($currentTask);
+            $previousCompletedTask = $this->taskManager->getAchievedTasksNameAndResult();
+            $context = "Previous tasks status: {$previousCompletedTask}";
 
             // TODO: add a mechanism to get the best tool for a given Task
             $executionAgent = new ExecutionTaskAgent($this->tools, null, $this->verbose);
@@ -60,7 +66,7 @@ class AutoPHP
                 return $finalResult;
             }
 
-            if (count($this->taskManager->getUnachievedTasks()) <= 1) {
+            if (count($this->taskManager->getUnachievedTasks()) <= 0) {
                 $this->creationTaskAgent->createTasks($this->objective, $this->tools);
             }
 
@@ -71,37 +77,39 @@ class AutoPHP
         return "failed to achieve objective in {$iteration} iterations";
     }
 
-    private function prepareNeededDataForTaskCompletion(Task $task): string
-    {
-        if ($this->taskManager->getAchievedTasks() === []) {
-            return '';
-        }
-
-        $previousCompletedTask = $this->taskManager->getAchievedTasksNameAndResult();
-        $prompt = "You are a data analyst expert.
-        You need to select the data needed to perform the following task from previous tasks: {$task->description}
-        Previous tasks: {$previousCompletedTask}";
-
-        if ($this->verbose) {
-            CLIOutputUtils::render('Prepare data from previous tasks. Prompt:'.$prompt, $this->verbose);
-        }
-
-        return $this->openAIChat->generateText($prompt);
-    }
-
     private function getObjectiveResult(): ?string
     {
+        $config = new OpenAIConfig();
+        $config->model = $this->defaultModelName;
+        $model = new OpenAIChat($config);
+        $autoPHPInternalTool = new AutoPHPInternalTool();
+        $enoughDataToFinishFunction = FunctionBuilder::buildFunctionInfo($autoPHPInternalTool, 'objectiveStatus');
+        $model->setFunctions([$enoughDataToFinishFunction]);
+        $model->requiredFunction = $enoughDataToFinishFunction;
+
         $achievedTasks = $this->taskManager->getAchievedTasksNameAndResult();
+        $unachievedTasks = $this->taskManager->getUnachievedTasksNameAndResult();
 
         $prompt = "Consider the ultimate objective of your team: {$this->objective}."
-            .'Based on the data from previous tasks, you need to determine if the objective has been achieved.'
+            .'Based on the result from previous tasks, you need to determine if the objective has been achieved.'
             ."The previous tasks are: {$achievedTasks}."
-            ."If you have enough data, give the exact answer to the objective {$this->objective}. If you don't have enought data, simply return 'no'.";
+            ."Remaining tasks: {$unachievedTasks}."
+            ."If the objective has been completed, give the exact answer to the objective {$this->objective}.";
 
-        $response = $this->openAIChat->generateText($prompt);
+        $stringOrFunctionInfo = $model->generateTextOrReturnFunctionCalled($prompt);
+        if (! $stringOrFunctionInfo instanceof FunctionInfo) {
+            // Shouldn't be null as OPENAI should call the function
+            return null;
+        }
 
-        if (strtolower($response) !== 'no') {
-            return $response;
+        $objectiveData = FunctionRunner::run($stringOrFunctionInfo);
+        if (! is_array($objectiveData)) {
+            // The wrong function has probably been called, shouldn't happen
+            return null;
+        }
+
+        if ($objectiveData['objectiveCompleted']) {
+            return $objectiveData['answer'];
         }
 
         return null;

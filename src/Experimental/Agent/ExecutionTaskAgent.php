@@ -2,7 +2,6 @@
 
 namespace LLPhant\Experimental\Agent;
 
-use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\FunctionRunner;
 use LLPhant\Chat\OpenAIChat;
@@ -40,14 +39,9 @@ class ExecutionTaskAgent extends AgentBase
         Task $task,
         string $additionalContext = ''
     ): string {
-        //TODO: add a max length for additionalContext using short term/long term memory
-        if ($additionalContext !== '') {
-            $additionalContext = "You should use the following refined informations : (start of the data){$additionalContext}(end of the data).";
-        }
-
         $prompt = "You are part of a big project. You need to perform the following task: {$task->description}
             {$additionalContext}
-            If you have enough information, answer with only the relevant information related to the task.
+            If you have enough information or if you know that the task has been done, answer with only the relevant information related to the task.
             Your answer:";
 
         CLIOutputUtils::renderTitleAndMessageGreen('🤖 ExecutionTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
@@ -56,15 +50,17 @@ class ExecutionTaskAgent extends AgentBase
         try {
             $stringOrFunctionInfo = $this->openAIChat->generateTextOrReturnFunctionCalled($prompt);
             if ($stringOrFunctionInfo instanceof FunctionInfo) {
-                // We don't want to agent to try endlessly a task that is not possible to do
+                // We don't want the agent to try endlessly a task that is not possible to do
                 if ($this->iterations >= 5) {
                     return 'Task failed';
                 }
                 // $toolResponse can be a very long string
                 $toolResponse = FunctionRunner::run($stringOrFunctionInfo);
-                $refinedData = $this->refineData($objective, $task, $toolResponse);
+                $refinedData = is_string($toolResponse) ? $this->refineData($objective, $task, $toolResponse) : 'no data returned';
 
-                $newContext = $additionalContext.$refinedData;
+                $message = "The function {$stringOrFunctionInfo->name} was called. The following data was returned:
+                    (data from function) {$refinedData} (end of data from function)";
+                $newContext = $additionalContext.$message;
                 $this->iterations++;
 
                 return $this->run($objective, $task, $newContext);
@@ -74,6 +70,7 @@ class ExecutionTaskAgent extends AgentBase
             return $stringOrFunctionInfo;
         } catch (\Exception $e) {
             var_dump('error'.$e->getMessage());
+            $task->wasSuccessful = false;
 
             return 'Task failed';
         }
@@ -82,9 +79,13 @@ class ExecutionTaskAgent extends AgentBase
     private function refineData(
         string $objective,
         Task $task,
-        string $dataToRefine,
+        ?string $dataToRefine,
         int $counter = 0
     ): string {
+        if (is_null($dataToRefine)) {
+            return '';
+        }
+
         // Naive approach: if the data is not too long, we don't refine it
         if (strlen($dataToRefine) <= self::MAX_REFINEMENT_REQUEST_LENGTH) {
             return $dataToRefine;
@@ -98,8 +99,7 @@ class ExecutionTaskAgent extends AgentBase
 
         $refinedData = '';
 
-        $gpt3 = new OpenAIChat();
-        $gpt3->model = OpenAIChatModel::Gpt35Turbo->getModelName();
+        $gpt = new OpenAIChat();
 
         $splittedDocumentsTotal = count($splittedDocuments);
         $splittedDocumentsCounter = 0;
@@ -112,8 +112,7 @@ class ExecutionTaskAgent extends AgentBase
                 You MUST be very concise and only extract information that can help for the task and objective.
                 If you can't find any useful information from the given data, you MUST answer with 'NO DATA.'.
                 The data you must use: (start of the data){$splittedDocument->content}(end of the data).";
-            $refinedContent = $gpt3->generateText($prompt).' ';
-            $refinedData .= $refinedContent;
+            $refinedData .= $gpt->generateText($prompt).' ';
         }
 
         if ($this->verbose) {
