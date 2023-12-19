@@ -29,7 +29,7 @@
         "doctrine/orm": "^2.13.0",
         "guzzlehttp/psr7": "^2.5.0",
         "hkulekci/qdrant": "^v0.4",
-        "laravel/pint": "^1.11.0",
+        "laravel/pint": "^v1.13.7",
         "nunomaduro/collision": "^7.7.0",
         "pestphp/pest": "dev-develop as 2.6.2",
         "pestphp/pest-plugin-arch": "^2.2.1",
