@@ -11,7 +11,7 @@ class CreationTaskAgent extends AgentBase
 {
     private readonly OpenAIChat $openAIChat;
 
-    public function __construct(private readonly TaskManager $taskManager, OpenAIChat $openAIChat = null, bool $verbose = false)
+    public function __construct(private readonly TaskManager $taskManager, ?OpenAIChat $openAIChat = null, bool $verbose = false)
     {
         parent::__construct($verbose);
         $this->openAIChat = $openAIChat ?? new OpenAIChat();

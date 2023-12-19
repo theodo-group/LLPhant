@@ -26,7 +26,7 @@ class ExecutionTaskAgent extends AgentBase
      */
     public function __construct(
         array $functions,
-        OpenAIChat $openAIChat = null,
+        ?OpenAIChat $openAIChat = null,
         bool $verbose = false,
     ) {
         parent::__construct($verbose);

@@ -18,7 +18,7 @@ class SerpApiSearch extends ToolBase
     /**
      * @throws Exception
      */
-    public function __construct(string $apiKey = null, bool $verbose = false)
+    public function __construct(?string $apiKey = null, bool $verbose = false)
     {
         parent::__construct($verbose);
         $apiKey ??= getenv('SERP_API_KEY');
