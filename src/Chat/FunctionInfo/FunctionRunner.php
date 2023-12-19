@@ -4,7 +4,7 @@ namespace LLPhant\Chat\FunctionInfo;
 
 class FunctionRunner
 {
-    public static function run(FunctionInfo $functionInfo): string
+    public static function run(FunctionInfo $functionInfo): mixed
     {
         if (! isset($functionInfo->jsonArgs)) {
             return $functionInfo->instance->{$functionInfo->name}();

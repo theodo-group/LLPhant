@@ -7,7 +7,7 @@ use LLPhant\Utils\CLIOutputUtils;
 class WebPageTextGetter extends ToolBase
 {
     /**
-     * Get the information content of a web page by its URL.
+     * Get the content of a web page by its URL.
      *
      * @throws \Exception
      */

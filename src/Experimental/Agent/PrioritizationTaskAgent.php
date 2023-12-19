@@ -17,7 +17,7 @@ class PrioritizationTaskAgent extends AgentBase
 
     public function prioritizeTask(string $objective): ?Task
     {
-        if (count($this->taskManager->getUnachievedTasks()) <= 1) {
+        if (count($this->taskManager->getUnachievedTasks()) <= 0) {
             return $this->taskManager->getNextTask();
         }
 
@@ -26,12 +26,10 @@ class PrioritizationTaskAgent extends AgentBase
             $unachievedTasks .= "id:{$key} name: {$task->name}.";
         }
         $achievedTasks = $this->taskManager->getAchievedTasksNameAndResult();
-
-        // Prepare the prompt using the provided information
         $prompt = "Consider the ultimate objective of your team: {$objective}.
-                You are a task prioritization AI tasked with reprioritizing the following tasks: {$unachievedTasks}."
+                You are a tasks prioritization AI tasked with prioritizing the following tasks: {$unachievedTasks}."
             ." To help you the previous tasks are: {$achievedTasks}."
-            .' Return the id of the next task that will bring us closer to achieve the objective';
+            .' Return the id of the task that we should do next';
 
         CLIOutputUtils::renderTitleAndMessageGreen('🤖 PrioritizationTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 

@@ -30,16 +30,15 @@ class CreationTaskAgent extends AgentBase
      */
     public function createTasks(string $objective, array $tools): void
     {
-        // Join the task list into a string for the prompt
-        $unachievedTasks = implode(', ', array_column($this->taskManager->getUnachievedTasks(), 'name'));
-
         if (empty($this->taskManager->getAchievedTasks())) {
-            $prompt = 'You are a task creation AI that uses the result of an execution agent. '
+            $prompt = 'You are a task creation AI. '
                 ."The objective is: {$objective}."
                 .'You have the following tools available: '.$this->getToolsDescription($tools)
                 .'You need to create tasks to do the objective.';
 
         } else {
+            // Join the task list into a string for the prompt
+            $unachievedTasks = implode(', ', array_column($this->taskManager->getUnachievedTasks(), 'name'));
             $achievedTasks = $this->taskManager->getAchievedTasksNameAndResult();
             $prompt = 'You are a task creation AI that uses the result of an execution agent'
                 ."Your objective is: {$objective},"

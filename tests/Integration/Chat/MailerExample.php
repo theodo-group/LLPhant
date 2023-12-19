@@ -7,10 +7,10 @@ namespace Tests\Integration\Chat;
 class MailerExample
 {
     /**
-     * This function send an email
+     * send an email
      */
-    public function sendMail(string $subject, string $body, string $email): void
+    public function sendMail(string $subject, string $body, string $email): string
     {
-        echo 'The email has been sent to '.$email.' with the subject '.$subject.' and the body '.$body.'.';
+        return 'The email has been sent to '.$email.' with the subject '.$subject.' and the body '.$body.'.';
     }
 }
