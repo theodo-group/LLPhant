@@ -17,7 +17,10 @@ class PrioritizationTaskAgent extends AgentBase
 
     public function prioritizeTask(string $objective): ?Task
     {
-        if (count($this->taskManager->getUnachievedTasks()) <= 0) {
+        if (count($this->taskManager->getUnachievedTasks()) <= 1) {
+            return $this->taskManager->getNextTask();
+        }
+        if ($this->taskManager->getAchievedTasks() === []) {
             return $this->taskManager->getNextTask();
         }
 
