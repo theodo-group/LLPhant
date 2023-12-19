@@ -96,8 +96,8 @@ class MilvusClient
         string $collectionName,
         array $vector,
         int $limit,
-        string $filter = null,
-        array $outputFields = null
+        ?string $filter = null,
+        ?array $outputFields = null
     ): array {
         $path = 'vector/search';
         $body = [
@@ -120,7 +120,7 @@ class MilvusClient
      *
      * @phpstan-ignore-next-line
      */
-    public function getEntity(string $collectionName, string $id, array $outputFields = null): array
+    public function getEntity(string $collectionName, string $id, ?array $outputFields = null): array
     {
         $path = 'vector/get';
         $body = [

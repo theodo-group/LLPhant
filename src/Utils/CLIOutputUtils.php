@@ -42,7 +42,7 @@ class CLIOutputUtils
     /**
      * @param  Task[]  $tasks
      */
-    public static function printTasks(bool $verbose, array $tasks, Task $currentTask = null): void
+    public static function printTasks(bool $verbose, array $tasks, ?Task $currentTask = null): void
     {
         $liItems = '';
         foreach ($tasks as $task) {
@@ -74,7 +74,7 @@ class CLIOutputUtils
         );
     }
 
-    private static function truncateString(bool $verbose, string $message, string $title = null): string
+    private static function truncateString(bool $verbose, string $message, ?string $title = null): string
     {
         $maxSize = 250;
         if ($title) {

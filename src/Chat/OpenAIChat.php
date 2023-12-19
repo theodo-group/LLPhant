@@ -33,7 +33,7 @@ class OpenAIChat
 
     public ?FunctionInfo $requiredFunction = null;
 
-    public function __construct(OpenAIConfig $config = null)
+    public function __construct(?OpenAIConfig $config = null)
     {
         $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
         if (! $apiKey) {
