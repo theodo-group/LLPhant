@@ -60,7 +60,9 @@ $response = $chat->generateChat($messages);
 ```
 
 ## Tools
+
 This feature is amazing. 
+
 OpenAI has refined its model to determine whether tools should be invoked.
 To utilize this, simply send a description of the available tools to OpenAI,
 either as a single prompt or within a broader conversation.
