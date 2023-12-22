@@ -47,4 +47,18 @@ class ToolFormatter
             ],
         ];
     }
+
+    public static function formatToolChoice(?FunctionInfo $requiredFunction)
+    {
+        if ($requiredFunction === null) {
+            return null;
+        }
+
+        return [
+            'type' => 'function',
+            'function' => [
+                'name' => $requiredFunction->name,
+            ],
+        ];
+    }
 }

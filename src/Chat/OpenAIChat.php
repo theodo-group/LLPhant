@@ -218,8 +218,7 @@ class OpenAIChat
         }
 
         if ($this->requiredFunction instanceof FunctionInfo) {
-            $openAiArgs['function_call'] =
-                ['name' => $this->requiredFunction->name];
+            $openAiArgs['tool_choice'] = ToolFormatter::formatToolChoice($this->requiredFunction);
         }
 
         return $openAiArgs;
