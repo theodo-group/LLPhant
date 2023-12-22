@@ -13,6 +13,8 @@ You can also create an OpenAIConfig object and pass it to the constructor of the
 
 ```php
 $config = new OpenAIConfig();
+// optional: wire a PSR-18 HTTP client, such as symfony/http-client
+$config->client = new PSR18Client();
 $config->apiKey = 'fakeapikey';
 $chat = new OpenAIChat($config);
 ```
