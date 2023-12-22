@@ -4,6 +4,10 @@ namespace LLPhant\Chat\FunctionInfo;
 
 class ToolFormatter
 {
+    /**
+     * @param  FunctionInfo[]  $functions
+     * @return mixed[]
+     */
     public static function formatFunctionsToOpenAITools(array $functions): array
     {
         if ($functions === []) {
@@ -48,7 +52,10 @@ class ToolFormatter
         ];
     }
 
-    public static function formatToolChoice(?FunctionInfo $requiredFunction)
+    /**
+     * @return array{type: string, function: array{name: string}}|null
+     */
+    public static function formatToolChoice(?FunctionInfo $requiredFunction): ?array
     {
         if (! $requiredFunction instanceof FunctionInfo) {
             return null;
