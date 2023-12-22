@@ -8,6 +8,20 @@ use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\Parameter;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
+use OpenAI\Client;
+
+it('can be supplied with a custom client', function () {
+    $client = \Mockery::mock(Client::class);
+    $client->shouldReceive('chat')->once();
+
+    $config = new OpenAIConfig();
+    $config->client = $client;
+
+    $chat = new OpenAIChat($config);
+    $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
+    $response = $chat->generateText('what is one + one ?');
+    expect($response)->toBeString();
+});
 
 it('can generate some stuff', function () {
     $chat = new OpenAIChat();

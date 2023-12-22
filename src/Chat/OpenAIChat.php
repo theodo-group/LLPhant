@@ -35,11 +35,16 @@ class OpenAIChat
 
     public function __construct(?OpenAIConfig $config = null)
     {
-        $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
-        if (! $apiKey) {
-            throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
+        if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
+            $this->client = $config->client;
+        } else {
+            $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
+            if (! $apiKey) {
+                throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
+            }
+
+            $this->client = OpenAI::client($apiKey);
         }
-        $this->client = OpenAI::client($apiKey);
         $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->getModelName();
     }
 
