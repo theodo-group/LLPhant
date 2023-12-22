@@ -11,9 +11,9 @@ use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
-use OpenAI\Responses\Chat\CreateResponseFunctionCall;
+use OpenAI\Responses\Chat\CreateResponseToolCall;
 use OpenAI\Responses\Chat\CreateStreamedResponse;
-use OpenAI\Responses\Chat\CreateStreamedResponseFunctionCall;
+use OpenAI\Responses\Chat\CreateStreamedResponseToolCall;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use function getenv;
@@ -51,7 +51,7 @@ class OpenAIChat
     public function generateText(string $prompt): string
     {
         $answer = $this->generate($prompt);
-        $this->handleFunctionCall($answer);
+        $this->handleTools($answer);
 
         return $answer->choices[0]->message->content ?? '';
     }
@@ -59,12 +59,14 @@ class OpenAIChat
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
         $answer = $this->generate($prompt);
-        $functionToCall = $this->getFunctionToCall($answer);
+        $functionsToCall = $this->getToolsToCall($answer);
 
-        if ($functionToCall instanceof FunctionInfo) {
+        foreach ($functionsToCall as $functionToCall) {
             $this->lastFunctionCalled = $functionToCall;
+        }
 
-            return $functionToCall;
+        if ($this->lastFunctionCalled instanceof FunctionInfo) {
+            return $this->lastFunctionCalled;
         }
 
         return $answer->choices[0]->message->content ?? '';
@@ -154,30 +156,37 @@ class OpenAIChat
         @ob_end_clean();
 
         $response->setCallback(function () use ($stream): void {
-            $arguments = '';
-            $functionName = null;
+            $toolsCalled = [];
+
             /** @var CreateStreamedResponse $partialResponse */
             foreach ($stream as $partialResponse) {
-                $responseFunctionCall = $partialResponse->choices[0]->delta->functionCall;
-                if ($responseFunctionCall instanceof CreateStreamedResponseFunctionCall) {
-                    if (! is_null($responseFunctionCall->name)) {
-                        $functionName = $responseFunctionCall->name;
-                    }
-                    if (! is_null($responseFunctionCall->arguments)) {
-                        $arguments .= $responseFunctionCall->arguments;
-                    }
+                $toolCalls = $partialResponse->choices[0]->delta->toolCalls ?? [];
+                /** @var CreateStreamedResponseToolCall $toolCall */
+                foreach ($toolCalls as $toolCall) {
+                    $toolsCalled[] = [
+                        'function' => $toolCall->function->name,
+                        'arguments' => $toolCall->function->arguments,
+                    ];
                 }
+
                 // $functionName should be always set if finishReason is function_call
-                if ($partialResponse->choices[0]->finishReason === 'function_call' && $functionName) {
-                    $this->callFunction($functionName, $arguments);
+                if ($partialResponse->choices[0]->finishReason === 'function_call' && $toolsCalled !== []) {
+                    foreach ($toolsCalled as $toolCalled) {
+                        if (is_string($toolCalled['function']) && is_string($toolCalled['arguments'])) {
+                            $this->callFunction($toolCalled['function'], $toolCalled['arguments']);
+                        }
+                    }
                 }
+
                 if (! is_null($partialResponse->choices[0]->finishReason)) {
                     ob_start();
                     break;
                 }
+
                 if (! ($partialResponse->choices[0]->delta->content)) {
                     continue;
                 }
+
                 echo $partialResponse->choices[0]->delta->content;
             }
         });
@@ -219,28 +228,36 @@ class OpenAIChat
     /**
      * @throws \JsonException
      */
-    private function handleFunctionCall(CreateResponse $answer): void
+    private function handleTools(CreateResponse $answer): void
     {
-        if ($answer->choices[0]->message->functionCall instanceof CreateResponseFunctionCall) {
-            $functionName = $answer->choices[0]->message->functionCall->name;
-            $arguments = $answer->choices[0]->message->functionCall->arguments;
+        /** @var CreateResponseToolCall $toolCall */
+        foreach ($answer->choices[0]->message->toolCalls as $toolCall) {
+            $functionName = $toolCall->function->name;
+            $arguments = $toolCall->function->arguments;
 
             $this->callFunction($functionName, $arguments);
         }
     }
 
-    private function getFunctionToCall(CreateResponse $answer): ?FunctionInfo
+    /**
+     * @return array<FunctionInfo>
+     *
+     * @throws Exception
+     */
+    private function getToolsToCall(CreateResponse $answer): array
     {
-        if ($answer->choices[0]->message->functionCall instanceof CreateResponseFunctionCall) {
-            $functionName = $answer->choices[0]->message->functionCall->name;
-            $arguments = $answer->choices[0]->message->functionCall->arguments;
+        $functionInfos = [];
+        /** @var CreateResponseToolCall $toolCall */
+        foreach ($answer->choices[0]->message->toolCalls as $toolCall) {
+            $functionName = $toolCall->function->name;
+            $arguments = $toolCall->function->arguments;
             $functionInfo = $this->getFunctionInfoFromName($functionName);
             $functionInfo->jsonArgs = $arguments;
 
-            return $functionInfo;
+            $functionInfos[] = $functionInfo;
         }
 
-        return null;
+        return $functionInfos;
     }
 
     /**
