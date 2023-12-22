@@ -50,7 +50,7 @@ class ToolFormatter
 
     public static function formatToolChoice(?FunctionInfo $requiredFunction)
     {
-        if (!$requiredFunction instanceof FunctionInfo) {
+        if (! $requiredFunction instanceof FunctionInfo) {
             return null;
         }
 
