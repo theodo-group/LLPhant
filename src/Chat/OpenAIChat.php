@@ -5,8 +5,8 @@ namespace LLPhant\Chat;
 use Exception;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
-use LLPhant\Chat\FunctionInfo\FunctionFormatter;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\ToolFormatter;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
@@ -214,7 +214,7 @@ class OpenAIChat
         ];
 
         if ($this->functions !== []) {
-            $openAiArgs['functions'] = FunctionFormatter::formatFunctionsToOpenAI($this->functions);
+            $openAiArgs['tools'] = ToolFormatter::formatFunctionsToOpenAITools($this->functions);
         }
 
         if ($this->requiredFunction instanceof FunctionInfo) {
