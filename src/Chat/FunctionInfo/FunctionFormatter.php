@@ -5,6 +5,8 @@ namespace LLPhant\Chat\FunctionInfo;
 class FunctionFormatter
 {
     /**
+     * @deprecated Switch to using tools instead of functions in your code
+     *
      * @param  FunctionInfo[]  $functions
      * @return mixed[]
      */
@@ -23,6 +25,8 @@ class FunctionFormatter
     }
 
     /**
+     * @deprecated Switch to using tools instead of functions in your code
+     *
      * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, mixed[]>, required: string[]}}
      */
     public static function formatOneFunctionToOpenAI(FunctionInfo $functionInfo): array
