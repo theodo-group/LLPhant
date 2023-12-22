@@ -27,7 +27,7 @@ class OpenAIChat
     private Message $systemMessage;
 
     /** @var FunctionInfo[] */
-    private array $functions = [];
+    private array $tools = [];
 
     public ?FunctionInfo $lastFunctionCalled = null;
 
@@ -59,10 +59,10 @@ class OpenAIChat
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
         $answer = $this->generate($prompt);
-        $functionsToCall = $this->getToolsToCall($answer);
+        $toolsToCall = $this->getToolsToCall($answer);
 
-        foreach ($functionsToCall as $functionToCall) {
-            $this->lastFunctionCalled = $functionToCall;
+        foreach ($toolsToCall as $toolToCall) {
+            $this->lastFunctionCalled = $toolToCall;
         }
 
         if ($this->lastFunctionCalled instanceof FunctionInfo) {
@@ -110,16 +110,34 @@ class OpenAIChat
     }
 
     /**
+     * @param  FunctionInfo[]  $tools
+     */
+    public function setTools(array $tools): void
+    {
+        $this->tools = $tools;
+    }
+
+    public function addTool(FunctionInfo $functionInfo): void
+    {
+        $this->tools[] = $functionInfo;
+    }
+
+    /**
+     * @deprecated Use setTools instead
+     *
      * @param  FunctionInfo[]  $functions
      */
     public function setFunctions(array $functions): void
     {
-        $this->functions = $functions;
+        $this->tools = $functions;
     }
 
+    /**
+     * @deprecated Use addTool instead
+     */
     public function addFunction(FunctionInfo $functionInfo): void
     {
-        $this->functions[] = $functionInfo;
+        $this->tools[] = $functionInfo;
     }
 
     private function generate(string $prompt): CreateResponse
@@ -213,8 +231,8 @@ class OpenAIChat
             'messages' => $finalMessages,
         ];
 
-        if ($this->functions !== []) {
-            $openAiArgs['tools'] = ToolFormatter::formatFunctionsToOpenAITools($this->functions);
+        if ($this->tools !== []) {
+            $openAiArgs['tools'] = ToolFormatter::formatFunctionsToOpenAITools($this->tools);
         }
 
         if ($this->requiredFunction instanceof FunctionInfo) {
@@ -264,7 +282,7 @@ class OpenAIChat
      */
     private function getFunctionInfoFromName(string $functionName): FunctionInfo
     {
-        foreach ($this->functions as $function) {
+        foreach ($this->tools as $function) {
             if ($function->name === $functionName) {
                 return $function;
             }
