@@ -59,11 +59,15 @@ $messages = [
 $response = $chat->generateChat($messages);
 ```
 
-## Function
+## Tools
 This feature is amazing. 
-OpenAI has refined its model to determine whether a function should be invoked. 
-To utilize this, simply send a description of the function to OpenAI, either as a single prompt or within a broader conversation. 
-In response, the model will provide the function name along with the parameter values, if it deems the function should be called.
+OpenAI has refined its model to determine whether tools should be invoked.
+To utilize this, simply send a description of the available tools to OpenAI,
+either as a single prompt or within a broader conversation.
+
+In the response, the model will provide the called tools names along with the parameter values,
+if it deems the one or more tools should be called.
+
 One potential application is to ascertain if a user has additional queries during a support interaction.
 Even more impressively, it can automate actions based on user inquiries.
 
@@ -71,6 +75,7 @@ We made it as simple as possible to use this feature.
 
 Let's see an example of how to use it.
 Imagine you have a class that send emails.
+
 ```php
 class MailerExample
 {
@@ -86,7 +91,7 @@ class MailerExample
 
 You can create a FunctionInfo object that will describe your method to OpenAI.
 Then you can add it to the OpenAIChat object.
-If the response from OpenAI contains a function name and parameters, LLPhant will call the function.
+If the response from OpenAI contains a tools' name and parameters, LLPhant will call the tool.
 
 <div align="center">
     <img src="/assets/function-flow.png" alt="Function flow" style={{paddingBottom:20}} />
@@ -96,9 +101,9 @@ This PHP script will most likely call the sendMail method that we pass to OpenAI
 
 ```php
 $chat = new OpenAIChat();
-// This helper will automatically gather information to describe the function
-$function = FunctionBuilder::buildFunctionInfo(new MailerExample(), 'sendMail');
-$chat->addFunction($function);
+// This helper will automatically gather information to describe the tools
+$tool = FunctionBuilder::buildFunctionInfo(new MailerExample(), 'sendMail');
+$chat->addTool($tool);
 $chat->setSystemMessage('You are an AI that deliver information using the email system. 
 When you have enough information to answer the question of the user you send a mail');
 $chat->generateText('Who is Marie Curie in one line? My email is student@foo.com');
@@ -112,14 +117,14 @@ $subject = new Parameter('subject', 'string', 'the subject of the mail');
 $body = new Parameter('body', 'string', 'the body of the mail');
 $email = new Parameter('email', 'string', 'the email address');
 
-$function = new FunctionInfo(
+$tool = new FunctionInfo(
     'sendMail',
     new MailerExample(),
     'send a mail',
     [$subject, $body, $email]
 );
 
-$chat->addFunction($function);
+$chat->addTool($tool);
 $chat->setSystemMessage('You are an AI that deliver information using the email system. When you have enough information to answer the question of the user you send a mail');
 $chat->generateText('Who is Marie Curie in one line? My email is student@foo.com');
 ```
