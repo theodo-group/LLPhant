@@ -276,7 +276,7 @@ One simple solution for web developers is to use a postgresql database as a vect
 You can find all the information on the pgvector extension on its [github repository](https://github.com/pgvector/pgvector).
 
 We suggest you 3 simple solutions to get a postgresql database with the extension enabled:
-- use docker with the [docker-compose.yml](devx/docker-compose.yml) file
+- use docker with the [docker-compose-pgvector.yml](devx/docker-compose-pgvector.yml) file
 - use [Supabase](https://supabase.com/)
 - use [Neon](https://neon.tech/)
 
