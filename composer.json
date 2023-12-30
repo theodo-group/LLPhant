@@ -16,6 +16,7 @@
         "phpoffice/phpword": "^1.1",
         "smalot/pdfparser": "^2.7",
         "symfony/cache": "*",
+        "symfony/http-client": "^6.0.0 || ^7.0.0",
         "symfony/http-foundation": "^6.0.0 || ^7.0.0"
     },
     "suggest": {
