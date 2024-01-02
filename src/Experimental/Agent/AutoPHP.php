@@ -32,6 +32,7 @@ class AutoPHP
         /* @var FunctionInfo[] */
         public array $tools,
         public bool $verbose = false,
+        public OutputAgentInterface $outputAgent = new CLIOutputUtils(),
     ) {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
@@ -43,13 +44,13 @@ class AutoPHP
     public function run(int $maxIteration = 100): string
     {
         terminal()->clear();
-        CLIOutputUtils::renderTitle('🐘 AutoPHP 🐘', '🎯 Objective: '.$this->objective, $this->verbose);
+        $this->outputAgent->renderTitle('🐘 AutoPHP 🐘', '🎯 Objective: '.$this->objective, $this->verbose);
         $this->creationTaskAgent->createTasks($this->objective, $this->tools);
-        CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
+        $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks);
         $currentTask = $this->prioritizationTaskAgent->prioritizeTask($this->objective);
         $iteration = 1;
         while ($currentTask instanceof Task && $maxIteration >= $iteration) {
-            CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
+            $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
 
             // TODO: add a mechanism to retrieve short-term / long-term memory
             $previousCompletedTask = $this->taskManager->getAchievedTasksNameAndResult();
@@ -59,9 +60,9 @@ class AutoPHP
             $executionAgent = new ExecutionTaskAgent($this->tools, new OpenAIChat(), $this->verbose);
             $currentTask->result = $executionAgent->run($this->objective, $currentTask, $context);
 
-            CLIOutputUtils::printTasks($this->verbose, $this->taskManager->tasks);
+            $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks);
             if ($finalResult = $this->getObjectiveResult()) {
-                CLIOutputUtils::renderTitle('🏆️ Success! 🏆️', 'Result: '.$finalResult, true);
+                $this->outputAgent->renderTitle('🏆️ Success! 🏆️', 'Result: '.$finalResult, true);
 
                 return $finalResult;
             }

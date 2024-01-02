@@ -9,7 +9,7 @@ use LLPhant\Utils\CLIOutputUtils;
 
 class CreationTaskAgent extends AgentBase
 {
-    public function __construct(private readonly TaskManager $taskManager, private readonly OpenAIChat $openAIChat, bool $verbose = false)
+    public function __construct(private readonly TaskManager $taskManager, private readonly OpenAIChat $openAIChat, bool $verbose = false, public OutputAgentInterface $outputAgent = new CLIOutputUtils())
     {
         parent::__construct($verbose);
         $nameTask = new Parameter('name', 'string', 'name of the task');
@@ -45,7 +45,7 @@ class CreationTaskAgent extends AgentBase
                 .' Based on the result of previous tasks, create new tasks to do the objective but ONLY if needed.'
                 .' You MUST avoid create duplicated tasks.';
         }
-        CLIOutputUtils::renderTitleAndMessageGreen('🤖 CreationTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
+        $this->outputAgent->renderTitleAndMessageGreen('🤖 CreationTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 
         // We don't handle the response because the function will be executed
         $this->openAIChat->generateText($prompt);
