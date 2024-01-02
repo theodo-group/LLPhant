@@ -2,11 +2,12 @@
 
 namespace LLPhant\Utils;
 
+use LLPhant\Experimental\Agent\OutputAgentInterface;
 use LLPhant\Experimental\Agent\Task;
 
 use function Termwind\{render};
 
-class CLIOutputUtils
+class CLIOutputUtils implements OutputAgentInterface
 {
     public static function render(string $message, bool $verbose): void
     {
@@ -31,12 +32,6 @@ class CLIOutputUtils
     {
         $message = self::truncateString($verbose, $message, $title);
         render('<div><div class="px-1 bg-orange-300">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
-    }
-
-    public static function renderTitleAndMessageYellow(string $title, string $message, bool $verbose): void
-    {
-        $message = self::truncateString($verbose, $message, $title);
-        render('<div><div class="px-1 bg-yellow-300">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
     }
 
     /**

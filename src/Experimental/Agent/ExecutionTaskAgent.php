@@ -26,6 +26,7 @@ class ExecutionTaskAgent extends AgentBase
         array $functions,
         private readonly OpenAIChat $openAIChat = new OpenAIChat(),
         bool $verbose = false,
+        public OutputAgentInterface $outputAgent = new CLIOutputUtils()
     ) {
         parent::__construct($verbose);
         $this->openAIChat->setFunctions($functions);
@@ -41,7 +42,7 @@ class ExecutionTaskAgent extends AgentBase
             If you have enough information or if you know that the task has been done, answer with only the relevant information related to the task.
             Your answer:";
 
-        CLIOutputUtils::renderTitleAndMessageGreen('🤖 ExecutionTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
+        $this->outputAgent->renderTitleAndMessageGreen('🤖 ExecutionTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 
         // Send prompt to OpenAI API and retrieve the result
         try {
@@ -102,7 +103,7 @@ class ExecutionTaskAgent extends AgentBase
         $splittedDocumentsCounter = 0;
         foreach ($splittedDocuments as $splittedDocument) {
             $splittedDocumentsCounter++;
-            CLIOutputUtils::render('📄Refining data: '.$splittedDocumentsCounter.' / '.$splittedDocumentsTotal,
+            $this->outputAgent->render('📄Refining data: '.$splittedDocumentsCounter.' / '.$splittedDocumentsTotal,
                 $this->verbose);
             //TODO: we should ignore part of the data that is not relevant to the task
             $prompt = "You are part of a big project. The main objective is {$objective}. You need to perform the following task: {$task->description}.
@@ -113,7 +114,7 @@ class ExecutionTaskAgent extends AgentBase
         }
 
         if ($this->verbose) {
-            CLIOutputUtils::renderTitleAndMessageOrange('Refined data: ', $refinedData, $this->verbose);
+            $this->outputAgent->renderTitleAndMessageOrange('Refined data: ', $refinedData, $this->verbose);
         }
 
         return $this->refineData($objective, $task, $refinedData, $counter + 1);

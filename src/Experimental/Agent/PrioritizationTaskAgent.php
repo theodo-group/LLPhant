@@ -7,7 +7,7 @@ use LLPhant\Utils\CLIOutputUtils;
 
 class PrioritizationTaskAgent extends AgentBase
 {
-    public function __construct(private readonly TaskManager $taskManager, private readonly OpenAIChat $openAIChat = new OpenAIChat(), bool $verbose = false)
+    public function __construct(private readonly TaskManager $taskManager, private readonly OpenAIChat $openAIChat = new OpenAIChat(), bool $verbose = false, public OutputAgentInterface $outputAgent = new CLIOutputUtils())
     {
         parent::__construct($verbose);
     }
@@ -31,11 +31,11 @@ class PrioritizationTaskAgent extends AgentBase
             ." To help you the previous tasks are: {$achievedTasks}."
             .' Return the id of the task that we should do next';
 
-        CLIOutputUtils::renderTitleAndMessageGreen('🤖 PrioritizationTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
+        $this->outputAgent->renderTitleAndMessageGreen('🤖 PrioritizationTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 
         $response = $this->openAIChat->generateText($prompt);
 
-        CLIOutputUtils::renderTitleAndMessageGreen('🤖 PrioritizationTaskAgent.', 'Response: '.$response, $this->verbose);
+        $this->outputAgent->renderTitleAndMessageGreen('🤖 PrioritizationTaskAgent.', 'Response: '.$response, $this->verbose);
 
         // Look for the first number in the response
         if (preg_match('/\d+/', $response, $matches)) {
