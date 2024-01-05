@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use LLPhant\Chat\OpenAIChat;
+use LLPhant\Experimental\Agent\OutputAgentInterface;
 use LLPhant\Utils\CLIOutputUtils;
 use LLPhant\Utils\StringParser;
 
@@ -18,7 +19,7 @@ class SerpApiSearch extends ToolBase
     /**
      * @throws Exception
      */
-    public function __construct(?string $apiKey = null, bool $verbose = false)
+    public function __construct(?string $apiKey = null, bool $verbose = false, public OutputAgentInterface $outputAgent = new CLIOutputUtils())
     {
         parent::__construct($verbose);
         $apiKey ??= getenv('SERP_API_KEY');
@@ -30,14 +31,14 @@ class SerpApiSearch extends ToolBase
     }
 
     /**
-     * Perform a Google search using the SerpApi and use OpenAI to extract and generate a clear response.
+     * Perform a Google search and extract a clear response.
      *
      * @throws Exception|GuzzleException
      */
-    public function search(string $googleQuery): string
+    public function googleSearch(string $googleQuery): string
     {
         $params = ['q' => $googleQuery, 'api_key' => $this->apiKey];
-        CLIOutputUtils::renderTitleAndMessageOrange('🔧 Executing tool SerpApi', $googleQuery, $this->verbose);
+        $this->outputAgent->renderTitleAndMessageOrange('🔧 Executing tool SerpApi', $googleQuery, $this->verbose);
 
         try {
             $response = $this->client->request('GET', '', ['query' => $params]);
@@ -57,7 +58,7 @@ class SerpApiSearch extends ToolBase
                 }
             }
 
-            CLIOutputUtils::render('Results from SerpApi: '.$results, $this->verbose);
+            $this->outputAgent->render('Results from SerpApi: '.$results, $this->verbose);
             $this->lastResponse = $results;
             $this->wasSuccessful = true;
 
@@ -76,7 +77,7 @@ class SerpApiSearch extends ToolBase
     public function searchAndGetPageContent(string $googleQuery, string $informationWeAreLookingFor): string
     {
         $params = ['q' => $googleQuery, 'api_key' => $this->apiKey];
-        CLIOutputUtils::renderTitleAndMessageOrange('🔧 Executing tool SerpApi', $googleQuery, $this->verbose);
+        $this->outputAgent->renderTitleAndMessageOrange('🔧 Executing tool SerpApi', $googleQuery, $this->verbose);
 
         try {
             $response = $this->client->request('GET', '', ['query' => $params]);
@@ -100,7 +101,7 @@ class SerpApiSearch extends ToolBase
             $gpt = new OpenAIChat();
             $prompt = 'Return ONLY the best URL of the page containing the information about '.$informationWeAreLookingFor.' from this list: '.$results;
             if ($this->verbose) {
-                CLIOutputUtils::render('Prompt sent to OpenAI: '.$prompt, $this->verbose);
+                $this->outputAgent->render('Prompt sent to OpenAI: '.$prompt, $this->verbose);
             }
 
             $gptAnswer = $gpt->generateText('Return the best URL of the page containing the information about '.$informationWeAreLookingFor.' from this list: '.$results);
@@ -112,9 +113,9 @@ class SerpApiSearch extends ToolBase
                 return '';
             }
 
-            CLIOutputUtils::render('URL found from SerpApi: '.$URLs[0], $this->verbose);
+            $this->outputAgent->render('URL found from SerpApi: '.$URLs[0], $this->verbose);
 
-            $this->lastResponse = WebPageTextGetter::getWebPageText($URLs[0]);
+            $this->lastResponse = (new WebPageTextGetter())->getWebPageText($URLs[0]);
             $this->wasSuccessful = true;
 
             return $this->lastResponse;

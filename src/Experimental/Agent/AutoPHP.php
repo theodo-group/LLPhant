@@ -10,8 +10,6 @@ use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
 use LLPhant\Utils\CLIOutputUtils;
 
-use function Termwind\terminal;
-
 class AutoPHP
 {
     public OpenAIChat $openAIChat;
@@ -23,6 +21,8 @@ class AutoPHP
     public PrioritizationTaskAgent $prioritizationTaskAgent;
 
     public string $defaultModelName;
+
+    private const CONTROL_FILE_PATH = 'control.txt';
 
     /**
      * @param  FunctionInfo[]  $tools
@@ -36,14 +36,13 @@ class AutoPHP
     ) {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
-        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, new OpenAIChat(), $verbose);
-        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, new OpenAIChat(), $verbose);
+        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, new OpenAIChat(), $verbose, $this->outputAgent);
+        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, new OpenAIChat(), $verbose, $this->outputAgent);
         $this->defaultModelName = OpenAIChatModel::Gpt4Turbo->getModelName();
     }
 
     public function run(int $maxIteration = 100): string
     {
-        terminal()->clear();
         $this->outputAgent->renderTitle('🐘 AutoPHP 🐘', '🎯 Objective: '.$this->objective, $this->verbose);
         $this->creationTaskAgent->createTasks($this->objective, $this->tools);
         $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks);
@@ -55,6 +54,7 @@ class AutoPHP
             // TODO: add a mechanism to retrieve short-term / long-term memory
             $previousCompletedTask = $this->taskManager->getAchievedTasksNameAndResult();
             $context = "Previous tasks status: {$previousCompletedTask}";
+            $this->checkForCancellation();
 
             // TODO: add a mechanism to get the best tool for a given Task
             $executionAgent = new ExecutionTaskAgent($this->tools, new OpenAIChat(), $this->verbose);
@@ -66,12 +66,14 @@ class AutoPHP
 
                 return $finalResult;
             }
+            $this->checkForCancellation();
 
             if (count($this->taskManager->getUnachievedTasks()) <= 0) {
                 $this->creationTaskAgent->createTasks($this->objective, $this->tools);
             }
 
             $currentTask = $this->prioritizationTaskAgent->prioritizeTask($this->objective);
+            $this->checkForCancellation();
             $iteration++;
         }
 
@@ -114,5 +116,24 @@ class AutoPHP
         }
 
         return null;
+    }
+
+    private function checkForCancellation(): void
+    {
+        if (file_exists(self::CONTROL_FILE_PATH)) {
+            $content = file_get_contents(self::CONTROL_FILE_PATH);
+            if (! $content) {
+                echo json_encode(['end' => 'control file empty or not readable']);
+                exit();
+            }
+            if (trim($content) !== 'ok') {
+                echo json_encode(['end' => 'control file not ok']);
+                exit();
+            }
+
+            return;
+        }
+        echo json_encode(['end' => 'end']);
+        exit();
     }
 }

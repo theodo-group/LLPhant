@@ -9,26 +9,26 @@ use function Termwind\{render};
 
 class CLIOutputUtils implements OutputAgentInterface
 {
-    public static function render(string $message, bool $verbose): void
+    public function render(string $message, bool $verbose): void
     {
         $message = self::truncateString($verbose, $message);
         render($message);
     }
 
-    public static function renderTitle(string $title, string $message, bool $verbose): void
+    public function renderTitle(string $title, string $message, bool $verbose): void
     {
         $message = self::truncateString($verbose, $message);
 
         render('<div><div class="px-1 bg-blue-500">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
     }
 
-    public static function renderTitleAndMessageGreen(string $title, string $message, bool $verbose): void
+    public function renderTitleAndMessageGreen(string $title, string $message, bool $verbose): void
     {
         $message = self::truncateString($verbose, $message, $title);
         render('<div><div class="px-1 bg-green-300">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
     }
 
-    public static function renderTitleAndMessageOrange(string $title, string $message, bool $verbose): void
+    public function renderTitleAndMessageOrange(string $title, string $message, bool $verbose): void
     {
         $message = self::truncateString($verbose, $message, $title);
         render('<div><div class="px-1 bg-orange-300">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
@@ -37,7 +37,7 @@ class CLIOutputUtils implements OutputAgentInterface
     /**
      * @param  Task[]  $tasks
      */
-    public static function printTasks(bool $verbose, array $tasks, ?Task $currentTask = null): void
+    public function printTasks(bool $verbose, array $tasks, ?Task $currentTask = null): void
     {
         $liItems = '';
         foreach ($tasks as $task) {
@@ -53,7 +53,7 @@ class CLIOutputUtils implements OutputAgentInterface
                 continue;
             }
 
-            $result = CLIOutputUtils::truncateString($verbose, $task->result, $task->name);
+            $result = self::truncateString($verbose, $task->result, $task->name);
 
             if ($task->wasSuccessful) {
                 $liItems .= "<li class='font-bold text-pink-400'>🟢 - {$task->name} ({$task->description}) - {$result}</li>";

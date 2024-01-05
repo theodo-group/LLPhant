@@ -2,32 +2,46 @@
 
 namespace LLPhant\Tool;
 
+use Exception;
+use LLPhant\Experimental\Agent\OutputAgentInterface;
 use LLPhant\Utils\CLIOutputUtils;
 
 class WebPageTextGetter extends ToolBase
 {
     /**
+     * @throws Exception
+     */
+    public function __construct(bool $verbose = false, public OutputAgentInterface $outputAgent = new CLIOutputUtils())
+    {
+        parent::__construct($verbose);
+    }
+
+    /**
      * Get the content of a web page by its URL.
      *
      * @throws \Exception
      */
-    public static function getWebPageText(string $url): string
+    public function getWebPageText(string $url): string
     {
-        CLIOutputUtils::renderTitleAndMessageOrange('🔧 retrieving web page content', $url, true);
+        $this->outputAgent->renderTitleAndMessageOrange('🔧 retrieving web page content', $url, true);
 
-        $html = file_get_contents($url);
-        if ($html === false) {
-            throw new \Exception('Unable to retrieve web page content');
+        try {
+            $html = file_get_contents($url);
+            if ($html === false) {
+                throw new \Exception('Unable to retrieve web page content');
+            }
+            $text = (string) preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html);
+            $text = (string) preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $text);
+            $text = strip_tags($text);
+            $text = html_entity_decode($text);
+            $text = str_replace("\n", '.', $text);
+            $text = str_replace("\t", '.', $text);
+            $text = str_replace("\r", '.', $text);
+            $text = (string) preg_replace('/( )+/', ' ', $text);
+
+            return (string) preg_replace('/((\.)|( \.))+/', '.', $text);
+        } catch (Exception) {
+            return 'We couldn\'t retrieve the web page content from the url provided '.$url;
         }
-        $text = (string) preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html);
-        $text = (string) preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $text);
-        $text = strip_tags($text);
-        $text = html_entity_decode($text);
-        $text = str_replace("\n", '.', $text);
-        $text = str_replace("\t", '.', $text);
-        $text = str_replace("\r", '.', $text);
-        $text = (string) preg_replace('/( )+/', ' ', $text);
-
-        return (string) preg_replace('/((\.)|( \.))+/', '.', $text);
     }
 }

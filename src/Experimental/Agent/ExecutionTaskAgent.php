@@ -11,8 +11,6 @@ use LLPhant\Utils\CLIOutputUtils;
 
 class ExecutionTaskAgent extends AgentBase
 {
-    private int $iterations = 0;
-
     public int $refinementIterations = 3;
 
     // 7000 character is around 4000 tokens,
@@ -29,39 +27,37 @@ class ExecutionTaskAgent extends AgentBase
         public OutputAgentInterface $outputAgent = new CLIOutputUtils()
     ) {
         parent::__construct($verbose);
-        $this->openAIChat->setFunctions($functions);
+        $this->openAIChat->setTools($functions);
     }
 
     public function run(
         string $objective,
         Task $task,
-        string $additionalContext = ''
+        string $additionalContext = '',
     ): string {
         $prompt = "You are part of a big project. You need to perform the following task: {$task->description}
             {$additionalContext}
             If you have enough information or if you know that the task has been done, answer with only the relevant information related to the task.
             Your answer:";
-
         $this->outputAgent->renderTitleAndMessageGreen('🤖 ExecutionTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 
         // Send prompt to OpenAI API and retrieve the result
         try {
             $stringOrFunctionInfo = $this->openAIChat->generateTextOrReturnFunctionCalled($prompt);
             if ($stringOrFunctionInfo instanceof FunctionInfo) {
-                // We don't want the agent to try endlessly a task that is not possible to do
-                if ($this->iterations >= 5) {
-                    return 'Task failed';
-                }
                 // $toolResponse can be a very long string
                 $toolResponse = FunctionRunner::run($stringOrFunctionInfo);
                 $refinedData = is_string($toolResponse) ? $this->refineData($objective, $task, $toolResponse) : 'no data returned';
 
-                $message = "The function {$stringOrFunctionInfo->name} was called. The following data was returned:
-                    (data from function) {$refinedData} (end of data from function)";
+                $message = "The tool {$stringOrFunctionInfo->name} was used and this is the result:
+                    (data from tool) {$refinedData} (end of data from tool)";
                 $newContext = $additionalContext.$message;
-                $this->iterations++;
 
-                return $this->run($objective, $task, $newContext);
+                $prompt = "You are part of a big project. You are performing the following task: {$task->description}. {$newContext}.
+                If you have enough information from using the tool or if you know that the task has been done, answer with only the relevant information related to the task.
+                Your answer:";
+
+                $stringOrFunctionInfo = (new OpenAIChat())->generateText($prompt);
             }
             $task->wasSuccessful = true;
 
