@@ -5,6 +5,7 @@ namespace LLPhant\Tool;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use LLPhant\Experimental\Agent\OutputAgentInterface;
 use LLPhant\Utils\CLIOutputUtils;
 
 class ApiRequest extends ToolBase
@@ -12,7 +13,7 @@ class ApiRequest extends ToolBase
     /**
      * @throws Exception
      */
-    public function __construct(bool $verbose = false)
+    public function __construct(bool $verbose = false, public OutputAgentInterface $outputAgent = new CLIOutputUtils())
     {
         parent::__construct($verbose);
     }
@@ -23,12 +24,12 @@ class ApiRequest extends ToolBase
     public function get_data_from_url(string $url): string
     {
         try {
-            CLIOutputUtils::renderTitleAndMessageOrange('🔧 Executing tool ApiRequest', $url, $this->verbose);
+            $this->outputAgent->renderTitleAndMessageOrange('🔧 Executing tool ApiRequest', $url, $this->verbose);
             $client = new Client();
             $response = $client->request('GET', $url);
 
             $rawContent = $response->getBody()->getContents();
-            CLIOutputUtils::render("Results from ApiRequest to {$url}: {$rawContent}", $this->verbose);
+            $this->outputAgent->render("Results from ApiRequest to {$url}: {$rawContent}", $this->verbose);
             $this->wasSuccessful = true;
 
         } catch (GuzzleException $e) {

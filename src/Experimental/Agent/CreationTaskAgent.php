@@ -45,7 +45,6 @@ class CreationTaskAgent extends AgentBase
                 .' Based on the result of previous tasks, create new tasks to do the objective but ONLY if needed.'
                 .' You MUST avoid create duplicated tasks.';
         }
-        $this->outputAgent->renderTitleAndMessageGreen('🤖 CreationTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 
         // We don't handle the response because the function will be executed
         $this->openAIChat->generateText($prompt);
