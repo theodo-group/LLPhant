@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Utils;
 
-use LLPhant\Utils\StringParser;
+use LLPhant\Experimental\Agent\Render\StringParser;
 
 it('extract URL for various edge cases', function () {
     // Edge case 1: Empty string

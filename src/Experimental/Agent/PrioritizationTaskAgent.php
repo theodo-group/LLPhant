@@ -3,7 +3,8 @@
 namespace LLPhant\Experimental\Agent;
 
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Utils\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 
 class PrioritizationTaskAgent extends AgentBase
 {

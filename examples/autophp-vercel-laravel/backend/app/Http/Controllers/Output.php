@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LLPhant\Experimental\Agent\Web\WebOutputUtils;
+use LLPhant\Experimental\Agent\Render\WebOutputUtils;
 
 class Output extends Controller
 {

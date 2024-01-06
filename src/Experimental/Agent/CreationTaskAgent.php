@@ -5,7 +5,8 @@ namespace LLPhant\Experimental\Agent;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\Parameter;
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Utils\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 
 class CreationTaskAgent extends AgentBase
 {

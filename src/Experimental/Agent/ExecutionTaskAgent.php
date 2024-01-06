@@ -7,7 +7,8 @@ use LLPhant\Chat\FunctionInfo\FunctionRunner;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
-use LLPhant\Utils\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 
 class ExecutionTaskAgent extends AgentBase
 {

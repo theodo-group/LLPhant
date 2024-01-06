@@ -1,8 +1,7 @@
 <?php
 
-namespace LLPhant\Experimental\Agent\Web;
+namespace LLPhant\Experimental\Agent\Render;
 
-use LLPhant\Experimental\Agent\OutputAgentInterface;
 use LLPhant\Experimental\Agent\Task;
 
 class WebOutputUtils implements OutputAgentInterface
@@ -24,8 +23,6 @@ class WebOutputUtils implements OutputAgentInterface
     {
         $messageWrapped = new OutputWrapper($message, 'info');
         $this->addMessageToFileSystem($messageWrapped);
-        echo json_encode($messageWrapped, JSON_PRETTY_PRINT);
-        flush();
     }
 
     /**
@@ -44,8 +41,6 @@ class WebOutputUtils implements OutputAgentInterface
     {
         $messageWrapped = new OutputWrapper($message, 'title');
         $this->addMessageToFileSystem($messageWrapped);
-        echo json_encode($messageWrapped, JSON_PRETTY_PRINT);
-        flush();
     }
 
     /**
@@ -55,15 +50,22 @@ class WebOutputUtils implements OutputAgentInterface
     {
         $messageWrapped = new OutputWrapper($message, 'title');
         $this->addMessageToFileSystem($messageWrapped);
-        echo json_encode($messageWrapped, JSON_PRETTY_PRINT);
-        flush();
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function printTasks(bool $verbose, array $tasks, ?Task $currentTask = null): void
     {
         $this->updateTaskToFileSystem($tasks);
-        echo json_encode($tasks, JSON_PRETTY_PRINT);
-        flush();
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    public function renderResult(?string $result): void
+    {
+        $this->updateResultToFileSystem($result);
     }
 
     /**
@@ -73,7 +75,7 @@ class WebOutputUtils implements OutputAgentInterface
     {
         $dataObject = $this->readMessagesFromFile();
         $dataObject['messages'][] = $messageWrapped;
-        $this->saveOutputToFileSystem($dataObject['tasks'], $dataObject['messages']);
+        $this->saveOutputToFileSystem($dataObject['tasks'], $dataObject['messages'], $dataObject['result']);
     }
 
     /**
@@ -85,7 +87,17 @@ class WebOutputUtils implements OutputAgentInterface
     {
         $dataObject = $this->readMessagesFromFile();
         $dataObject['tasks'] = $tasks;
-        $this->saveOutputToFileSystem($dataObject['tasks'], $dataObject['messages']);
+        $this->saveOutputToFileSystem($dataObject['tasks'], $dataObject['messages'], $dataObject['result']);
+    }
+
+    /**
+     * @throws \JsonException
+     */
+    private function updateResultToFileSystem(?string $result): void
+    {
+        $dataObject = $this->readMessagesFromFile();
+        $dataObject['result'] = $result;
+        $this->saveOutputToFileSystem($dataObject['tasks'], $dataObject['messages'], $dataObject['result']);
     }
 
     /**
@@ -94,7 +106,7 @@ class WebOutputUtils implements OutputAgentInterface
      *
      * @throws \JsonException
      */
-    private function saveOutputToFileSystem(array $tasks, array $messages): void
+    private function saveOutputToFileSystem(array $tasks, array $messages, ?string $result): void
     {
         $arrayMessage = array_map(fn (OutputWrapper $outputWrapped): array => [
             'content' => $outputWrapped->content,
@@ -108,30 +120,30 @@ class WebOutputUtils implements OutputAgentInterface
             'wasSuccessful' => $task->wasSuccessful ?? null,
         ], $tasks);
 
-        $data = ['messages' => $arrayMessage, 'tasks' => $arrayTasks];
+        $data = ['messages' => $arrayMessage, 'tasks' => $arrayTasks, 'result' => $result];
         $jsonData = json_encode($data, JSON_PRETTY_PRINT);
         file_put_contents($this->filePath, $jsonData);
     }
 
     /**
-     * @return array{messages: OutputWrapper[], tasks: Task[]}
+     * @return array{messages: OutputWrapper[], tasks: Task[], result: ?string}
      *
      * @throws \JsonException
      */
     public function readMessagesFromFile(): array
     {
         if (! file_exists($this->filePath)) {
-            return ['messages' => [], 'tasks' => []];
+            return ['messages' => [], 'tasks' => [], 'result' => null];
         }
 
         $jsonData = file_get_contents($this->filePath);
         if ($jsonData === false) {
-            return ['messages' => [], 'tasks' => []];
+            return ['messages' => [], 'tasks' => [], 'result' => null];
         }
 
         $data = json_decode($jsonData, true, 512, JSON_THROW_ON_ERROR);
         if (! is_array($data)) {
-            return ['messages' => [], 'tasks' => []];
+            return ['messages' => [], 'tasks' => [], 'result' => null];
         }
 
         $messages = array_map(function (array $entry): OutputWrapper {
@@ -152,6 +164,8 @@ class WebOutputUtils implements OutputAgentInterface
             return $task;
         }, $data['tasks']);
 
-        return ['messages' => $messages, 'tasks' => $tasks];
+        $result = $data['result'] ?? null;
+
+        return ['messages' => $messages, 'tasks' => $tasks, 'result' => $result];
     }
 }

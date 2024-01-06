@@ -1,8 +1,7 @@
 <?php
 
-namespace LLPhant\Utils;
+namespace LLPhant\Experimental\Agent\Render;
 
-use LLPhant\Experimental\Agent\OutputAgentInterface;
 use LLPhant\Experimental\Agent\Task;
 
 use function Termwind\{render};
@@ -32,6 +31,11 @@ class CLIOutputUtils implements OutputAgentInterface
     {
         $message = self::truncateString($verbose, $message, $title);
         render('<div><div class="px-1 bg-orange-300">'.$title.'</div><em class="ml-1">'.$message.'</em></div>');
+    }
+
+    public function renderResult(string $result): void
+    {
+        $this->renderTitle('🏆️ Success! 🏆️ Result:', $result, true);
     }
 
     /**

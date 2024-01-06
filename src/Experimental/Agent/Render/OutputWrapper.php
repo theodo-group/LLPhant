@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\Experimental\Agent\Web;
+namespace LLPhant\Experimental\Agent\Render;
 
 class OutputWrapper
 {
