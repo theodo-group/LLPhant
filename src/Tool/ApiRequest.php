@@ -5,8 +5,8 @@ namespace LLPhant\Tool;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use LLPhant\Experimental\Agent\OutputAgentInterface;
-use LLPhant\Utils\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 
 class ApiRequest extends ToolBase
 {

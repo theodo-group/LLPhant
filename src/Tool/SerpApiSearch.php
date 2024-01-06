@@ -6,9 +6,9 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use LLPhant\Chat\OpenAIChat;
-use LLPhant\Experimental\Agent\OutputAgentInterface;
-use LLPhant\Utils\CLIOutputUtils;
-use LLPhant\Utils\StringParser;
+use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
+use LLPhant\Experimental\Agent\Render\StringParser;
 
 class SerpApiSearch extends ToolBase
 {

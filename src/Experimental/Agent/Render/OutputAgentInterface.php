@@ -1,6 +1,8 @@
 <?php
 
-namespace LLPhant\Experimental\Agent;
+namespace LLPhant\Experimental\Agent\Render;
+
+use LLPhant\Experimental\Agent\Task;
 
 interface OutputAgentInterface
 {
@@ -11,6 +13,8 @@ interface OutputAgentInterface
     public function renderTitleAndMessageGreen(string $title, string $message, bool $verbose): void;
 
     public function renderTitleAndMessageOrange(string $title, string $message, bool $verbose): void;
+
+    public function renderResult(string $result): void;
 
     /**
      * @param  Task[]  $tasks

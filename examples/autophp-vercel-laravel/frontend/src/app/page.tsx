@@ -8,38 +8,10 @@ import { Input } from "@/components/ui/input"
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
 import React, { useState } from 'react';
 
-type StreamDataHandler = (chunk: string) => void;
-type ErrorHandler = (error: any) => void;
-
 let currentRunId = null;
-
-async function handleStreamResponse(url: string, method: 'GET' | 'POST', onData: StreamDataHandler, onError: ErrorHandler, body?: any) {
-    try {
-        const response = await fetch(url, {
-            method,
-            body: method === 'POST' ? JSON.stringify(body) : undefined
-        });
-
-        if (!response.body) {
-            throw new Error('ReadableStream not available in the response');
-        }
-        const reader = response.body.getReader();
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) {
-                break;
-            }
-            // Assuming the server sends UTF-8 encoded text data
-            const chunk = new TextDecoder().decode(value);
-            onData(chunk);
-        }
-    } catch (error) {
-        onError(error);
-    }
-}
+let pollInterval = null;
 
 export default function Component() {
     const [input, setInput] = useState('');
@@ -50,64 +22,52 @@ export default function Component() {
         setInput(event.target.value); // Update the state with the input value
     };
 
-
-const handleSubmit = (e) => {
-    currentRunId = null;
-    console.log(input)
-    e.preventDefault()
-    console.log('submit')
-
-    handleStreamResponse(
-        'http://localhost:8000/api/chat',
-        'POST',
-
-        (chunk) => {
-            console.log('Received chunk:', chunk);
-            if (!currentRunId) {
-                const jsonChunk = JSON.parse(chunk);
-                currentRunId = jsonChunk.id;
-                console.log('yeah'+currentRunId)
+    const handleSubmit = (e) => {
+        // We create a new autophp run that will be identified by the currentRunId
+        // obviously this is not a good way to do it in production, but it's just a demo
+        currentRunId = Math.random().toString(32).slice(2);
+        e.preventDefault()
+        console.log('input', input)
+        fetch('http://localhost:8000/api/chat', {
+            method: "POST",
+            body: JSON.stringify({objective: input, id: currentRunId })
+        }).then((response) => {
+            console.log('response', response)
+            if (!(response.status === 200)) {
+                throw new Error('Something went wrong on api server!');
+            } else {
+                console.log('AutoPHP started');
+                pollInterval = setInterval(getLastInfo, 1000);
             }
 
-            if (!currentRunId) {
-                return;
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    const getLastInfo = () => {
+        if (!currentRunId) {
+            return;
+        }
+        const response = fetch('http://127.0.0.1:8001/api/outputs?id=' + currentRunId, {
+            method: "GET",
+        }).then((response) => {
+            return response.json(); // Parse the response as JSON
+        }).then((data) => {
+            console.log('LastInfo:', data);
+            setTasks(data.tasks);
+            setMessages(data.messages);
+            if (data.result) {
+                setResult(data.result);
+                clearInterval(pollInterval);
+                pollInterval= null;
             }
-
-            // Handle the result
-            try {
-                const jsonChunk = JSON.parse(chunk);
-                if (jsonChunk && jsonChunk.result) {
-                    setResult(jsonChunk.result);
-                    return;
-                }
-            } catch {}
-            const response = fetch('http://127.0.0.1:8001/api/outputs?id='+ currentRunId, {
-                method: "GET",
-            }).then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json(); // Parse the response as JSON
-            }).then((data) => {
-                console.log(data); // Handle the JSON data
-                if (data.result) {
-                    setResult(data.result);
-                }
-                setTasks(data.tasks);
-                setMessages(data.messages)
-            })
-        },
-        (error) => {
-            console.error('Stream error:', error);
-        },
-        { objective: input },
-    ).then(() => console.log('Stream then'));
-}
-
-
-    // const { messages, input, handleInputChange, handleSubmit } = useChat({api: 'http://127.0.0.1:8000/api/chat'})
-
-    // console.log(messages)
+        }).catch((error) => {
+            console.error('Error:', error);
+            clearInterval(pollInterval);
+            pollInterval= null;
+        });
+    }
 
     return (
         <div key="1" className="grid min-h-screen w-full">

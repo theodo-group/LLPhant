@@ -7,8 +7,9 @@ use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\FunctionRunner;
 use LLPhant\Chat\OpenAIChat;
+use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
+use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 use LLPhant\OpenAIConfig;
-use LLPhant\Utils\CLIOutputUtils;
 
 class AutoPHP
 {
@@ -62,7 +63,7 @@ class AutoPHP
 
             $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks);
             if ($finalResult = $this->getObjectiveResult()) {
-                $this->outputAgent->renderTitle('🏆️ Success! 🏆️', 'Result: '.$finalResult, true);
+                $this->outputAgent->renderResult($finalResult);
 
                 return $finalResult;
             }
