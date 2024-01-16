@@ -17,7 +17,26 @@ class WebPageTextGetter extends ToolBase
     }
 
     /**
-     * Get the content of a web page by its URL.
+     * With this function you can get the content of multiple web pages by their URLs.
+     *
+     * @param  string[]  $urls
+     * @return string[]
+     * @throws Exception
+     */
+    public function getMultipleWebPageText(array $urls): array
+    {
+        $this->outputAgent->renderTitleAndMessageOrange('🔧 retrieving web content of those pages :',
+            implode(', ', $urls), true);
+        $texts = [];
+        foreach ($urls as $url) {
+            $texts[$url] = $this->getWebPageText($url);
+        }
+
+        return $texts;
+    }
+
+    /**
+     * With this function you can get content of a web page by its URL.
      *
      * @throws \Exception
      */
