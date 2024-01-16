@@ -12,5 +12,5 @@ $objective = 'Find the name of the french player who scored the most trials in t
 
 $function = FunctionBuilder::buildFunctionInfo($webPageTextGetter, 'getWebPageText');
 
-$autoPHP = new AutoPHP($objective, [$function], true, 1);
+$autoPHP = new AutoPHP($objective, [$function], true);
 $response = $autoPHP->run();
