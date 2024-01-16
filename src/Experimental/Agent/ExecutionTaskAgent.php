@@ -48,7 +48,8 @@ class ExecutionTaskAgent extends AgentBase
             if ($stringOrFunctionInfo instanceof FunctionInfo) {
                 // $toolResponse can be a very long string
                 $toolResponse = FunctionRunner::run($stringOrFunctionInfo);
-                $refinedData = is_string($toolResponse) ? $this->refineData($objective, $task, $toolResponse) : 'no data returned';
+                $refinedData = is_string($toolResponse) ? $this->refineData($objective, $task,
+                    $toolResponse) : 'no data returned';
 
                 $message = "The tool {$stringOrFunctionInfo->name} was used and this is the result:
                     (data from tool) {$refinedData} (end of data from tool)";
@@ -105,7 +106,7 @@ class ExecutionTaskAgent extends AgentBase
             //TODO: we should ignore part of the data that is not relevant to the task
             $prompt = "You are part of a big project. The main objective is {$objective}. You need to perform the following task: {$task->description}.
                 You MUST be very concise and only extract information that can help for the task and objective.
-                If you can't find any useful information from the given data, you MUST answer with 'NO DATA.'.
+                If you can't find any useful information from the given data, you MUST answer with 'NULL'.
                 The data you must use: (start of the data){$splittedDocument->content}(end of the data).";
             $refinedData .= $gpt->generateText($prompt).' ';
         }
