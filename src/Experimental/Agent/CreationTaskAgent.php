@@ -10,14 +10,27 @@ use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 
 class CreationTaskAgent extends AgentBase
 {
-    public function __construct(private readonly TaskManager $taskManager, private readonly OpenAIChat $openAIChat, bool $verbose = false, public OutputAgentInterface $outputAgent = new CLIOutputUtils())
-    {
+    /**
+     * @param  FunctionInfo[]  $tools
+     */
+    public function __construct(
+        private readonly TaskManager $taskManager,
+        private readonly OpenAIChat $openAIChat,
+        array $tools,
+        bool $verbose = false,
+        public OutputAgentInterface $outputAgent = new CLIOutputUtils()
+    ) {
         parent::__construct($verbose);
         $nameTask = new Parameter('name', 'string', 'name of the task');
         $descriptionTask = new Parameter('description', 'string', 'description of the task');
-        $param = new Parameter('tasks', 'array', 'tasks to be added to the list of tasks to be completed', [], null, [$nameTask, $descriptionTask]);
-        $addTasksFunction = new FunctionInfo('addTasks', $this->taskManager, 'add tasks to the list of tasks to be completed', [$param], [$param]);
-        $this->openAIChat->addFunction($addTasksFunction);
+        $param = new Parameter('tasks', 'array', 'tasks to be added to the list of tasks to be completed', [], null,
+            [$nameTask, $descriptionTask]);
+        $addTasksFunction = new FunctionInfo('addTasks', $this->taskManager,
+            'add tasks to the list of tasks to be completed', [$param], [$param]);
+        $this->openAIChat->addTool($addTasksFunction);
+        foreach ($tools as $tool) {
+            $this->openAIChat->addTool($tool);
+        }
         $this->openAIChat->requiredFunction = $addTasksFunction;
     }
 
@@ -31,7 +44,6 @@ class CreationTaskAgent extends AgentBase
         if (empty($this->taskManager->getAchievedTasks())) {
             $prompt = 'You are a task creation AI. '
                 ."The objective is: {$objective}."
-                .'You have the following tools available: '.$this->getToolsDescription($tools)
                 .'You need to create tasks to do the objective.';
 
         } else {
@@ -42,7 +54,6 @@ class CreationTaskAgent extends AgentBase
                 ."Your objective is: {$objective},"
                 ." The previous tasks are: {$achievedTasks}."
                 ." These are incomplete tasks: {$unachievedTasks}."
-                .'You have the following tools available: '.$this->getToolsDescription($tools)
                 .' Based on the result of previous tasks, create new tasks to do the objective but ONLY if needed.'
                 .' You MUST avoid create duplicated tasks.';
         }

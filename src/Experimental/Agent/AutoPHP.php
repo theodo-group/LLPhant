@@ -37,8 +37,10 @@ class AutoPHP
     ) {
         $this->taskManager = new TaskManager();
         $this->openAIChat = new OpenAIChat();
-        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, new OpenAIChat(), $verbose, $this->outputAgent);
-        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, new OpenAIChat(), $verbose, $this->outputAgent);
+        $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, new OpenAIChat(), $tools, $verbose,
+            $this->outputAgent);
+        $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, new OpenAIChat(), $verbose,
+            $this->outputAgent);
         $this->defaultModelName = OpenAIChatModel::Gpt4Turbo->getModelName();
     }
 
@@ -134,6 +136,7 @@ class AutoPHP
 
             return;
         }
+
         echo json_encode(['end' => 'end']);
         exit();
     }
