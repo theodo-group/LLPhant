@@ -133,8 +133,6 @@ class AutoPHP
                 echo json_encode(['end' => 'control file not ok']);
                 exit();
             }
-
-            return;
         }
 
         echo json_encode(['end' => 'end']);
