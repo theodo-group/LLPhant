@@ -21,6 +21,7 @@ class WebPageTextGetter extends ToolBase
      *
      * @param  string[]  $urls
      * @return string[]
+     *
      * @throws Exception
      */
     public function getMultipleWebPageText(array $urls): array
