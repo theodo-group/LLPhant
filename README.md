@@ -14,6 +14,10 @@ We want to thank few amazing projects that we use here or inspired us:
 - the learnings from using [LangChain](https://www.langchain.com/) and [LLamaIndex](https://www.llamaindex.ai/)
 - the excellent work from the [OpenAI PHP SDK](https://github.com/openai-php/client).
 
+We can find great external resource on LLPhant (ping us to add yours):
+- 🇫🇷 [Construire un RAG en PHP avec la doc de Symfony, LLPhant et OpenAI : Tutoriel Complet](https://www.youtube.com/watch?v=zFJgRd05Noo)
+
+
 ## Table of Contents
 - [Get Started](#get-started)
   - [Database](#database)
