@@ -122,7 +122,8 @@ class ElasticsearchVectorStore extends VectorStoreBase
      * {@inheritDoc}
      *
      * @param  array{filter?: string|array<string, mixed>, num_candidates?: int}  $additionalArguments
-     *                                                                                                  num_candidates is used to tune approximate kNN for speed or accuracy (see : https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#tune-approximate-knn-for-speed-accuracy)
+     *
+     * num_candidates is used to tune approximate kNN for speed or accuracy (see : https://www.elastic.co/guide/en/elasticsearch/reference/current/knn-search.html#tune-approximate-knn-for-speed-accuracy)
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
