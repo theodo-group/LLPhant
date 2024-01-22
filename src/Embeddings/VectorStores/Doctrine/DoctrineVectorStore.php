@@ -21,8 +21,10 @@ final class DoctrineVectorStore extends VectorStoreBase
      *
      * @throws Exception
      */
-    public function __construct(private readonly EntityManagerInterface $entityManager, public readonly string $entityClassName)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        public readonly string $entityClassName
+    ) {
         if (! interface_exists(EntityManagerInterface::class)) {
             throw new \RuntimeException('To use this functionality, you must install the `doctrine/orm` package: `composer require doctrine/orm`.');
         }
