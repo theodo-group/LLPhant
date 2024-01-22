@@ -61,17 +61,4 @@ class CreationTaskAgent extends AgentBase
         // We don't handle the response because the function will be executed
         $this->openAIChat->generateText($prompt);
     }
-
-    /**
-     * @param  FunctionInfo[]  $tools
-     */
-    private function getToolsDescription(array $tools): string
-    {
-        $toolsDescription = '';
-        foreach ($tools as $tool) {
-            $toolsDescription .= "The tool {$tool->name} is used to {$tool->description}.";
-        }
-
-        return $toolsDescription;
-    }
 }
