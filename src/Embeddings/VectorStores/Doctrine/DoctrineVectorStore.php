@@ -63,7 +63,7 @@ final class DoctrineVectorStore extends VectorStoreBase
     }
 
     /**
-     * @param  float[]  $embedding The embedding used to search closest neighbors
+     * @param  float[]  $embedding  The embedding used to search closest neighbors
      * @param  array<string, string|int>  $additionalArguments
      * @return DoctrineEmbeddingEntityBase[]
      */
