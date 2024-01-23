@@ -141,7 +141,7 @@ Then you can add it to the OpenAIChat object.
 If the response from OpenAI contains a tools' name and parameters, LLPhant will call the tool.
 
 <div align="center">
-    <img src="/assets/function-flow.png" alt="Function flow" style={{paddingBottom:20}} />
+    <img src="/doc/assets/function-flow.png" alt="Function flow" style={{paddingBottom:20}} />
 </div>
 
 This PHP script will most likely call the sendMail method that we pass to OpenAI.
