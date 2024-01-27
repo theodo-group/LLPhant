@@ -5,7 +5,7 @@ use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\FileSystem\FileSystemVectorStore;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 
-require_once '../../vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 if (file_exists(__DIR__ . '/documents-vectorStore.json')) {
 
