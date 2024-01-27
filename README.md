@@ -236,14 +236,14 @@ OpenAI has 2 new models that can be used to generate embeddings. More informatio
 Status | Model                  | Embedding size  |
 -----|------------------------|-----------------|
 Default | text-embedding-ada-002 | 1536            | 
-New | text-embedding-3-small | 512 or 1536     | 
-New | text-embedding-3-large | 256 or 1024 or 3072 | 
+New | text-embedding-3-small | 1536     |
+
+Actually, LLPhant is not compatible with the new models 'text-embedding-3-large'.
 
 You can embed the documents using the following code:
 ```php
 $embeddingGenerator = new OpenAIEmbeddingGenerator();
 $embeddingGenerator->modelName = 'text-embedding-3-small';
-$embeddingGenerator->EmbeddingLength = 512;
 $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 ```
 

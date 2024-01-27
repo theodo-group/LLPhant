@@ -37,7 +37,7 @@ class QdrantVectorStore extends VectorStoreBase
 
         $createCollection->addVector(
             new VectorParams(
-                (new OpenAIEmbeddingGenerator)->EmbeddingLength,
+                OpenAIEmbeddingGenerator::OPENAI_EMBEDDING_LENGTH,
                 VectorParams::DISTANCE_COSINE), QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME);
         $response = $this->client->collections($name)->create($createCollection);
         $this->collectionName = $name;
