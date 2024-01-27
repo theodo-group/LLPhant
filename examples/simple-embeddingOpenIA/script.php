@@ -1,6 +1,6 @@
 <?php
 
-require_once '../../vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Embeddings\DataReader\FileDataReader;
