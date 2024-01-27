@@ -230,9 +230,20 @@ $formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
 #### Embedding Generator
 This is the step where we generate the embedding for each chunk of text by calling the LLM.
 
+**25 january 2024** : New embedding models and API updates
+OpenAI has 2 new models that can be used to generate embeddings. More information on the [OpenAI Blog](https://openai.com/blog/new-embedding-models-and-api-updates).
+
+Model | Embedding size  |
+--- |-----------------|
+text-embedding-ada-002 | 1536            | 
+text-embedding-3-small | 512 or 1536     | 
+text-embedding-3-large | 256 or 1024 or 3072 | 
+
 You can embed the documents using the following code:
 ```php
 $embeddingGenerator = new OpenAIEmbeddingGenerator();
+$embeddingGenerator->modelName = 'text-embedding-3-small';
+$embeddingGenerator->EmbeddingLength = 512;
 $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 ```
 
