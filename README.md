@@ -16,7 +16,7 @@ We want to thank few amazing projects that we use here or inspired us:
 
 We can find great external resource on LLPhant (ping us to add yours):
 - 🇫🇷 [Construire un RAG en PHP avec la doc de Symfony, LLPhant et OpenAI : Tutoriel Complet](https://www.youtube.com/watch?v=zFJgRd05Noo)
-
+- 🇫🇷 [Retour d'expérience sur la création d'un agent autonome](https://www.youtube.com/watch?v=ZnYUxTtS6IU)
 
 ## Table of Contents
 - [Get Started](#get-started)
