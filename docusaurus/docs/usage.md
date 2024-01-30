@@ -135,6 +135,8 @@ You can safely use the following types in the Parameter object: string, int, flo
 The array type is supported but still experimental.
 
 ## Embeddings
+LLPhant support OpenAI and Mistral.
+
 > 💡 Embeddings are used to compare two texts and see how similar they are. This is the base of semantic search.
 An embedding is a vector representation of a text that captures the meaning of the text.
 It is a float array of 1536 elements for OpenAI.
