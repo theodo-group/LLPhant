@@ -230,6 +230,10 @@ $formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
 #### Embedding Generator
 This is the step where we generate the embedding for each chunk of text by calling the LLM.
 
+**30 january 2024** : Adding Mistral embedding API
+You need to have a Mistral account to use this API. More information on the [Mistral website](https://mistral.ai/).
+And you need to set up the MISTRAL_API_KEY environment variable or pass it to the constructor of the `MistralEmbeddingGenerator` class.
+
 **25 january 2024** : New embedding models and API updates
 OpenAI has 2 new models that can be used to generate embeddings. More information on the [OpenAI Blog](https://openai.com/blog/new-embedding-models-and-api-updates).
 
@@ -313,6 +317,7 @@ CREATE TABLE IF NOT EXISTS test_place (
 
 ⚠️ If the embedding length is not 1536 you will need to specify it in the entity by overriding the $embedding property.
 Typically, if you use the `OpenAI3LargeEmbeddingGenerator` class, you will need to set the length to 3072 in the entity.
+Or if you use the `MistralEmbeddingGenerator` class, you will need to set the length to 1024 in the entity.
 
 The PlaceEntity
 ```php
