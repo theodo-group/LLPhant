@@ -13,7 +13,7 @@ use OpenAI\Client;
 use function getenv;
 use function str_replace;
 
-final class OpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
+final class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
 {
     public const OPENAI_EMBEDDING_LENGTH = 1536;
 
@@ -70,5 +70,10 @@ final class OpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
         }
 
         return $embedDocuments;
+    }
+
+    public function getEmbeddingLength(): int
+    {
+        return self::OPENAI_EMBEDDING_LENGTH;
     }
 }
