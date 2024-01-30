@@ -187,13 +187,13 @@ This is the step where we generate the embedding for each chunk of text by calli
 
 You can embed the documents using the following code:
 ```php
-$embeddingGenerator = new OpenAIEmbeddingGenerator();
+$embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
 $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 ```
 
 You can also create a embedding from a text using the following code:
 ```php
-$llm = new OpenAIEmbeddingGenerator();
+$llm = new OpenAI3SmallEmbeddingGenerator();
 $embedding = $llm->embedText('I love food');
 //You can then use the embedding to perform a similarity search
 ```
@@ -343,7 +343,7 @@ $documents = $dataReader->getDocuments();
 
 $splittedDocuments = DocumentSplitter::splitDocuments($documents, 500);
 
-$embeddingGenerator = new OpenAIEmbeddingGenerator();
+$embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
 $embeddedDocuments = $embeddingGenerator->embedDocuments($splittedDocuments);
 
 $memoryVectorStore = new MemoryVectorStore();
