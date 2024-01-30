@@ -9,7 +9,7 @@ use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
-use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
+use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAIADA002EmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\FileSystem\FileSystemVectorStore;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -22,7 +22,7 @@ class Chat extends Controller
     public function index(Request $request): StreamedResponse
     {
         $filesVectorStore = new FileSystemVectorStore();
-        $embeddingGenerator = new OpenAIEmbeddingGenerator();
+        $embeddingGenerator = new OpenAIADA002EmbeddingGenerator();
 
         if ($filesVectorStore->getNumberOfDocuments() === 0) {
             $dataReader = new FileDataReader(__DIR__.'/The_Star_H.G_Wells.txt');

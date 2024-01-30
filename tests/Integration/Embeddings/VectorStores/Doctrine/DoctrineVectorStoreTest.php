@@ -10,7 +10,7 @@ use Doctrine\ORM\ORMSetup;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
-use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
+use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3LargeEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Doctrine\DoctrineVectorStore;
 
 it('creates two entity with their embeddings and perform a similarity search', function () {
@@ -32,7 +32,7 @@ it('creates two entity with their embeddings and perform a similarity search', f
     $entityManager = new EntityManager($connection, $config);
 
     $vectorStore = new DoctrineVectorStore($entityManager, PlaceEntity::class);
-    $embeddingGenerator = new OpenAIEmbeddingGenerator();
+    $embeddingGenerator = new OpenAI3LargeEmbeddingGenerator();
 
     $paris = new PlaceEntity();
     $paris->content = 'I live in Paris';
@@ -77,7 +77,7 @@ it('tests a full embedding flow with Doctrine', function () {
     $splittedDocuments = DocumentSplitter::splitDocuments($documents, 100, "\n");
     $formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
 
-    $embeddingGenerator = new OpenAIEmbeddingGenerator();
+    $embeddingGenerator = new OpenAI3LargeEmbeddingGenerator();
     $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 
     $vectorStore = new DoctrineVectorStore($entityManager, PlaceEntity::class);

@@ -18,4 +18,6 @@ interface EmbeddingGeneratorInterface
      * @return Document[]
      */
     public function embedDocuments(array $documents): array;
+
+    public function getEmbeddingLength(): int;
 }

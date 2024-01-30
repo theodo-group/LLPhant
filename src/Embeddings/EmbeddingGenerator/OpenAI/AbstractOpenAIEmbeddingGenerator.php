@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace LLPhant\Embeddings\EmbeddingGenerator;
+namespace LLPhant\Embeddings\EmbeddingGenerator\OpenAI;
 
 use Exception;
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
@@ -13,13 +14,9 @@ use OpenAI\Client;
 use function getenv;
 use function str_replace;
 
-final class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
+abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
 {
-    public const OPENAI_EMBEDDING_LENGTH = 1536;
-
     public Client $client;
-
-    public string $modelName = 'text-embedding-ada-002';
 
     /**
      * @throws Exception
@@ -43,7 +40,7 @@ final class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInterf
         $text = str_replace("\n", ' ', $text);
 
         $response = $this->client->embeddings()->create([
-            'model' => $this->modelName,
+            'model' => $this->getModelName(),
             'input' => $text,
         ]);
 
@@ -72,8 +69,7 @@ final class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInterf
         return $embedDocuments;
     }
 
-    public function getEmbeddingLength(): int
-    {
-        return self::OPENAI_EMBEDDING_LENGTH;
-    }
+    abstract public function getEmbeddingLength(): int;
+
+    abstract public function getModelName(): string;
 }

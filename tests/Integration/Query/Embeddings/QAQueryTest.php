@@ -7,7 +7,7 @@ namespace Tests\Integration\Query\Embeddings;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
-use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
+use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAIADA002EmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Memory\MemoryVectorStore;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 
@@ -17,7 +17,7 @@ it('generates a answer based on private knowledge', function () {
 
     $splittedDocuments = DocumentSplitter::splitDocuments($documents, 500);
 
-    $embeddingGenerator = new OpenAIEmbeddingGenerator();
+    $embeddingGenerator = new OpenAIADA002EmbeddingGenerator();
     $embeddedDocuments = $embeddingGenerator->embedDocuments($splittedDocuments);
 
     $memoryVectorStore = new MemoryVectorStore();

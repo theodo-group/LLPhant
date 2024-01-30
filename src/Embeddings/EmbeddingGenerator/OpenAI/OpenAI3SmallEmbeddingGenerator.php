@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace LLPhant\Embeddings\EmbeddingGenerator\OpenAI;
 
-final class OpenAIADA002EmbeddingGenerator extends AbstractOpenAIEmbeddingGenerator
+final class OpenAI3SmallEmbeddingGenerator extends AbstractOpenAIEmbeddingGenerator
 {
     public function getEmbeddingLength(): int
     {
@@ -13,6 +13,6 @@ final class OpenAIADA002EmbeddingGenerator extends AbstractOpenAIEmbeddingGenera
 
     public function getModelName(): string
     {
-        return 'text-embedding-ada-002';
+        return 'text-embedding-3-small';
     }
 }
