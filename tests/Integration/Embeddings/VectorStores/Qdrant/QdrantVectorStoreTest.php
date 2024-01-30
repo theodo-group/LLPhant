@@ -8,7 +8,7 @@ use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
-use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
+use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAIADA002EmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Qdrant\QdrantVectorStore;
 use Qdrant\Config;
 use Qdrant\Models\Filter\Condition\MatchString;
@@ -20,7 +20,7 @@ it('tests a full embedding flow with Qdrant', function () {
     $splittedDocuments = DocumentSplitter::splitDocuments($documents, 200);
     $formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
 
-    $embeddingGenerator = new OpenAIEmbeddingGenerator();
+    $embeddingGenerator = new OpenAIADA002EmbeddingGenerator();
     $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 
     $host = getenv('QDRANT_HOST');

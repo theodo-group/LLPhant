@@ -182,7 +182,7 @@ The array type is supported but still experimental.
 ### Embeddings
 > 💡 Embeddings are used to compare two texts and see how similar they are. This is the base of semantic search.
 An embedding is a vector representation of a text that captures the meaning of the text.
-It is a float array of 1536 elements for OpenAI.
+It is a float array of 1536 elements for OpenAI for the small model.
 
 To manipulate embeddings we use the `Document` class that contains the text and some metadata useful for the vector store.
 The creation of an embedding follow the following flow:
@@ -237,20 +237,18 @@ Status | Model                  | Embedding size  |
 -----|------------------------|-----------------|
 Default | text-embedding-ada-002 | 1536            | 
 New | text-embedding-3-small | 1536     |
-
-Actually, LLPhant is not compatible with the new models 'text-embedding-3-large'.
+New | text-embedding-3-large | 3072     |
 
 You can embed the documents using the following code:
 ```php
-$embeddingGenerator = new OpenAIEmbeddingGenerator();
-$embeddingGenerator->modelName = 'text-embedding-3-small';
+$embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
 $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 ```
 
 You can also create a embedding from a text using the following code:
 ```php
-$llm = new OpenAIEmbeddingGenerator();
-$embedding = $llm->embedText('I love food');
+$embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
+$embedding = $embeddingGenerator->embedText('I love food');
 //You can then use the embedding to perform a similarity search
 ```
 
@@ -313,6 +311,9 @@ CREATE TABLE IF NOT EXISTS test_place (
 );
 ```
 
+⚠️ If the embedding length is not 1536 you will need to specify it in the entity by overriding the $embedding property.
+Typically, if you use the `OpenAI3LargeEmbeddingGenerator` class, you will need to set the length to 3072 in the entity.
+
 The PlaceEntity
 ```php
 #[Entity]
@@ -321,6 +322,9 @@ class PlaceEntity extends DoctrineEmbeddingEntityBase
 {
 #[ORM\Column(type: Types::STRING, nullable: true)]
 public ?string $type;
+
+#[ORM\Column(type: VectorType::VECTOR, length: 3072)]
+public ?array $embedding;
 }
 ```
 

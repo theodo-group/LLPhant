@@ -5,7 +5,6 @@ namespace LLPhant\Embeddings\VectorStores\Qdrant;
 use Exception;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
-use LLPhant\Embeddings\EmbeddingGenerator\OpenAIEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 use Qdrant\Config;
 use Qdrant\Http\GuzzleClient;
@@ -31,13 +30,16 @@ class QdrantVectorStore extends VectorStoreBase
         $this->client = new Qdrant(new GuzzleClient($config));
     }
 
-    public function createCollection(string $name): Response
+    /**
+     * @param  int  $embeddingLength  this depends on the embedding generator you use
+     */
+    public function createCollection(string $name, int $embeddingLength): Response
     {
         $createCollection = new CreateCollection();
 
         $createCollection->addVector(
             new VectorParams(
-                OpenAIEmbeddingGenerator::OPENAI_EMBEDDING_LENGTH,
+                $embeddingLength,
                 VectorParams::DISTANCE_COSINE), QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME);
         $response = $this->client->collections($name)->create($createCollection);
         $this->collectionName = $name;
