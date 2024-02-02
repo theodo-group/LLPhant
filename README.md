@@ -7,7 +7,9 @@
 We designed this framework to be as simple as possible, while still providing you with the tools you need to build powerful apps.
 It is compatible with Symfony and Laravel.
 
-For the moment only OpenAI is supported, if you want to use other LLMs, you can use [genossGPT](https://github.com/OpenGenenerativeAI/GenossGPT)
+We are working to expand the support of different LLMs. Right now, we are supporting [OpenAI](https://openai.com/blog/openai-api) and [Ollama](https://ollama.ai/) that can be used to run LLM locally such as [Llama 2](https://llama.meta.com/).
+
+If you want to use other LLMs, you can use [genossGPT](https://github.com/OpenGenenerativeAI/GenossGPT)
 as a proxy.
 
 We want to thank few amazing projects that we use here or inspired us:
@@ -62,6 +64,11 @@ If you want to discover more usage from the community, you can see here a list o
 You can also see other use cases on [Qdrant's website](https://qdrant.tech/use-cases/).
 
 ## Usage
+
+You can use OpenAI or Ollama as LLM.
+
+### OpenAI
+
 The most simple to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
 
 ```bash
@@ -76,37 +83,43 @@ $config->apiKey = 'fakeapikey';
 $chat = new OpenAIChat($config);
 ```
 
+### Ollama
+
+If you want to use Ollama, you can just specify the model to use using the `OllamaConfig` object and pass it to the `OllamaChat`.
+
+```php
+$config = new OllamaConfig();
+$config->model = 'llama2';
+$chat = new OllamaChat($config);
+```
+
 ### Chat
+
 > 💡 This class can be used to generate content, to create a chatbot or to create a text summarizer.
 
-The API to generate text using OpenAI will only be from the chat API.
-So even if you want to generate a completion for a simple question under the hood it will use the chat API.
-This is why this class is called OpenAIChat.
-We can use it to simply generate text from a prompt.
+You can use the `OpenAIChat` or `OllamaChat` to generate text or to create a chat.
 
+We can use it to simply generate text from a prompt.
 This will ask directly an answer from the LLM.
 ```php
-$chat = new OpenAIChat();
 $response = $chat->generateText('what is one + one ?'); // will return something like "Two"
 ```
 
 If you want to display in your frontend a stream of text like in ChatGPT you can use the following method.
 ```php
-$chat = new OpenAIChat();
 return $chat->generateStreamOfText('can you write me a poem of 10 lines about life ?');
 ```
 
 You can add instruction so the LLM will behave in a specific manner.
 
 ```php
-$chat = new OpenAIChat();
 $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
 $response = $chat->generateText('what is one + one ?'); // will return "ok"
 ```
 
 ## Tools
 
-This feature is amazing.
+This feature is amazing and is available only for OpenAI.
 
 OpenAI has refined its model to determine whether tools should be invoked.
 To utilize this, simply send a description of the available tools to OpenAI,
@@ -181,6 +194,7 @@ The array type is supported but still experimental.
 
 ### Embeddings
 > 💡 Embeddings are used to compare two texts and see how similar they are. This is the base of semantic search.
+
 An embedding is a vector representation of a text that captures the meaning of the text.
 It is a float array of 1536 elements for OpenAI for the small model.
 
