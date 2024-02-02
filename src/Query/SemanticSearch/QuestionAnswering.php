@@ -7,7 +7,7 @@ use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Psr\Http\Message\StreamInterface;
 
 class QuestionAnswering
 {
@@ -43,7 +43,7 @@ class QuestionAnswering
      * @param  Message[]  $messages
      * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
      */
-    public function answerQuestionFromChat(array $messages, int $k = 4, array $additionalArguments = []): StreamedResponse
+    public function answerQuestionFromChat(array $messages, int $k = 4, array $additionalArguments = []): StreamInterface
     {
         // First we need to give the context to openAI with the good instructions
         $userQuestion = $messages[count($messages) - 1]->content;

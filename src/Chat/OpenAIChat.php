@@ -3,6 +3,7 @@
 namespace LLPhant\Chat;
 
 use Exception;
+use GuzzleHttp\Psr7\Utils;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
@@ -12,13 +13,12 @@ use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Chat\CreateResponseToolCall;
-use OpenAI\Responses\Chat\CreateStreamedResponse;
 use OpenAI\Responses\Chat\CreateStreamedResponseToolCall;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Psr\Http\Message\StreamInterface;
 
 use function getenv;
 
-class OpenAIChat
+class OpenAIChat implements ChatInterface
 {
     private readonly Client $client;
 
@@ -72,7 +72,7 @@ class OpenAIChat
         return $answer->choices[0]->message->content ?? '';
     }
 
-    public function generateStreamOfText(string $prompt): StreamedResponse
+    public function generateStreamOfText(string $prompt): StreamInterface
     {
         $messages = $this->createOpenAIMessagesFromPrompt($prompt);
 
@@ -93,7 +93,7 @@ class OpenAIChat
     /**
      * @param  Message[]  $messages
      */
-    public function generateChatStream(array $messages): StreamedResponse
+    public function generateChatStream(array $messages): StreamInterface
     {
         return $this->createStreamedResponse($messages);
     }
@@ -163,22 +163,14 @@ class OpenAIChat
     /**
      * @param  Message[]  $messages
      */
-    private function createStreamedResponse(array $messages): StreamedResponse
+    private function createStreamedResponse(array $messages): StreamInterface
     {
         $openAiArgs = $this->getOpenAiArgs($messages);
-
         $stream = $this->client->chat()->createStreamed($openAiArgs);
-        $response = new StreamedResponse();
-        //We need this to make the streaming works
-        //It may not work with Symfony: https://stackoverflow.com/questions/76362863/why-streamedresponse-from-symfony-6-is-sent-at-once
-        @ob_end_clean();
-
-        $response->setCallback(function () use ($stream): void {
-            $toolsCalled = [];
-
-            /** @var CreateStreamedResponse $partialResponse */
+        $generator = function ($stream) {
             foreach ($stream as $partialResponse) {
                 $toolCalls = $partialResponse->choices[0]->delta->toolCalls ?? [];
+                $toolsCalled = [];
                 /** @var CreateStreamedResponseToolCall $toolCall */
                 foreach ($toolCalls as $toolCall) {
                     $toolsCalled[] = [
@@ -197,7 +189,6 @@ class OpenAIChat
                 }
 
                 if (! is_null($partialResponse->choices[0]->finishReason)) {
-                    ob_start();
                     break;
                 }
 
@@ -205,11 +196,11 @@ class OpenAIChat
                     continue;
                 }
 
-                echo $partialResponse->choices[0]->delta->content;
+                yield $partialResponse->choices[0]->delta->content;
             }
-        });
+        };
 
-        return $response->send();
+        return Utils::streamFor($generator($stream));
     }
 
     /**
