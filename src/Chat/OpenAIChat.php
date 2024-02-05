@@ -14,6 +14,7 @@ use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Chat\CreateResponseToolCall;
 use OpenAI\Responses\Chat\CreateStreamedResponseToolCall;
+use OpenAI\Responses\StreamResponse;
 use Psr\Http\Message\StreamInterface;
 
 use function getenv;
@@ -167,7 +168,7 @@ class OpenAIChat implements ChatInterface
     {
         $openAiArgs = $this->getOpenAiArgs($messages);
         $stream = $this->client->chat()->createStreamed($openAiArgs);
-        $generator = function ($stream) {
+        $generator = function (StreamResponse $stream) {
             foreach ($stream as $partialResponse) {
                 $toolCalls = $partialResponse->choices[0]->delta->toolCalls ?? [];
                 $toolsCalled = [];

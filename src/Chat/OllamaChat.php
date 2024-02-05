@@ -176,7 +176,7 @@ class OllamaChat implements ChatInterface
     {
         // Split the application/x-ndjson response into json responses
         $stream = explode("\n", $response->getBody()->getContents());
-        $generator = function ($stream) {
+        $generator = function (array $stream) {
             foreach ($stream as $partialResponse) {
                 $json = Utility::decodeJson($partialResponse);
                 if ((bool) $json['done']) {
@@ -202,7 +202,7 @@ class OllamaChat implements ChatInterface
     {
         // Split the application/x-ndjson response into json responses
         $stream = explode("\n", $response->getBody()->getContents());
-        $generator = function ($stream) {
+        $generator = function (array $stream) {
             foreach ($stream as $partialResponse) {
                 $json = Utility::decodeJson($partialResponse);
                 if ((bool) $json['done']) {
