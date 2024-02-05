@@ -13,20 +13,20 @@ interface ChatInterface
 
     public function generateStreamOfText(string $prompt): StreamInterface;
 
-    /** @param Message[] $messages */
+    /** @param  Message[]  $messages */
     public function generateChat(array $messages): string;
 
-    /** @param Message[] $messages */
+    /** @param  Message[]  $messages */
     public function generateChatStream(array $messages): StreamInterface;
 
     public function setSystemMessage(string $message): void;
 
-    /** @param FunctionInfo[] $tools */
+    /** @param  FunctionInfo[]  $tools */
     public function setTools(array $tools): void;
 
     public function addTool(FunctionInfo $functionInfo): void;
 
-    /** @param FunctionInfo[] $functions */
+    /** @param  FunctionInfo[]  $functions */
     public function setFunctions(array $functions): void;
 
     public function addFunction(FunctionInfo $functionInfo): void;
