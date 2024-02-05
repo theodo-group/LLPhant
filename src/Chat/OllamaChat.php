@@ -6,13 +6,12 @@ namespace LLPhant\Chat;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
-use JsonException;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
-use LLPhant\Exception\FormatException;
 use LLPhant\Exception\HttpExcetion;
 use LLPhant\Exception\MissingFeatureExcetion;
 use LLPhant\Exception\MissingParameterExcetion;
 use LLPhant\OllamaConfig;
+use LLPhant\Utility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -54,7 +53,7 @@ class OllamaChat implements ChatInterface
                 'stream' => false,
             ]
         );
-        $json = $this->decodeJson($response->getBody()->getContents());
+        $json = Utility::decodeJson($response->getBody()->getContents());
 
         return $json['response'];
     }
@@ -100,7 +99,7 @@ class OllamaChat implements ChatInterface
                 'stream' => false,
             ]
         );
-        $json = $this->decodeJson($response->getBody()->getContents());
+        $json = Utility::decodeJson($response->getBody()->getContents());
 
         return $json['message']['content'];
     }
@@ -171,23 +170,6 @@ class OllamaChat implements ChatInterface
     }
 
     /**
-     * Decode a JSON string into an array
-     *
-     * @return mixed[]
-     */
-    protected function decodeJson(string $json): array
-    {
-        try {
-            return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new FormatException(sprintf(
-                'JSON error decoding: %s',
-                $e->getMessage()
-            ));
-        }
-    }
-
-    /**
      * Decode a stream of text using the application/x-ndjson format
      */
     protected function decodeStreamOfText(ResponseInterface $response): StreamInterface
@@ -196,7 +178,7 @@ class OllamaChat implements ChatInterface
         $stream = explode("\n", $response->getBody()->getContents());
         $generator = function ($stream) {
             foreach ($stream as $partialResponse) {
-                $json = $this->decodeJson($partialResponse);
+                $json = Utility::decodeJson($partialResponse);
                 if ((bool) $json['done']) {
                     break;
                 }
@@ -222,7 +204,7 @@ class OllamaChat implements ChatInterface
         $stream = explode("\n", $response->getBody()->getContents());
         $generator = function ($stream) {
             foreach ($stream as $partialResponse) {
-                $json = $this->decodeJson($partialResponse);
+                $json = Utility::decodeJson($partialResponse);
                 if ((bool) $json['done']) {
                     break;
                 }
