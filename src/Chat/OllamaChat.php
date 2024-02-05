@@ -104,7 +104,7 @@ class OllamaChat implements ChatInterface
         return $json['message']['content'];
     }
 
-    /** @param Message[] $messages */
+    /** @param  Message[]  $messages */
     public function generateChatStream(array $messages): StreamInterface
     {
         $response = $this->sendRequest(
@@ -125,7 +125,7 @@ class OllamaChat implements ChatInterface
         $this->systemMessage = Message::system($message);
     }
 
-    /** @param FunctionInfo[] $tools */
+    /** @param  FunctionInfo[]  $tools */
     public function setTools(array $tools): void
     {
         throw new MissingFeatureExcetion('This feature is not supported');
@@ -136,7 +136,7 @@ class OllamaChat implements ChatInterface
         throw new MissingFeatureExcetion('This feature is not supported');
     }
 
-    /** @param FunctionInfo[] $functions */
+    /** @param  FunctionInfo[]  $functions */
     public function setFunctions(array $functions): void
     {
         throw new MissingFeatureExcetion('This feature is not supported');
