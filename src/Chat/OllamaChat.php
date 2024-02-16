@@ -8,7 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Exception\HttpExcetion;
-use LLPhant\Exception\MissingFeatureExcetion;
+use LLPhant\Exception\MissingFeatureException;
 use LLPhant\Exception\MissingParameterExcetion;
 use LLPhant\OllamaConfig;
 use LLPhant\Utility;
@@ -128,23 +128,23 @@ class OllamaChat implements ChatInterface
     /** @param  FunctionInfo[]  $tools */
     public function setTools(array $tools): void
     {
-        throw new MissingFeatureExcetion('This feature is not supported');
+        throw new MissingFeatureException('This feature is not supported');
     }
 
     public function addTool(FunctionInfo $functionInfo): void
     {
-        throw new MissingFeatureExcetion('This feature is not supported');
+        throw new MissingFeatureException('This feature is not supported');
     }
 
     /** @param  FunctionInfo[]  $functions */
     public function setFunctions(array $functions): void
     {
-        throw new MissingFeatureExcetion('This feature is not supported');
+        throw new MissingFeatureException('This feature is not supported');
     }
 
     public function addFunction(FunctionInfo $functionInfo): void
     {
-        throw new MissingFeatureExcetion('This feature is not supported');
+        throw new MissingFeatureException('This feature is not supported');
     }
 
     /**
