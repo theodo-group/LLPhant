@@ -2,8 +2,8 @@
 
 namespace LLPhant\Query\SemanticSearch;
 
+use LLPhant\Chat\ChatInterface;
 use LLPhant\Chat\Message;
-use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
@@ -13,7 +13,7 @@ class QuestionAnswering
 {
     public string $systemMessageTemplate = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
 
-    public function __construct(public readonly VectorStoreBase $vectorStoreBase, public readonly EmbeddingGeneratorInterface $embeddingGenerator, public readonly OpenAIChat $openAIChat)
+    public function __construct(public readonly VectorStoreBase $vectorStoreBase, public readonly EmbeddingGeneratorInterface $embeddingGenerator, public readonly ChatInterface $chat)
     {
     }
 
@@ -23,9 +23,9 @@ class QuestionAnswering
     public function answerQuestion(string $question, int $k = 4, array $additionalArguments = []): string
     {
         $systemMessage = $this->searchDocumentAndCreateSystemMessage($question, $k, $additionalArguments);
-        $this->openAIChat->setSystemMessage($systemMessage);
+        $this->chat->setSystemMessage($systemMessage);
 
-        return $this->openAIChat->generateText($question);
+        return $this->chat->generateText($question);
     }
 
     /**
@@ -34,9 +34,9 @@ class QuestionAnswering
     public function answerQuestionStream(string $question, int $k = 4, array $additionalArguments = []): string
     {
         $systemMessage = $this->searchDocumentAndCreateSystemMessage($question, $k, $additionalArguments);
-        $this->openAIChat->setSystemMessage($systemMessage);
+        $this->chat->setSystemMessage($systemMessage);
 
-        return $this->openAIChat->generateStreamOfText($question);
+        return $this->chat->generateStreamOfText($question);
     }
 
     /**
@@ -48,10 +48,10 @@ class QuestionAnswering
         // First we need to give the context to openAI with the good instructions
         $userQuestion = $messages[count($messages) - 1]->content;
         $systemMessage = $this->searchDocumentAndCreateSystemMessage($userQuestion, $k, $additionalArguments);
-        $this->openAIChat->setSystemMessage($systemMessage);
+        $this->chat->setSystemMessage($systemMessage);
 
         // Then we can just give the conversation
-        return $this->openAIChat->generateChatStream($messages);
+        return $this->chat->generateChatStream($messages);
     }
 
     /**
