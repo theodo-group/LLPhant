@@ -11,4 +11,6 @@ class OllamaConfig
     public string $url = 'http://localhost:11434/api/';
 
     public bool $stream = false;
+
+    public bool $formatJson = false;
 }
