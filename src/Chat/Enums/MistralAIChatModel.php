@@ -13,9 +13,9 @@ enum MistralAIChatModel
     {
         return match ($this) {
             MistralAIChatModel::tiny => 'mistral-tiny',
-            MistralAIChatModel::small => 'mistral-small',
-            MistralAIChatModel::medium => 'mistral-medium',
-            MistralAIChatModel::large => 'mistral-large',
+            MistralAIChatModel::small => 'mistral-small-latest',
+            MistralAIChatModel::medium => 'mistral-medium-latest',
+            MistralAIChatModel::large => 'mistral-large-latest',
         };
     }
 }
