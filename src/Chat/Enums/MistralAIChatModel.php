@@ -7,6 +7,7 @@ enum MistralAIChatModel
     case tiny;
     case small;
     case medium;
+    case large;
 
     public function getModelName(): string
     {
@@ -14,6 +15,7 @@ enum MistralAIChatModel
             MistralAIChatModel::tiny => 'mistral-tiny',
             MistralAIChatModel::small => 'mistral-small',
             MistralAIChatModel::medium => 'mistral-medium',
+            MistralAIChatModel::large => 'mistral-large',
         };
     }
 }
