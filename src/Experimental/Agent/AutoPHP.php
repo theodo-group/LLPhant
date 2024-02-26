@@ -23,8 +23,6 @@ class AutoPHP
 
     public string $defaultModelName;
 
-    private const CONTROL_FILE_PATH = 'control.txt';
-
     /**
      * @param  FunctionInfo[]  $tools
      */
@@ -123,19 +121,23 @@ class AutoPHP
 
     private function checkForCancellation(): void
     {
-        if (file_exists(self::CONTROL_FILE_PATH)) {
-            $content = file_get_contents(self::CONTROL_FILE_PATH);
-            if (! $content) {
-                echo json_encode(['end' => 'control file empty or not readable']);
-                exit();
-            }
-            if (trim($content) !== 'ok') {
-                echo json_encode(['end' => 'control file not ok']);
-                exit();
-            }
-        }
 
-        echo json_encode(['end' => 'end']);
-        exit();
+        // You can uncomment this and add a CONTROL_FILE_PATH const to have a mean of controlling the execution of stopping AutoPHP in the background
+        // without killing the process
+
+        //        if (file_exists(self::CONTROL_FILE_PATH)) {
+        //            $content = file_get_contents(self::CONTROL_FILE_PATH);
+        //            if (! $content) {
+        //                echo json_encode(['end' => 'control file empty or not readable']);
+        //                exit();
+        //            }
+        //            if (trim($content) !== 'ok') {
+        //                echo json_encode(['end' => 'control file not ok']);
+        //                exit();
+        //            }
+        //        }
+        //
+        //        echo json_encode(['end' => 'end']);
+        //        exit();
     }
 }

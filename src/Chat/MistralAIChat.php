@@ -4,8 +4,6 @@ namespace LLPhant\Chat;
 
 use Exception;
 use LLPhant\Chat\Enums\MistralAIChatModel;
-use LLPhant\Chat\FunctionInfo\FunctionInfo;
-use LLPhant\Exception\MissingFeatureExcetion;
 use LLPhant\OpenAIConfig;
 use OpenAI\Client;
 use OpenAI\Factory;
@@ -35,29 +33,7 @@ class MistralAIChat extends OpenAIChat
                 ->make();
         }
 
-        $config->model ??= MistralAIChatModel::small->getModelName();
+        $config->model ??= MistralAIChatModel::large->getModelName();
         parent::__construct($config);
-    }
-
-    /** @param  FunctionInfo[]  $tools */
-    public function setTools(array $tools): void
-    {
-        throw new MissingFeatureExcetion('This feature is not supported');
-    }
-
-    public function addTool(FunctionInfo $functionInfo): void
-    {
-        throw new MissingFeatureExcetion('This feature is not supported');
-    }
-
-    /** @param  FunctionInfo[]  $functions */
-    public function setFunctions(array $functions): void
-    {
-        throw new MissingFeatureExcetion('This feature is not supported');
-    }
-
-    public function addFunction(FunctionInfo $functionInfo): void
-    {
-        throw new MissingFeatureExcetion('This feature is not supported');
     }
 }
