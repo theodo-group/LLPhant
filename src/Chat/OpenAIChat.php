@@ -25,6 +25,9 @@ class OpenAIChat implements ChatInterface
 
     public string $model;
 
+    /** @var array<string, mixed> */
+    private array $modelOptions = [];
+
     private Message $systemMessage;
 
     /** @var FunctionInfo[] */
@@ -47,6 +50,7 @@ class OpenAIChat implements ChatInterface
             $this->client = OpenAI::client($apiKey);
         }
         $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->getModelName();
+        $this->modelOptions = $config->modelOptions;
     }
 
     public function generateText(string $prompt): string
@@ -141,6 +145,11 @@ class OpenAIChat implements ChatInterface
         $this->tools[] = $functionInfo;
     }
 
+    public function setModelOption(string $option, mixed $value): void
+    {
+        $this->modelOptions[$option] = $value;
+    }
+
     private function generate(string $prompt): CreateResponse
     {
         $messages = $this->createOpenAIMessagesFromPrompt($prompt);
@@ -218,10 +227,9 @@ class OpenAIChat implements ChatInterface
 
         $finalMessages = array_merge($finalMessages, $messages);
 
-        $openAiArgs = [
-            'model' => $this->model,
-            'messages' => $finalMessages,
-        ];
+        $openAiArgs = $this->modelOptions;
+
+        $openAiArgs = [...$openAiArgs, 'model' => $this->model, 'messages' => $finalMessages];
 
         if ($this->tools !== []) {
             $openAiArgs['tools'] = ToolFormatter::formatFunctionsToOpenAITools($this->tools);
