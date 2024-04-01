@@ -26,6 +26,9 @@ class OllamaChat implements ChatInterface
 
     private readonly bool $formatJson;
 
+    /** @var array<string, mixed> */
+    private array $modelOptions = [];
+
     public Client $client;
 
     public function __construct(protected OllamaConfig $config)
@@ -39,6 +42,7 @@ class OllamaChat implements ChatInterface
         ]);
 
         $this->formatJson = $config->formatJson;
+        $this->modelOptions = $config->modelOptions;
     }
 
     /**
@@ -48,7 +52,8 @@ class OllamaChat implements ChatInterface
      */
     public function generateText(string $prompt): string
     {
-        $params = [
+        $params = $params = [
+            ...$this->modelOptions,
             'model' => $this->config->model,
             'prompt' => $prompt,
             'stream' => false,
@@ -82,14 +87,16 @@ class OllamaChat implements ChatInterface
 
     public function generateStreamOfText(string $prompt): StreamInterface
     {
+        $params = [
+            ...$this->modelOptions,
+            'model' => $this->config->model,
+            'prompt' => $prompt,
+            'stream' => true,
+        ];
         $response = $this->sendRequest(
             'POST',
             'generate',
-            [
-                'model' => $this->config->model,
-                'prompt' => $prompt,
-                'stream' => true,
-            ]
+            $params,
         );
 
         return $this->decodeStreamOfText($response);
@@ -104,14 +111,16 @@ class OllamaChat implements ChatInterface
      */
     public function generateChat(array $messages): string
     {
+        $params = [
+            ...$this->modelOptions,
+            'model' => $this->config->model,
+            'messages' => $this->prepareMessages($messages),
+            'stream' => false,
+        ];
         $response = $this->sendRequest(
             'POST',
             'chat',
-            [
-                'model' => $this->config->model,
-                'messages' => $this->prepareMessages($messages),
-                'stream' => false,
-            ]
+            $params
         );
         $json = Utility::decodeJson($response->getBody()->getContents());
 
@@ -121,14 +130,16 @@ class OllamaChat implements ChatInterface
     /** @param  Message[]  $messages */
     public function generateChatStream(array $messages): StreamInterface
     {
+        $params = [
+            ...$this->modelOptions,
+            'model' => $this->config->model,
+            'messages' => $this->prepareMessages($messages),
+            'stream' => true,
+        ];
         $response = $this->sendRequest(
             'POST',
             'chat',
-            [
-                'model' => $this->config->model,
-                'messages' => $this->prepareMessages($messages),
-                'stream' => true,
-            ]
+            $params
         );
 
         return $this->decodeStreamOfChat($response);
@@ -159,6 +170,11 @@ class OllamaChat implements ChatInterface
     public function addFunction(FunctionInfo $functionInfo): void
     {
         throw new MissingFeatureException('This feature is not supported');
+    }
+
+    public function setModelOption(string $option, mixed $value): void
+    {
+        $this->modelOptions[$option] = $value;
     }
 
     /**
