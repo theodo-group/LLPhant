@@ -30,4 +30,6 @@ interface ChatInterface
     public function setFunctions(array $functions): void;
 
     public function addFunction(FunctionInfo $functionInfo): void;
+
+    public function setModelOption(string $option, mixed $value): void;
 }
