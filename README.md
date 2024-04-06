@@ -230,7 +230,7 @@ To avoid this problem we split the document into smaller chunks.
 The `DocumentSplitter` class is used to split the document into smaller chunks.
 
 ```php
-$splittedDocuments = DocumentSplitter::splitDocuments($documents, 800);
+$splitDocuments = DocumentSplitter::splitDocuments($documents, 800);
 ```
 
 #### Embedding Formatter
@@ -238,7 +238,7 @@ The `EmbeddingFormatter` is an optional step to format each chunk of text into a
 Adding a header and links to other documents can help the LLM to understand the context of the text.
 
 ```php
-$formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
+$formattedDocuments = EmbeddingFormatter::formatEmbeddings($splitDocuments);
 ```
 
 #### Embedding Generator
@@ -420,10 +420,10 @@ Here is one example using the `MemoryVectorStore`:
 $dataReader = new FileDataReader(__DIR__.'/private-data.txt');
 $documents = $dataReader->getDocuments();
 
-$splittedDocuments = DocumentSplitter::splitDocuments($documents, 500);
+$splitDocuments = DocumentSplitter::splitDocuments($documents, 500);
 
 $embeddingGenerator = new OpenAIEmbeddingGenerator();
-$embeddedDocuments = $embeddingGenerator->embedDocuments($splittedDocuments);
+$embeddedDocuments = $embeddingGenerator->embedDocuments($splitDocuments);
 
 $memoryVectorStore = new MemoryVectorStore();
 $memoryVectorStore->addDocuments($embeddedDocuments);
