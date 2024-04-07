@@ -260,7 +260,7 @@ New | text-embedding-3-large | 3072     |
 You can embed the documents using the following code:
 ```php
 $embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
-$embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
+$embeddedDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 ```
 
 You can also create a embedding from a text using the following code:
@@ -287,7 +287,7 @@ Example of usage with the `DoctrineVectorStore` class to store the embeddings in
 
 ```php
 $vectorStore = new DoctrineVectorStore($entityManager, PlaceEntity::class);
-$vectorStore->addDocuments($embededDocuments);
+$vectorStore->addDocuments($embeddedDocuments);
 ```
 
 Once you have done that you can perform a similarity search over your data.
