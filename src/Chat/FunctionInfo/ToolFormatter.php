@@ -23,7 +23,9 @@ class ToolFormatter
     }
 
     /**
-     * @return array{type: string, function: array{name: string, description: string, parameters: array{type: string, properties: array<string, mixed[]>, required: string[]}}}
+     * @return mixed[]
+     *
+     * @throws \Exception
      */
     public static function formatOneToolToOpenAI(FunctionInfo $functionInfo): array
     {
@@ -31,6 +33,16 @@ class ToolFormatter
         foreach ($functionInfo->parameters as $parameter) {
             $param = FunctionFormatter::formatParameter($parameter);
             $parametersOpenAI[$parameter->name] = $param;
+        }
+
+        if ($parametersOpenAI === []) {
+            return [
+                'type' => 'function',
+                'function' => [
+                    'name' => $functionInfo->name,
+                    'description' => $functionInfo->description,
+                ],
+            ];
         }
 
         $requiredParametersOpenAI = [];
