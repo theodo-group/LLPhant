@@ -117,6 +117,22 @@ $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
 $response = $chat->generateText('what is one + one ?'); // will return "ok"
 ```
 
+### Customizing System Messages in Question Answering
+
+When using the `QuestionAnswering` class, it is possible to customize the system message to guide the AI's response style and context sensitivity according to your specific needs. This feature allows you to enhance the interaction between the user and the AI, making it more tailored and responsive to specific scenarios.
+
+Here's how you can set a custom system message:
+
+```php
+use LLPhant\Query\SemanticSearch\QuestionAnswering;
+
+$qa = new QuestionAnswering($vectorStore, $embeddingGenerator, $chat);
+
+$customSystemMessage = 'Your are a helpful assistant. Answer with conversational tone. \\n\\n{context}.';
+
+$qa->systemMessageTemplate = $customSystemMessage;
+```
+
 ## Tools
 
 This feature is amazing and is available only for OpenAI.
