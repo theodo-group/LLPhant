@@ -31,7 +31,7 @@ class QuestionAnswering
     /**
      * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
      */
-    public function answerQuestionStream(string $question, int $k = 4, array $additionalArguments = []): string
+    public function answerQuestionStream(string $question, int $k = 4, array $additionalArguments = []): StreamInterface
     {
         $systemMessage = $this->searchDocumentAndCreateSystemMessage($question, $k, $additionalArguments);
         $this->chat->setSystemMessage($systemMessage);
