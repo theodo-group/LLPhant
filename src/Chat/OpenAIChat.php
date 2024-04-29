@@ -16,6 +16,7 @@ use OpenAI\Responses\Chat\CreateResponseToolCall;
 use OpenAI\Responses\Chat\CreateStreamedResponseToolCall;
 use OpenAI\Responses\StreamResponse;
 use Psr\Http\Message\StreamInterface;
+use LLPhant\Chat\TokenUsage;
 
 use function getenv;
 
@@ -36,6 +37,8 @@ class OpenAIChat implements ChatInterface
     public ?FunctionInfo $lastFunctionCalled = null;
 
     public ?FunctionInfo $requiredFunction = null;
+    
+    public ?TokenUsage $usage = null;
 
     public function __construct(?OpenAIConfig $config = null)
     {
@@ -51,6 +54,7 @@ class OpenAIChat implements ChatInterface
         }
         $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->getModelName();
         $this->modelOptions = $config->modelOptions ?? [];
+        $this->usage = new TokenUsage();
     }
 
     public function generateText(string $prompt): string
@@ -91,6 +95,7 @@ class OpenAIChat implements ChatInterface
     {
         $openAiArgs = $this->getOpenAiArgs($messages);
         $answer = $this->client->chat()->create($openAiArgs);
+        $this->usage->logLastUsage($answer);
 
         return $answer->choices[0]->message->content ?? '';
     }
@@ -155,7 +160,10 @@ class OpenAIChat implements ChatInterface
         $messages = $this->createOpenAIMessagesFromPrompt($prompt);
         $openAiArgs = $this->getOpenAiArgs($messages);
 
-        return $this->client->chat()->create($openAiArgs);
+        $answer = $this->client->chat()->create($openAiArgs);
+        $this->usage->logLastUsage($answer);
+
+        return $answer;
     }
 
     /**
