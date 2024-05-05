@@ -1,6 +1,6 @@
 <?php
 
-/* Note that CreateStreamedResponse does not contain any usage parameter for now. */ 
+/* Note that CreateStreamedResponse does not contain any usage parameter for now. */
 
 namespace LLPhant\Chat;
 
@@ -10,9 +10,9 @@ class TokenUsage
 {
     /* Only logs the latest response, not the total amount of all responses */
     public ?string $Prompt_Tokens = '';
-    
+
     public ?string $Completion_Tokens = '';
-    
+
     public ?string $Total_Tokens = '';
 
     public function logLastUsage(CreateResponse $answer): void
