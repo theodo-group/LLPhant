@@ -33,11 +33,11 @@ class OpenAIChat implements ChatInterface
     /** @var FunctionInfo[] */
     private array $tools = [];
 
-    public ?FunctionInfo $lastFunctionCalled = null;
+    public ? FunctionInfo $lastFunctionCalled = null;
 
-    public ?FunctionInfo $requiredFunction = null;
+    public ? FunctionInfo $requiredFunction = null;
     
-    public ?TokenUsage $usage = null;
+    public ? TokenUsage $usage = null;
 
     public function __construct(?OpenAIConfig $config = null)
     {
