@@ -15,7 +15,7 @@ class TokenUsage
 
     public ?int $Total_Tokens = 0;
 
-    public function logLastUsage(CreateResponse $answer): void
+    public function logLastUsage(?CreateResponse $answer): void
     {
         if (isset($answer->usage->promptTokens)) {
             $this->Prompt_Tokens = $answer->usage->promptTokens;
