@@ -41,6 +41,7 @@ class OpenAIChat implements ChatInterface
 
     public function __construct(?OpenAIConfig $config = null)
     {
+        $this->usage = new TokenUsage();
         if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
             $this->client = $config->client;
         } else {
@@ -53,7 +54,6 @@ class OpenAIChat implements ChatInterface
         }
         $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->getModelName();
         $this->modelOptions = $config->modelOptions ?? [];
-        $this->usage = new TokenUsage();
     }
 
     public function generateText(string $prompt): string
