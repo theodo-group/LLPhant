@@ -9,11 +9,11 @@ use OpenAI\Responses\Chat\CreateResponse;
 class TokenUsage
 {
     /* Only logs the latest response, not the total amount of all responses */
-    public ?string $Prompt_Tokens = '';
+    public ?int $Prompt_Tokens = 0;
 
-    public ?string $Completion_Tokens = '';
+    public ?int $Completion_Tokens = 0;
 
-    public ?string $Total_Tokens = '';
+    public ?int $Total_Tokens = 0;
 
     public function logLastUsage(CreateResponse $answer): void
     {
