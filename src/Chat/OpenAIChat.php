@@ -16,7 +16,6 @@ use OpenAI\Responses\Chat\CreateResponseToolCall;
 use OpenAI\Responses\Chat\CreateStreamedResponseToolCall;
 use OpenAI\Responses\StreamResponse;
 use Psr\Http\Message\StreamInterface;
-use LLPhant\Chat\TokenUsage;
 
 use function getenv;
 
