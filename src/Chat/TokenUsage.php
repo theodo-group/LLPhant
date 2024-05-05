@@ -17,16 +17,14 @@ class TokenUsage
 
     public function logLastUsage(CreateResponse $answer): void
     {
-        if ($answer->usage !== null) {
-            if (isset($answer->usage->promptTokens)) {
-                $this->Prompt_Tokens = $answer->usage->promptTokens;
-            }
-            if (isset($answer->usage->completionTokens)) {
-                $this->Completion_Tokens = $answer->usage->completionTokens;
-            }
-            if (isset($answer->usage->totalTokens)) {
-                $this->Total_Tokens = $answer->usage->totalTokens;
-            }
+        if (isset($answer->usage->promptTokens)) {
+            $this->Prompt_Tokens = $answer->usage->promptTokens;
         }
-    }
+        if (isset($answer->usage->completionTokens)) {
+            $this->Completion_Tokens = $answer->usage->completionTokens;
+        }
+        if (isset($answer->usage->totalTokens)) {
+            $this->Total_Tokens = $answer->usage->totalTokens;
+        }
+    }    
 }
