@@ -26,5 +26,5 @@ class TokenUsage
         if (isset($answer->usage->totalTokens)) {
             $this->Total_Tokens = $answer->usage->totalTokens;
         }
-    }    
+    }
 }
