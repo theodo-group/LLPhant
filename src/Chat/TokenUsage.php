@@ -1,6 +1,6 @@
 <?php
 
-/* Note that CreateStreamedResponse does not contain any usage parameter for now. */ 
+/* Note that CreateStreamedResponse does not contain any usage parameter for now. */
 
 namespace LLPhant\Chat;
 
