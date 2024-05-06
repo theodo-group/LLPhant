@@ -13,12 +13,13 @@ class FileSystemVectorStore extends VectorStoreBase
 
     /**
      * Create or open a vector storage in a local .json file
-     * @param ?string $filepath Full path to the .json that stores the vector data. Pass "null" to default to a local directory. 
+     *
+     * @param  ?string  $filepath  Full path to the .json that stores the vector data. Pass "null" to default to a local directory.
      */
     public function __construct(?string $filepath = null)
     {
         if ($filepath === null) {
-             $this->filePath = getcwd().DIRECTORY_SEPERATOR.'documents-vectorStore.json';
+            $this->filePath = getcwd().DIRECTORY_SEPERATOR.'documents-vectorStore.json';
         } else {
             $this->filePath = $filepath;
         }
