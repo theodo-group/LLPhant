@@ -18,7 +18,7 @@ class FileSystemVectorStore extends VectorStoreBase
     public function __construct(?string $filepath = null)
     {
         if ($filepath === null) {
-            $this->filePath = getcwd() . DIRECTORY_SEPERATOR . 'documents-vectorStore.json';
+             $this->filePath = getcwd().DIRECTORY_SEPERATOR.'documents-vectorStore.json';
         } else {
             $this->filePath = $filepath;
         }
@@ -106,8 +106,6 @@ class FileSystemVectorStore extends VectorStoreBase
         if (! is_readable($this->filePath)) {
             return [];
         }
-
-        
 
         // Get the JSON data from the file
         $jsonData = file_get_contents($this->filePath);
