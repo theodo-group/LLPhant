@@ -8,14 +8,14 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use LLPhant\Chat\Message;
 use LLPhant\Chat\OllamaChat;
-use LLPhant\Exception\MissingParameterExcetion;
+use LLPhant\Exception\MissingParameterException;
 use LLPhant\OllamaConfig;
 use Psr\Http\Message\StreamInterface;
 
 it('error when construct with no model', function () {
     $config = new OllamaConfig();
     $chat = new OllamaChat($config);
-})->throws(MissingParameterExcetion::class, 'You need to specify a model for Ollama');
+})->throws(MissingParameterException::class, 'You need to specify a model for Ollama');
 
 it('no error when construct with model', function () {
     $config = new OllamaConfig();
