@@ -18,7 +18,7 @@ class FileSystemVectorStore extends VectorStoreBase
      */
     public function __construct(?string $filepath = null)
     {
-        $this->filePath = $filepath ?? getcwd().DIRECTORY_SEPERATOR.'documents-vectorStore.json';
+        $this->filePath = $filepath ?? getcwd().DIRECTORY_SEPARATOR.'documents-vectorStore.json';
     }
 
     public function addDocument(Document $document): void
