@@ -17,6 +17,10 @@ class TokenUsage
 
     public function logLastUsage(?CreateResponse $answer): void
     {
+        if ($answer === null) {
+            return; // Exit early if $answer is null
+        }
+
         if (isset($answer->usage->promptTokens)) {
             $this->Prompt_Tokens = $answer->usage->promptTokens;
         }
