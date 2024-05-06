@@ -36,9 +36,8 @@ class OpenAIChat implements ChatInterface
     public ?FunctionInfo $lastFunctionCalled = null;
 
     public ?FunctionInfo $requiredFunction = null;
-
-    /** @var TokenUsage|null */
-    public ?TokenUsage $usage = null;
+    
+    public TokenUsage $usage;
 
     public function __construct(?OpenAIConfig $config = null)
     {
