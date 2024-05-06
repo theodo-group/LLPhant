@@ -7,9 +7,9 @@ namespace LLPhant\Chat;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
-use LLPhant\Exception\HttpExcetion;
+use LLPhant\Exception\HttpException;
 use LLPhant\Exception\MissingFeatureException;
-use LLPhant\Exception\MissingParameterExcetion;
+use LLPhant\Exception\MissingParameterException;
 use LLPhant\OllamaConfig;
 use LLPhant\Utility;
 use Psr\Http\Message\ResponseInterface;
@@ -35,7 +35,7 @@ class OllamaChat implements ChatInterface
     {
         $this->config = $config;
         if (! isset($config->model)) {
-            throw new MissingParameterExcetion('You need to specify a model for Ollama');
+            throw new MissingParameterException('You need to specify a model for Ollama');
         }
         $this->client = new Client([
             'base_uri' => $config->url,
@@ -189,7 +189,7 @@ class OllamaChat implements ChatInterface
         $response = $this->client->request($method, $path, ['json' => $json]);
         $status = $response->getStatusCode();
         if ($status < 200 || $status >= 300) {
-            throw new HttpExcetion(sprintf(
+            throw new HttpException(sprintf(
                 'HTTP error from Ollama (%d): %s',
                 $status,
                 $response->getBody()->getContents()
