@@ -6,6 +6,6 @@ namespace LLPhant\Exception;
 
 use Exception;
 
-class MissingParameterExcetion extends Exception implements LLPhantException
+class MissingParameterException extends Exception implements LLPhantException
 {
 }
