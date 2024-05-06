@@ -17,7 +17,7 @@ class TokenUsage
 
     public function logLastUsage(?CreateResponse $answer): void
     {
-        if ($answer === null) {
+        if (!$answer instanceof CreateResponse) {
             return; // Exit early if $answer is null
         }
 
