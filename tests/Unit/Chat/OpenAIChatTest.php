@@ -60,7 +60,7 @@ it('returns a stream response using generateChatStream()', function () {
 it('returns last response using generateText()', function () {
     $response = TransporterResponse::from(
         fixture('OpenAI/chat-response'),
-        []
+        ['x-request-id' => '1']
     );
     $transport = Mockery::mock(TransporterContract::class);
     $transport->allows()->requestObject(anyArgs())->andReturns($response);
@@ -83,7 +83,7 @@ it('returns last response using generateText()', function () {
 it('returns last response using generateTextOrReturnFunctionCalled()', function () {
     $response = TransporterResponse::from(
         fixture('OpenAI/chat-response'),
-        []
+        ['x-request-id' => '1']
     );
     $transport = Mockery::mock(TransporterContract::class);
     $transport->allows()->requestObject(anyArgs())->andReturns($response);
