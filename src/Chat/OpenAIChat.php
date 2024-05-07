@@ -37,8 +37,11 @@ class OpenAIChat implements ChatInterface
 
     public ?FunctionInfo $requiredFunction = null;
 
+    public TokenUsage $usage;
+
     public function __construct(?OpenAIConfig $config = null)
     {
+        $this->usage = new TokenUsage();
         if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
             $this->client = $config->client;
         } else {
@@ -91,6 +94,7 @@ class OpenAIChat implements ChatInterface
     {
         $openAiArgs = $this->getOpenAiArgs($messages);
         $answer = $this->client->chat()->create($openAiArgs);
+        $this->usage->logLastUsage($answer);
 
         return $answer->choices[0]->message->content ?? '';
     }
@@ -155,7 +159,10 @@ class OpenAIChat implements ChatInterface
         $messages = $this->createOpenAIMessagesFromPrompt($prompt);
         $openAiArgs = $this->getOpenAiArgs($messages);
 
-        return $this->client->chat()->create($openAiArgs);
+        $answer = $this->client->chat()->create($openAiArgs);
+        $this->usage->logLastUsage($answer);
+
+        return $answer;
     }
 
     /**
