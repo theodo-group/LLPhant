@@ -13,6 +13,7 @@ use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\Chat\CreateResponse;
 use OpenAI\Responses\Chat\CreateResponseToolCall;
+use OpenAI\Responses\Chat\CreateResponseUsage;
 use OpenAI\Responses\Chat\CreateStreamedResponseToolCall;
 use OpenAI\Responses\StreamResponse;
 use Psr\Http\Message\StreamInterface;
@@ -24,6 +25,8 @@ class OpenAIChat implements ChatInterface
     private readonly Client $client;
 
     public string $model;
+
+    private ?CreateResponse $lastResponse = null;
 
     /** @var array<string, mixed> */
     private array $modelOptions = [];
@@ -56,14 +59,23 @@ class OpenAIChat implements ChatInterface
     public function generateText(string $prompt): string
     {
         $answer = $this->generate($prompt);
+        $this->lastResponse = $answer;
+
         $this->handleTools($answer);
 
         return $answer->choices[0]->message->content ?? '';
     }
 
+    public function getLastResponse(): ?CreateResponse
+    {
+        return $this->lastResponse;
+    }
+
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
         $answer = $this->generate($prompt);
+        $this->lastResponse = $answer;
+
         $toolsToCall = $this->getToolsToCall($answer);
 
         foreach ($toolsToCall as $toolToCall) {
