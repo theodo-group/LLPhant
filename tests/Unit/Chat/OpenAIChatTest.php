@@ -100,7 +100,6 @@ it('returns last response using generateTextOrReturnFunctionCalled()', function 
 });
 
 it('returns empty (null) last response if no usage', function () {
-    
     $transport = Mockery::mock(TransporterContract::class);
 
     $config = new OpenAIConfig();
