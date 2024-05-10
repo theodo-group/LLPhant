@@ -6,6 +6,6 @@ namespace LLPhant\Exception;
 
 use Exception;
 
-class HttpExcetion extends Exception implements LLPhantException
+class HttpException extends Exception implements LLPhantException
 {
 }

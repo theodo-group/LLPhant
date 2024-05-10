@@ -11,9 +11,14 @@ class FileSystemVectorStore extends VectorStoreBase
 {
     public string $filePath;
 
-    public function __construct(string $filepath = 'documents-vectorStore.json')
+    /**
+     * Create or open a vector storage in a local .json file
+     *
+     * @param  ?string  $filepath  Full path to the .json that stores the vector data. Pass "null" to default to a local directory.
+     */
+    public function __construct(?string $filepath = null)
     {
-        $this->filePath = getcwd().'/'.$filepath;
+        $this->filePath = $filepath ?? getcwd().DIRECTORY_SEPARATOR.'documents-vectorStore.json';
     }
 
     public function addDocument(Document $document): void
@@ -94,8 +99,8 @@ class FileSystemVectorStore extends VectorStoreBase
      */
     private function readDocumentsFromFile(): array
     {
-        // Check if file exists
-        if (! file_exists($this->filePath)) {
+        // Check if file exists and we can open it
+        if (! is_readable($this->filePath)) {
             return [];
         }
 
