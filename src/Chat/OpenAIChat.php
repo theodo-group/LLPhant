@@ -41,11 +41,8 @@ class OpenAIChat implements ChatInterface
 
     public ?FunctionInfo $requiredFunction = null;
 
-    public TokenUsage $usage;
-
     public function __construct(?OpenAIConfig $config = null)
     {
-        $this->usage = new TokenUsage();
         if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
             $this->client = $config->client;
         } else {
