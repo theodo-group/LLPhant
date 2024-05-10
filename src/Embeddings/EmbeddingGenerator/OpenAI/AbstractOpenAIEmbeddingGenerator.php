@@ -39,23 +39,40 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
      * Call out to OpenAI's embedding endpoint.
      *
      * @return float[]
+     * @throws Exception
      */
-    public function embedText(string $text): array
+    public function embedText(string $text, ?int $dimensions = null): array
     {
+        if (null !== $dimensions && "text-embedding-ada-002" === $this->getModelName()) {
+            throw new Exception("Setting embeddings dimensions is only supported in text-embedding-3 and later models.");
+        }
+
+        if (null !== $dimensions && $dimensions > $this->getEmbeddingLength()) {
+            throw new Exception(sprintf(
+                'The %s model only supports embeddings of length %d or less.',
+                $this->getModelName(),
+                $this->getEmbeddingLength()
+            ));
+        }
+
         $text = str_replace("\n", ' ', $text);
 
         $response = $this->client->embeddings()->create([
             'model' => $this->getModelName(),
             'input' => $text,
+            'dimensions' => $dimensions ?? $this->getEmbeddingLength(),
         ]);
 
         return $response->embeddings[0]->embedding;
     }
 
-    public function embedDocument(Document $document): Document
+    /**
+     * @throws Exception
+     */
+    public function embedDocument(Document $document, ?int $dimensions = null): Document
     {
         $text = $document->formattedContent ?? $document->content;
-        $document->embedding = $this->embedText($text);
+        $document->embedding = $this->embedText($text, $dimensions);
 
         return $document;
     }
@@ -63,12 +80,13 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
     /**
      * @param  Document[]  $documents
      * @return Document[]
+     * @throws Exception
      */
-    public function embedDocuments(array $documents): array
+    public function embedDocuments(array $documents, ?int $dimensions = null): array
     {
         $embedDocuments = [];
         foreach ($documents as $document) {
-            $embedDocuments[] = $this->embedDocument($document);
+            $embedDocuments[] = $this->embedDocument($document, $dimensions);
         }
 
         return $embedDocuments;
