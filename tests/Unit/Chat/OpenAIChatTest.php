@@ -108,3 +108,22 @@ it('returns empty (null) last response if no usage', function () {
 
     expect($chat->getLastResponse())->toBe(null);
 });
+
+it('returns total token usage generate() or generateTextOrReturnFunctionCalled()', function () {
+    $response = TransporterResponse::from(
+        fixture('OpenAI/chat-response'),
+        ['x-request-id' => '1']
+    );
+    $transport = Mockery::mock(TransporterContract::class);
+    $transport->allows()->requestObject(anyArgs())->andReturns($response);
+
+    $config = new OpenAIConfig();
+    $config->client = new Client($transport);
+    $chat = new OpenAIChat($config);
+
+    $response = $chat->generateText('here the question');
+    expect($chat->getTotalTokens())->toBe(21);
+
+    $response = $chat->generateTextOrReturnFunctionCalled('here the second question with function');
+    expect($chat->getTotalTokens())->toBe(42);
+});

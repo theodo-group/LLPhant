@@ -27,6 +27,8 @@ class OpenAIChat implements ChatInterface
 
     private ?CreateResponse $lastResponse = null;
 
+    private int $totalTokens = 0;
+
     /** @var array<string, mixed> */
     private array $modelOptions = [];
 
@@ -69,6 +71,11 @@ class OpenAIChat implements ChatInterface
         return $this->lastResponse;
     }
 
+    public function getTotalTokens(): int
+    {
+        return $this->totalTokens;
+    }
+
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
         $answer = $this->generate($prompt);
@@ -101,6 +108,7 @@ class OpenAIChat implements ChatInterface
         $openAiArgs = $this->getOpenAiArgs($messages);
         $answer = $this->client->chat()->create($openAiArgs);
         $this->lastResponse = $answer;
+        $this->totalTokens += $answer->usage->totalTokens ?? 0;
 
         return $answer->choices[0]->message->content ?? '';
     }
@@ -166,6 +174,7 @@ class OpenAIChat implements ChatInterface
         $openAiArgs = $this->getOpenAiArgs($messages);
 
         $this->lastResponse = $this->client->chat()->create($openAiArgs);
+        $this->totalTokens += $this->lastResponse->usage->totalTokens ?? 0;
 
         return $this->lastResponse;
     }
