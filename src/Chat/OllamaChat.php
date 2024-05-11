@@ -85,6 +85,24 @@ class OllamaChat implements ChatInterface
         return $this->generateText($prompt);
     }
 
+    public function generateChatorReturnFunctionCalled(array $messages): string|FunctionInfo
+    {
+        $params = [
+            ...$this->modelOptions,
+            'model' => $this->config->model,
+            'messages' => $this->prepareMessages($messages),
+            'stream' => false,
+        ];
+        $response = $this->sendRequest(
+            'POST',
+            'chat',
+            $params
+        );
+        $json = Utility::decodeJson($response->getBody()->getContents());
+
+        return $json['message']['content'];
+    }
+
     public function generateStreamOfText(string $prompt): StreamInterface
     {
         $params = [
