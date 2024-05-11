@@ -113,7 +113,7 @@ class OpenAIChat implements ChatInterface
         return $answer->choices[0]->message->content ?? '';
     }
 
-    public function generateChatOrReturnFunctionCalled(array $messages):  string|FunctionInfo
+    public function generateChatOrReturnFunctionCalled(array $messages): string|FunctionInfo
     {
         $openAiArgs = $this->getOpenAiArgs($messages);
         $answer = $this->client->chat()->create($openAiArgs);
