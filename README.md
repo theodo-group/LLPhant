@@ -9,9 +9,6 @@ It is compatible with Symfony and Laravel.
 
 We are working to expand the support of different LLMs. Right now, we are supporting [OpenAI](https://openai.com/blog/openai-api) and [Ollama](https://ollama.ai/) that can be used to run LLM locally such as [Llama 2](https://llama.meta.com/).
 
-If you want to use other LLMs, you can use [genossGPT](https://github.com/OpenGenenerativeAI/GenossGPT)
-as a proxy.
-
 We want to thank few amazing projects that we use here or inspired us:
 - the learnings from using [LangChain](https://www.langchain.com/) and [LLamaIndex](https://www.llamaindex.ai/)
 - the excellent work from the [OpenAI PHP SDK](https://github.com/openai-php/client).
