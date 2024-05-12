@@ -25,6 +25,10 @@ class OpenAIChat implements ChatInterface
 
     public string $model;
 
+    private ?CreateResponse $lastResponse = null;
+
+    private int $totalTokens = 0;
+
     /** @var array<string, mixed> */
     private array $modelOptions = [];
 
@@ -37,11 +41,8 @@ class OpenAIChat implements ChatInterface
 
     public ?FunctionInfo $requiredFunction = null;
 
-    public TokenUsage $usage;
-
     public function __construct(?OpenAIConfig $config = null)
     {
-        $this->usage = new TokenUsage();
         if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
             $this->client = $config->client;
         } else {
@@ -59,14 +60,26 @@ class OpenAIChat implements ChatInterface
     public function generateText(string $prompt): string
     {
         $answer = $this->generate($prompt);
+
         $this->handleTools($answer);
 
         return $answer->choices[0]->message->content ?? '';
     }
 
+    public function getLastResponse(): ?CreateResponse
+    {
+        return $this->lastResponse;
+    }
+
+    public function getTotalTokens(): int
+    {
+        return $this->totalTokens;
+    }
+
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
         $answer = $this->generate($prompt);
+
         $toolsToCall = $this->getToolsToCall($answer);
 
         foreach ($toolsToCall as $toolToCall) {
@@ -94,7 +107,8 @@ class OpenAIChat implements ChatInterface
     {
         $openAiArgs = $this->getOpenAiArgs($messages);
         $answer = $this->client->chat()->create($openAiArgs);
-        $this->usage->logLastUsage($answer);
+        $this->lastResponse = $answer;
+        $this->totalTokens += $answer->usage->totalTokens ?? 0;
 
         return $answer->choices[0]->message->content ?? '';
     }
@@ -159,10 +173,10 @@ class OpenAIChat implements ChatInterface
         $messages = $this->createOpenAIMessagesFromPrompt($prompt);
         $openAiArgs = $this->getOpenAiArgs($messages);
 
-        $answer = $this->client->chat()->create($openAiArgs);
-        $this->usage->logLastUsage($answer);
+        $this->lastResponse = $this->client->chat()->create($openAiArgs);
+        $this->totalTokens += $this->lastResponse->usage->totalTokens ?? 0;
 
-        return $answer;
+        return $this->lastResponse;
     }
 
     /**
