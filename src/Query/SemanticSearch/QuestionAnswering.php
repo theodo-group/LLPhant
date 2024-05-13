@@ -71,10 +71,9 @@ class QuestionAnswering
     private function searchDocumentAndCreateSystemMessage(string $question, int $k, array $additionalArguments): string
     {
         $embedding = $this->embeddingGenerator->embedText($question);
-        /** @var Document[] $documents */
         $this->retrievedDocs = $this->vectorStoreBase->similaritySearch($embedding, $k, $additionalArguments);
 
-        if (empty($this->retrievedDocs)) {
+        if ($this->retrievedDocs === []) {
             return "I don't know. I didn't find any document to answer the question";
         }
 
