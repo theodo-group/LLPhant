@@ -15,7 +15,7 @@ enum OpenAIChatModel
             OpenAIChatModel::Gpt35Turbo => 'gpt-3.5-turbo',
             OpenAIChatModel::Gpt4 => 'gpt-4',
             OpenAIChatModel::Gpt4Turbo => 'gpt-4-1106-preview',
-            OpenAiChatModel::Gpt4Omni => 'gpt-4o'
+            OpenAIChatModel::Gpt4Omni => 'gpt-4o',
         };
     }
 }
