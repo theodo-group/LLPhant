@@ -78,6 +78,7 @@ class OpenAIChat implements ChatInterface
 
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
+        $this->lastFunctionCalled = null;
         $answer = $this->generate($prompt);
 
         $toolsToCall = $this->getToolsToCall($answer);
@@ -115,6 +116,7 @@ class OpenAIChat implements ChatInterface
 
     public function generateChatOrReturnFunctionCalled(array $messages): string|FunctionInfo
     {
+        $this->lastFunctionCalled = null;
         $openAiArgs = $this->getOpenAiArgs($messages);
         $answer = $this->client->chat()->create($openAiArgs);
         $toolsToCall = $this->getToolsToCall($answer);
