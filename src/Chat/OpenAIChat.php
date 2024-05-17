@@ -91,6 +91,7 @@ class OpenAIChat implements ChatInterface
         }
 
         $this->lastResponse = $answer;
+
         return $answer->choices[0]->message->content ?? '';
     }
 
@@ -128,7 +129,7 @@ class OpenAIChat implements ChatInterface
         if ($this->lastFunctionCalled instanceof FunctionInfo) {
             return $this->lastFunctionCalled;
         }
-        
+
         $this->totalTokens += $answer->usage->totalTokens ?? 0;
         $this->lastResponse = $answer;
 
