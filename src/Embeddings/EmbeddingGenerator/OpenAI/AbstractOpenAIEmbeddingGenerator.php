@@ -44,7 +44,7 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
      */
     public function embedText(string $text, ?int $dimensions = null): array
     {
-        if ($dimensions !== null && $this->getModelName() === 'text-embedding-ada-002') {
+        if ($dimensions !== null && $this instanceof OpenAIADA002EmbeddingGenerator) {
             throw new Exception('Setting embeddings dimensions is only supported in text-embedding-3 and later models.');
         }
 
