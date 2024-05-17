@@ -9,15 +9,15 @@ interface EmbeddingGeneratorInterface
     /**
      * @return float[]
      */
-    public function embedText(string $text): array;
+    public function embedText(string $text, ?int $dimensions = null): array;
 
-    public function embedDocument(Document $document): Document;
+    public function embedDocument(Document $document, ?int $dimensions = null): Document;
 
     /**
      * @param  Document[]  $documents
      * @return Document[]
      */
-    public function embedDocuments(array $documents): array;
+    public function embedDocuments(array $documents, ?int $dimensions = null): array;
 
     public function getEmbeddingLength(): int;
 }

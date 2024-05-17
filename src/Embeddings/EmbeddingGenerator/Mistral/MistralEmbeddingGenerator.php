@@ -37,7 +37,7 @@ class MistralEmbeddingGenerator implements EmbeddingGeneratorInterface
      *
      * @return float[]
      */
-    public function embedText(string $text): array
+    public function embedText(string $text, ?int $dimensions = null): array
     {
         $text = str_replace("\n", ' ', $text);
 
@@ -64,10 +64,10 @@ class MistralEmbeddingGenerator implements EmbeddingGeneratorInterface
         return $searchResults['data'][0]['embedding'];
     }
 
-    public function embedDocument(Document $document): Document
+    public function embedDocument(Document $document, ?int $dimensions = null): Document
     {
         $text = $document->formattedContent ?? $document->content;
-        $document->embedding = $this->embedText($text);
+        $document->embedding = $this->embedText($text, $dimensions);
 
         return $document;
     }
@@ -78,11 +78,11 @@ class MistralEmbeddingGenerator implements EmbeddingGeneratorInterface
      * @param  Document[]  $documents
      * @return Document[]
      */
-    public function embedDocuments(array $documents): array
+    public function embedDocuments(array $documents, ?int $dimensions = null): array
     {
         $embedDocuments = [];
         foreach ($documents as $document) {
-            $embedDocuments[] = $this->embedDocument($document);
+            $embedDocuments[] = $this->embedDocument($document, $dimensions);
         }
 
         return $embedDocuments;

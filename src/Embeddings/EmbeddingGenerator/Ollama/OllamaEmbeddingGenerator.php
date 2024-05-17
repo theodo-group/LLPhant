@@ -30,8 +30,11 @@ final class OllamaEmbeddingGenerator implements EmbeddingGeneratorInterface
      * Call out to Ollama embedding endpoint.
      *
      * @return float[]
+     *
+     * @throws \JsonException
+     * @throws Exception
      */
-    public function embedText(string $text): array
+    public function embedText(string $text, ?int $dimensions = null): array
     {
         $text = str_replace("\n", ' ', $text);
 
@@ -57,10 +60,13 @@ final class OllamaEmbeddingGenerator implements EmbeddingGeneratorInterface
         return $searchResults['embedding'];
     }
 
-    public function embedDocument(Document $document): Document
+    /**
+     * @throws \JsonException
+     */
+    public function embedDocument(Document $document, ?int $dimensions = null): Document
     {
         $text = $document->formattedContent ?? $document->content;
-        $document->embedding = $this->embedText($text);
+        $document->embedding = $this->embedText($text, $dimensions);
 
         return $document;
     }
@@ -68,12 +74,14 @@ final class OllamaEmbeddingGenerator implements EmbeddingGeneratorInterface
     /**
      * @param  Document[]  $documents
      * @return Document[]
+     *
+     * @throws \JsonException
      */
-    public function embedDocuments(array $documents): array
+    public function embedDocuments(array $documents, ?int $dimensions = null): array
     {
         $embedDocuments = [];
         foreach ($documents as $document) {
-            $embedDocuments[] = $this->embedDocument($document);
+            $embedDocuments[] = $this->embedDocument($document, $dimensions);
         }
 
         return $embedDocuments;
