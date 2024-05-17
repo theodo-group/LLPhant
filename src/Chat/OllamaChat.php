@@ -102,7 +102,7 @@ class OllamaChat implements ChatInterface
 
         return $json['message']['content'];
     }
-    
+
     public function generateStreamOfText(string $prompt): StreamInterface
     {
         $params = [

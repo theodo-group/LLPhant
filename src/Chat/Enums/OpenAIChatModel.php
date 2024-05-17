@@ -9,7 +9,6 @@ enum OpenAIChatModel
     case Gpt4Turbo;
     case Gpt4Omni;
 
-
     public function getModelName(): string
     {
         return match ($this) {
