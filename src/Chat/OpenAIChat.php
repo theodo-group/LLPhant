@@ -78,8 +78,8 @@ class OpenAIChat implements ChatInterface
 
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
+        $this->lastFunctionCalled = null;
         $answer = $this->generate($prompt);
-
         $toolsToCall = $this->getToolsToCall($answer);
 
         foreach ($toolsToCall as $toolToCall) {
@@ -90,6 +90,7 @@ class OpenAIChat implements ChatInterface
             return $this->lastFunctionCalled;
         }
 
+        $this->lastResponse = $answer;
         return $answer->choices[0]->message->content ?? '';
     }
 
@@ -109,6 +110,27 @@ class OpenAIChat implements ChatInterface
         $answer = $this->client->chat()->create($openAiArgs);
         $this->lastResponse = $answer;
         $this->totalTokens += $answer->usage->totalTokens ?? 0;
+
+        return $answer->choices[0]->message->content ?? '';
+    }
+
+    public function generateChatOrReturnFunctionCalled(array $messages): string|FunctionInfo
+    {
+        $this->lastFunctionCalled = null;
+        $openAiArgs = $this->getOpenAiArgs($messages);
+        $answer = $this->client->chat()->create($openAiArgs);
+        $toolsToCall = $this->getToolsToCall($answer);
+
+        foreach ($toolsToCall as $toolToCall) {
+            $this->lastFunctionCalled = $toolToCall;
+        }
+
+        if ($this->lastFunctionCalled instanceof FunctionInfo) {
+            return $this->lastFunctionCalled;
+        }
+        
+        $this->totalTokens += $answer->usage->totalTokens ?? 0;
+        $this->lastResponse = $answer;
 
         return $answer->choices[0]->message->content ?? '';
     }
