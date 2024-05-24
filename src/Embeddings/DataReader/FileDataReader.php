@@ -18,8 +18,9 @@ final class FileDataReader implements DataReader
      * @template T of Document
      *
      * @param  class-string<T>  $documentClassName
+     * @param string[] $extensions
      */
-    public function __construct(public string $filePath, public readonly string $documentClassName = Document::class)
+    public function __construct(public string $filePath, public readonly string $documentClassName = Document::class, private readonly array $extensions = [])
     {
     }
 
@@ -32,30 +33,21 @@ final class FileDataReader implements DataReader
             return [];
         }
 
+        return $this->getDocumentsFrom($this->filePath);
+    }
+
+    /**
+     * @return Document[]
+     * @throws Exception
+     */
+    private function getDocumentsFrom(string $path): array
+    {
         // If it's a directory
-        if (is_dir($this->filePath)) {
-            $documents = [];
-            // Open the directory
-            if ($handle = opendir($this->filePath)) {
-                // Read the directory contents
-                while (($entry = readdir($handle)) !== false) {
-                    $fullPath = $this->filePath.'/'.$entry;
-                    if ($entry != '.' && $entry != '..' && is_file($fullPath)) {
-                        $content = $this->getContentFromFile($fullPath);
-                        if ($content !== false) {
-                            $documents[] = $this->getDocument($content, $entry);
-                        }
-                    }
-                }
-
-                // Close the directory
-                closedir($handle);
-            }
-
-            return $documents;
+        if (is_dir($path)) {
+            return $this->getContentFromDirectory($path);
         }
         // If it's a file
-        $content = $this->getContentFromFile($this->filePath);
+        $content = $this->getContentFromFile($path);
         if ($content === false) {
             return [];
         }
@@ -64,18 +56,55 @@ final class FileDataReader implements DataReader
     }
 
     /**
+     * @return Document[]
      * @throws Exception
      */
-    public function getContentFromFile(string $path): string|false
+    private function getContentFromDirectory(string $path): array
     {
-        if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'pdf') {
+        $documents = [];
+        // Open the directory
+        if ($handle = opendir($path)) {
+            // Read the directory contents
+            while (($entry = readdir($handle)) !== false) {
+                $fullPath = $path . '/' . $entry;
+                if ($entry != '.' && $entry != '..') {
+                    if (is_dir($fullPath)) {
+                        $documents = [...$documents, ...$this->getDocumentsFrom($fullPath)];
+                    } else {
+                        $content = $this->getContentFromFile($fullPath);
+                        if ($content !== false) {
+                            $documents[] = $this->getDocument($content, $entry);
+                        }
+                    }
+                }
+            }
+
+            // Close the directory
+            closedir($handle);
+        }
+
+        return $documents;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getContentFromFile(string $path): string|false
+    {
+        $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        if (!$this->validExtension($fileExtension)) {
+            return false;
+        }
+
+        if ($fileExtension === 'pdf') {
             $parser = new Parser();
             $pdf = $parser->parseFile($path);
 
             return $pdf->getText();
         }
 
-        if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'docx') {
+        if ($fileExtension === 'docx') {
             $phpWord = IOFactory::load($path);
             $fullText = '';
             foreach ($phpWord->getSections() as $section) {
@@ -111,5 +140,14 @@ final class FileDataReader implements DataReader
         $document->sourceName = $entry;
 
         return $document;
+    }
+
+    private function validExtension(string $fileExtension): bool
+    {
+        if (sizeof($this->extensions) === 0) {
+            return true;
+        }
+
+        return in_array($fileExtension, $this->extensions);
     }
 }
