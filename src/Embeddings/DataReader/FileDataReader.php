@@ -33,21 +33,12 @@ final class FileDataReader implements DataReader
             return [];
         }
 
-        return $this->getDocumentsFrom($this->filePath);
-    }
-
-    /**
-     * @return Document[]
-     * @throws Exception
-     */
-    private function getDocumentsFrom(string $path): array
-    {
         // If it's a directory
-        if (is_dir($path)) {
-            return $this->getContentFromDirectory($path);
+        if (is_dir($this->filePath)) {
+            return $this->getDocumentsFromDirectory($this->filePath);
         }
         // If it's a file
-        $content = $this->getContentFromFile($path);
+        $content = $this->getContentFromFile($this->filePath);
         if ($content === false) {
             return [];
         }
@@ -57,9 +48,8 @@ final class FileDataReader implements DataReader
 
     /**
      * @return Document[]
-     * @throws Exception
      */
-    private function getContentFromDirectory(string $path): array
+    private function getDocumentsFromDirectory(string $path): array
     {
         $documents = [];
         // Open the directory
@@ -69,7 +59,7 @@ final class FileDataReader implements DataReader
                 $fullPath = $path . '/' . $entry;
                 if ($entry != '.' && $entry != '..') {
                     if (is_dir($fullPath)) {
-                        $documents = [...$documents, ...$this->getDocumentsFrom($fullPath)];
+                        $documents = [...$documents, ...$this->getDocumentsFromDirectory($fullPath)];
                     } else {
                         $content = $this->getContentFromFile($fullPath);
                         if ($content !== false) {
@@ -86,9 +76,6 @@ final class FileDataReader implements DataReader
         return $documents;
     }
 
-    /**
-     * @throws Exception
-     */
     private function getContentFromFile(string $path): string|false
     {
         $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
