@@ -43,11 +43,7 @@ final class FileDataReader implements DataReader
                     if ($entry != '.' && $entry != '..' && is_file($fullPath)) {
                         $content = $this->getContentFromFile($fullPath);
                         if ($content !== false) {
-                            $document = new $this->documentClassName();
-                            $document->content = $content;
-                            $document->sourceType = $this->sourceType;
-                            $document->sourceName = $entry;
-                            $documents[] = $document;
+                            $documents[] = $this->getDocument($content, $entry);
                         }
                     }
                 }
@@ -63,12 +59,8 @@ final class FileDataReader implements DataReader
         if ($content === false) {
             return [];
         }
-        $document = new $this->documentClassName();
-        $document->content = $content;
-        $document->sourceType = $this->sourceType;
-        $document->sourceName = $this->filePath;
 
-        return [$document];
+        return [$this->getDocument($content, $this->filePath)];
     }
 
     /**
@@ -109,5 +101,15 @@ final class FileDataReader implements DataReader
         }
 
         return $text;
+    }
+
+    private function getDocument(string $content, string $entry): mixed
+    {
+        $document = new $this->documentClassName();
+        $document->content = $content;
+        $document->sourceType = $this->sourceType;
+        $document->sourceName = $entry;
+
+        return $document;
     }
 }
