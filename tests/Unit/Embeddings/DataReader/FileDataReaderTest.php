@@ -51,7 +51,6 @@ it('can read pdf and texts ', function () {
     expect($foundText)->toBeTrue();
 });
 
-
 it('can filter files based on extensions', function () {
     $filePath = __DIR__.'/FilesTestDirectory/';
     $reader = new FileDataReader($filePath, Document::class, ['docx']);
@@ -65,8 +64,7 @@ it('can read sub-directories', function () {
     $reader = new FileDataReader($filePath, Document::class, ['txt']);
     $documents = $reader->getDocuments();
 
-    $contents = array_map(fn($doc) => $doc->content, $documents);
+    $contents = array_map(fn ($doc) => $doc->content, $documents);
 
     expect($contents)->toContain("hello test!\n", "hello test2!\n", "hello test3!\n");
 });
-

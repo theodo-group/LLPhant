@@ -2,7 +2,6 @@
 
 namespace LLPhant\Embeddings\DataReader;
 
-use Exception;
 use LLPhant\Embeddings\Document;
 use PhpOffice\PhpWord\Element\Section;
 use PhpOffice\PhpWord\Element\Text;
@@ -18,7 +17,7 @@ final class FileDataReader implements DataReader
      * @template T of Document
      *
      * @param  class-string<T>  $documentClassName
-     * @param string[] $extensions
+     * @param  string[]  $extensions
      */
     public function __construct(public string $filePath, public readonly string $documentClassName = Document::class, private readonly array $extensions = [])
     {
@@ -49,14 +48,14 @@ final class FileDataReader implements DataReader
     /**
      * @return Document[]
      */
-    private function getDocumentsFromDirectory(string $path): array
+    private function getDocumentsFromDirectory(string $directory): array
     {
         $documents = [];
         // Open the directory
-        if ($handle = opendir($path)) {
+        if ($handle = opendir($directory)) {
             // Read the directory contents
             while (($entry = readdir($handle)) !== false) {
-                $fullPath = $path . '/' . $entry;
+                $fullPath = $directory.'/'.$entry;
                 if ($entry != '.' && $entry != '..') {
                     if (is_dir($fullPath)) {
                         $documents = [...$documents, ...$this->getDocumentsFromDirectory($fullPath)];
@@ -80,7 +79,7 @@ final class FileDataReader implements DataReader
     {
         $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        if (!$this->validExtension($fileExtension)) {
+        if (! $this->validExtension($fileExtension)) {
             return false;
         }
 
@@ -131,7 +130,7 @@ final class FileDataReader implements DataReader
 
     private function validExtension(string $fileExtension): bool
     {
-        if (sizeof($this->extensions) === 0) {
+        if ($this->extensions === []) {
             return true;
         }
 
