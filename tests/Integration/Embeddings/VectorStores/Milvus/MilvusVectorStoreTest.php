@@ -26,7 +26,7 @@ it('tests a full embedding flow with Milvus', function () {
     /** @var float[] $embeddingQuery */
     $embeddingQuery = json_decode($rawFileContent, true);
 
-    $client = new MilvusClient('localhost', '19530', 'root', 'milvus');
+    $client = new MilvusClient(getenv('MILVUS_HOST') ?? 'localhost', '19530', 'root', 'milvus');
     $vectorStore = new MilvusVectorStore($client);
 
     $vectorStore->addDocuments($embeddedDocuments);

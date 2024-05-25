@@ -30,7 +30,7 @@ it('tests a full embedding flow with Redis', function () {
 
     $redisClient = new Client([
         'scheme' => 'tcp',
-        'host' => 'localhost',
+        'host' => getenv('REDIS_HOST') ?? 'localhost',
         'port' => 6379,
     ]);
     $vectorStore = new RedisVectorStore($redisClient);
