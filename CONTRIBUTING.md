@@ -74,6 +74,8 @@ as in the `docker-compose.yaml` file from `devx` folder.
 Then run this sql query to create the table for the tests:
 
 ```postgresql
+CREATE EXTENSION vector;
+
 CREATE TABLE IF NOT EXISTS test_place (
                                           id SERIAL PRIMARY KEY,
                                           content text,
@@ -81,7 +83,19 @@ CREATE TABLE IF NOT EXISTS test_place (
                                           sourcetype text,
                                           sourcename text,
                                           embedding vector
-)
+);
+```
 
+Then run:
+```bash
+composer test:int
+```
+
+You can set host names for the various services involved in integration tests using these environment variables:
+```
+PGVECTOR_HOST
+ELASTIC_URL
+MILVUS_HOST
+REDIS_HOST
 ```
 
