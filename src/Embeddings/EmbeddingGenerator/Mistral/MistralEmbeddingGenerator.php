@@ -36,9 +36,15 @@ class MistralEmbeddingGenerator implements EmbeddingGeneratorInterface
      * Call out to OpenAI's embedding endpoint.
      *
      * @return float[]
+     *
+     * @throws Exception
      */
     public function embedText(string $text, ?int $dimensions = null): array
     {
+        if (null !== $dimensions) {
+            throw new Exception('Setting embeddings dimensions is not supported.');
+        }
+
         $text = str_replace("\n", ' ', $text);
 
         $response = $this->client->post('https://api.mistral.ai/v1/embeddings', [

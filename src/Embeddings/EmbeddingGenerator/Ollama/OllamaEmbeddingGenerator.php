@@ -36,6 +36,10 @@ final class OllamaEmbeddingGenerator implements EmbeddingGeneratorInterface
      */
     public function embedText(string $text, ?int $dimensions = null): array
     {
+        if (null !== $dimensions) {
+            throw new Exception('Setting embeddings dimensions is not supported.');
+        }
+
         $text = str_replace("\n", ' ', $text);
 
         $response = $this->client->post('embeddings', [
