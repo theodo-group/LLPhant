@@ -41,7 +41,7 @@ class MistralEmbeddingGenerator implements EmbeddingGeneratorInterface
      */
     public function embedText(string $text, ?int $dimensions = null): array
     {
-        if (null !== $dimensions) {
+        if ($dimensions !== null) {
             throw new Exception('Setting embeddings dimensions is not supported.');
         }
 
