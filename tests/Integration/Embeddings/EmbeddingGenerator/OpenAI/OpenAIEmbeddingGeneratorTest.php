@@ -33,7 +33,7 @@ it('can embed with custom dimensions', function () {
     }
 });
 
-it('throws an exception when trying to set dimensions on a model that does not support it', function () {
+it('should not allow dimensions for ada model', function () {
     $llm = new OpenAIADA002EmbeddingGenerator();
     $llm->embedText('I love food', 512);
 })->fails('Setting embeddings dimensions is only supported in text-embedding-3 and later models.');

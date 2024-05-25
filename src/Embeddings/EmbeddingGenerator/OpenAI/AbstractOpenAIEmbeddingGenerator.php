@@ -7,6 +7,7 @@ namespace LLPhant\Embeddings\EmbeddingGenerator\OpenAI;
 use Exception;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
+use LLPhant\Embeddings\EmbeddingGenerator\Mistral\MistralEmbeddingGenerator;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
@@ -44,18 +45,7 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
      */
     public function embedText(string $text, ?int $dimensions = null): array
     {
-        if ($dimensions !== null && $this instanceof OpenAIADA002EmbeddingGenerator) {
-            throw new Exception('Setting embeddings dimensions is only supported in text-embedding-3 and later models.');
-        }
-
-        if ($dimensions !== null && $dimensions > $this->getEmbeddingLength()) {
-            throw new Exception(sprintf(
-                'The %s model only supports embeddings of length %d or less.',
-                $this->getModelName(),
-                $this->getEmbeddingLength()
-            ));
-        }
-
+        $this->validatedEmbeddingsDimensions($dimensions);
         $text = str_replace("\n", ' ', $text);
 
         $response = $this->client->embeddings()->create([
@@ -97,4 +87,28 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
     abstract public function getEmbeddingLength(): int;
 
     abstract public function getModelName(): string;
+
+    /**
+     * @throws Exception
+     */
+    private function validatedEmbeddingsDimensions(?int $dimensions = null): void
+    {
+        if ($dimensions !== null) {
+            if ($this instanceof OpenAIADA002EmbeddingGenerator) {
+                throw new Exception('Setting embeddings dimensions is only supported in text-embedding-3 and later models.');
+            }
+
+            if ($this instanceof MistralEmbeddingGenerator) {
+                throw new Exception('Setting embeddings dimensions is not supported in Mistral.');
+            }
+
+            if ($dimensions > $this->getEmbeddingLength()) {
+                throw new Exception(sprintf(
+                    'The %s model only supports embeddings of length %d or less.',
+                    $this->getModelName(),
+                    $this->getEmbeddingLength()
+                ));
+            }
+        }
+    }
 }
