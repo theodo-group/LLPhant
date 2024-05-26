@@ -7,23 +7,10 @@ namespace Tests\Integration\Chat;
 use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\Parameter;
+use LLPhant\Chat\Message;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
 use Mockery;
-
-it('can be supplied with a custom client', function () {
-    $client = new MockOpenAIClient();
-
-    $config = new OpenAIConfig();
-    $config->client = $client;
-
-    $chat = new OpenAIChat($config);
-    $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
-    $response = $chat->generateText('what is one + one ?');
-    expect($response)->toBeString()
-        ->and($response)->toBe("\n\nHello there, this is a fake chat response.");
-    // See OpenAI\Testing\Responses\Fixtures\Chat\CreateResponseFixture
-});
 
 it('can generate some stuff', function () {
     $chat = new OpenAIChat();
@@ -102,4 +89,21 @@ it('can call a function without argument', function () {
     $functionInfo = $chat->generateTextOrReturnFunctionCalled('the confirmation should be called');
 
     expect($functionInfo->name)->toBe('sendNotificationToSlack');
+});
+
+it('calls tool functions during a chat', function () {
+    $chat = new OpenAIChat();
+    $notifier = new NotificationExample();
+
+    $functionSendNotification = FunctionBuilder::buildFunctionInfo($notifier, 'sendNotificationToSlack');
+
+    $chat->addTool($functionSendNotification);
+    $messages = [
+        Message::system('You need to call the function to send a confirmation notification to slack'),
+        Message::user('the confirmation should be called'),
+    ];
+
+    $chat->generateChat($messages);
+
+    expect($notifier->nrOfCalls)->toBe(1);
 });
