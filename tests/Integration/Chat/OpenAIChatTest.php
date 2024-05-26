@@ -10,11 +10,9 @@ use LLPhant\Chat\FunctionInfo\Parameter;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
 use Mockery;
-use OpenAI\Client;
 
 it('can be supplied with a custom client', function () {
-    $client = \Mockery::mock(Client::class);
-    $client->shouldReceive('chat')->once();
+    $client = new MockOpenAIClient();
 
     $config = new OpenAIConfig();
     $config->client = $client;
@@ -22,7 +20,9 @@ it('can be supplied with a custom client', function () {
     $chat = new OpenAIChat($config);
     $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
     $response = $chat->generateText('what is one + one ?');
-    expect($response)->toBeString();
+    expect($response)->toBeString()
+        ->and($response)->toBe("\n\nHello there, this is a fake chat response.");
+    // See OpenAI\Testing\Responses\Fixtures\Chat\CreateResponseFixture
 });
 
 it('can generate some stuff', function () {
@@ -35,7 +35,8 @@ it('can generate some stuff with a system prompt', function () {
     $chat = new OpenAIChat();
     $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
     $response = $chat->generateText('what is one + one ?');
-    expect(strtolower($response))->toBe('ok');
+    // Sometimes final a dot is added to the answer
+    expect(strtolower($response))->toStartWith('ok');
 });
 
 it('can load any existing model', function () {
