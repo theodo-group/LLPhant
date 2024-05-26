@@ -127,3 +127,17 @@ it('returns total token usage generate() or generateTextOrReturnFunctionCalled()
     $response = $chat->generateTextOrReturnFunctionCalled('here the second question with function');
     expect($chat->getTotalTokens())->toBe(42);
 });
+
+it('can be supplied with a custom client', function () {
+    $client = new MockOpenAIClient();
+
+    $config = new OpenAIConfig();
+    $config->client = $client;
+
+    $chat = new OpenAIChat($config);
+    $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
+    $response = $chat->generateText('what is one + one ?');
+    expect($response)->toBeString()
+        ->and($response)->toBe("\n\nHello there, this is a fake chat response.");
+    // See OpenAI\Testing\Responses\Fixtures\Chat\CreateResponseFixture
+});

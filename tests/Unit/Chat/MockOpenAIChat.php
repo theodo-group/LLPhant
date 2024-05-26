@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Chat;
+namespace Tests\Unit\Chat;
 
 use OpenAI\Contracts\Resources\ChatContract;
 use OpenAI\Responses\Chat\CreateResponse;
