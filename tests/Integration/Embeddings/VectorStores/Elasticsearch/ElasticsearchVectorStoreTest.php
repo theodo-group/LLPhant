@@ -27,7 +27,7 @@ it('tests a full embedding flow with Elasticsearch', function () {
     $embeddingQuery = json_decode($rawFileContent, true);
 
     $client = (new ClientBuilder())::create()
-        ->setHosts([getenv('ELASTIC_URL') ?? 'http://elasticsearch:9200'])
+        ->setHosts([getenv('ELASTIC_URL') ?? 'http://localhost:9200'])
         ->build();
     $vectorStore = new ElasticsearchVectorStore($client, 'llphant_test');
 
