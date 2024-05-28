@@ -20,6 +20,7 @@
     },
     "suggest": {
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
+        "symfony/cache": "This is one of the possible types of psr/cache needed by doctrine/orm",
         "hkulekci/qdrant": "This is required for the QdrantVectoreStore.",
         "predis/predis": "This is required for the RedisVectoreStore.",
         "elasticsearch/elasticsearch": "This is required for the ElasticsearchVectoreStore."
