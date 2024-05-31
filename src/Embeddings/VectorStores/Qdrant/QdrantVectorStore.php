@@ -3,11 +3,12 @@
 namespace LLPhant\Embeddings\VectorStores\Qdrant;
 
 use Exception;
+use GuzzleHttp\Client;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 use Qdrant\Config;
-use Qdrant\Http\GuzzleClient;
+use Qdrant\Http\Transport;
 use Qdrant\Models\Filter\Condition\ConditionInterface;
 use Qdrant\Models\Filter\Filter;
 use Qdrant\Models\PointsStruct;
@@ -27,7 +28,7 @@ class QdrantVectorStore extends VectorStoreBase
 
     public function __construct(Config $config, private string $collectionName)
     {
-        $this->client = new Qdrant(new GuzzleClient($config));
+        $this->client = new Qdrant(new Transport(new Client(), $config));
     }
 
     /**
