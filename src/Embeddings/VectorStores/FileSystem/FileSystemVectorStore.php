@@ -3,8 +3,9 @@
 namespace LLPhant\Embeddings\VectorStores\FileSystem;
 
 use Exception;
+use LLPhant\Embeddings\Distances\Distance;
+use LLPhant\Embeddings\Distances\EuclideanDistanceL2;
 use LLPhant\Embeddings\Document;
-use LLPhant\Embeddings\VectorStores\DistanceL2Utils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 
 class FileSystemVectorStore extends VectorStoreBase
@@ -16,7 +17,7 @@ class FileSystemVectorStore extends VectorStoreBase
      *
      * @param  ?string  $filepath  Full path to the .json that stores the vector data. Pass "null" to default to a local directory.
      */
-    public function __construct(?string $filepath = null)
+    public function __construct(?string $filepath = null, private readonly Distance $distance = new EuclideanDistanceL2())
     {
         $this->filePath = $filepath ?? getcwd().DIRECTORY_SEPARATOR.'documents-vectorStore.json';
     }
@@ -49,7 +50,7 @@ class FileSystemVectorStore extends VectorStoreBase
             if ($document->embedding === null) {
                 throw new Exception("Document with the following content has no embedding: {$document->content}");
             }
-            $dist = DistanceL2Utils::euclideanDistanceL2($embedding, $document->embedding);
+            $dist = $this->distance->measure($embedding, $document->embedding);
             $distances[$index] = $dist;
         }
 

@@ -3,14 +3,19 @@
 namespace LLPhant\Embeddings\VectorStores\Memory;
 
 use Exception;
+use LLPhant\Embeddings\Distances\Distance;
+use LLPhant\Embeddings\Distances\EuclideanDistanceL2;
 use LLPhant\Embeddings\Document;
-use LLPhant\Embeddings\VectorStores\DistanceL2Utils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 
 class MemoryVectorStore extends VectorStoreBase
 {
     /** @var Document[] */
     private array $documentsPool = [];
+
+    public function __construct(private readonly Distance $distance = new EuclideanDistanceL2())
+    {
+    }
 
     public function addDocument(Document $document): void
     {
@@ -33,7 +38,7 @@ class MemoryVectorStore extends VectorStoreBase
             if ($document->embedding === null) {
                 throw new Exception("Document with the following content has no embedding: {$document->content}");
             }
-            $dist = DistanceL2Utils::euclideanDistanceL2($embedding, $document->embedding);
+            $dist = $this->distance->measure($embedding, $document->embedding);
             $distances[$index] = $dist;
         }
 
