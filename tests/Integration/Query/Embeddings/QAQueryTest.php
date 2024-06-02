@@ -8,10 +8,12 @@ use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAIADA002EmbeddingGenerator;
+use LLPhant\Embeddings\VectorStores\FileSystem\FileSystemVectorStore;
 use LLPhant\Embeddings\VectorStores\Memory\MemoryVectorStore;
+use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 
-it('generates a answer based on private knowledge', function () {
+it('generates a answer based on private knowledge', function (VectorStoreBase $vectorStore) {
     $dataReader = new FileDataReader(__DIR__.'/private-data.txt');
     $documents = $dataReader->getDocuments();
 
@@ -20,11 +22,10 @@ it('generates a answer based on private knowledge', function () {
     $embeddingGenerator = new OpenAIADA002EmbeddingGenerator();
     $embeddedDocuments = $embeddingGenerator->embedDocuments($splittedDocuments);
 
-    $memoryVectorStore = new MemoryVectorStore();
-    $memoryVectorStore->addDocuments($embeddedDocuments);
+    $vectorStore->addDocuments($embeddedDocuments);
 
     $qa = new QuestionAnswering(
-        $memoryVectorStore,
+        $vectorStore,
         $embeddingGenerator,
         new OpenAIChat()
     );
@@ -32,4 +33,4 @@ it('generates a answer based on private knowledge', function () {
     $answer = $qa->answerQuestion('what is the secret of Alice?');
 
     expect($answer)->toContain('cheese');
-});
+})->with([new MemoryVectorStore(), new FileSystemVectorStore(\sys_get_temp_dir().'\QAQueryTest.json')]);
