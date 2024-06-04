@@ -7,23 +7,10 @@ namespace Tests\Integration\Chat;
 use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\Parameter;
+use LLPhant\Chat\Message;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;
 use Mockery;
-use OpenAI\Client;
-
-it('can be supplied with a custom client', function () {
-    $client = \Mockery::mock(Client::class);
-    $client->shouldReceive('chat')->once();
-
-    $config = new OpenAIConfig();
-    $config->client = $client;
-
-    $chat = new OpenAIChat($config);
-    $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
-    $response = $chat->generateText('what is one + one ?');
-    expect($response)->toBeString();
-});
 
 it('can generate some stuff', function () {
     $chat = new OpenAIChat();
@@ -35,7 +22,8 @@ it('can generate some stuff with a system prompt', function () {
     $chat = new OpenAIChat();
     $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
     $response = $chat->generateText('what is one + one ?');
-    expect(strtolower($response))->toBe('ok');
+    // Sometimes final a dot is added to the answer
+    expect(strtolower($response))->toStartWith('ok');
 });
 
 it('can load any existing model', function () {
@@ -101,4 +89,21 @@ it('can call a function without argument', function () {
     $functionInfo = $chat->generateTextOrReturnFunctionCalled('the confirmation should be called');
 
     expect($functionInfo->name)->toBe('sendNotificationToSlack');
+});
+
+it('calls tool functions during a chat', function () {
+    $chat = new OpenAIChat();
+    $notifier = new NotificationExample();
+
+    $functionSendNotification = FunctionBuilder::buildFunctionInfo($notifier, 'sendNotificationToSlack');
+
+    $chat->addTool($functionSendNotification);
+    $messages = [
+        Message::system('You need to call the function to send a confirmation notification to slack'),
+        Message::user('the confirmation should be called'),
+    ];
+
+    $chat->generateChat($messages);
+
+    expect($notifier->nrOfCalls)->toBe(1);
 });

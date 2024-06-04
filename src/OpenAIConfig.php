@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace LLPhant;
 
-use OpenAI\Client;
+use OpenAI\Contracts\ClientContract;
 
 class OpenAIConfig
 {
     public string $apiKey;
 
-    public ?Client $client = null;
+    public ?ClientContract $client = null;
 
     public string $model;
 

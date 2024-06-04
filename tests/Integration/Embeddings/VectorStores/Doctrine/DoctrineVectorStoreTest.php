@@ -23,7 +23,7 @@ it('creates two entity with their embeddings and perform a similarity search', f
         'dbname' => 'postgres',
         'user' => 'myuser',
         'password' => '!ChangeMe!',
-        'host' => 'localhost',
+        'host' => getenv('PGVECTOR_HOST') ?? 'localhost',
         'driver' => 'pdo_pgsql',
     ];
 
@@ -63,7 +63,7 @@ it('tests a full embedding flow with Doctrine', function () {
         'dbname' => 'postgres',
         'user' => 'myuser',
         'password' => '!ChangeMe!',
-        'host' => 'localhost',
+        'host' => getenv('PGVECTOR_HOST') ?? 'localhost',
         'driver' => 'pdo_pgsql',
     ];
 

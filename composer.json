@@ -20,6 +20,7 @@
     },
     "suggest": {
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
+        "symfony/cache": "This is one of the possible types of psr/cache needed by doctrine/orm",
         "hkulekci/qdrant": "This is required for the QdrantVectoreStore.",
         "predis/predis": "This is required for the RedisVectoreStore.",
         "elasticsearch/elasticsearch": "This is required for the ElasticsearchVectoreStore."
@@ -32,10 +33,11 @@
         "mockery/mockery": "^1.6",
         "pestphp/pest": "2.32.0",
         "pestphp/pest-plugin-arch": "^2.5.0",
-        "pestphp/pest-plugin-type-coverage": "^2.8.0",
-        "phpstan/phpstan": "^1.10.25",
+        "pestphp/pest-plugin-type-coverage": "2.8.0",
+        "phpstan/phpstan": "1.10.55",
         "predis/predis": "^2.2",
         "rector/rector": "^0.16.0",
+        "symfony/cache": "^7.0",
         "symfony/var-dumper": "^6.3.1 || ^7.0.0"
     },
     "autoload": {
