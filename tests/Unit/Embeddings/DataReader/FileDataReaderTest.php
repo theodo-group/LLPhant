@@ -31,6 +31,14 @@ it('can read docx', function () {
     expect($documents[0]->content)->toBe('This data is from a docx');
 });
 
+it('can read docx with text breaks', function () {
+    $filePath = __DIR__.'/FilesTestDirectory/document-with-text-breaks.docx';
+    $reader = new FileDataReader($filePath);
+    $documents = $reader->getDocuments();
+
+    expect($documents[0]->content)->toContain('Sample document with text breaks');
+});
+
 it('can read pdf and texts ', function () {
     $filePath = __DIR__.'/FilesTestDirectory/';
     $reader = new FileDataReader($filePath);
@@ -56,7 +64,7 @@ it('can filter files based on extensions', function () {
     $reader = new FileDataReader($filePath, Document::class, ['docx']);
     $documents = $reader->getDocuments();
 
-    expect($documents)->toHaveCount(1);
+    expect($documents)->toHaveCount(2);
 });
 
 it('can read sub-directories', function () {

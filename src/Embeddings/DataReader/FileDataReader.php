@@ -3,9 +3,7 @@
 namespace LLPhant\Embeddings\DataReader;
 
 use LLPhant\Embeddings\Document;
-use PhpOffice\PhpWord\Element\Section;
-use PhpOffice\PhpWord\Element\Text;
-use PhpOffice\PhpWord\Element\TextRun;
+use PhpOffice\PhpWord\Element\AbstractElement;
 use PhpOffice\PhpWord\IOFactory;
 use Smalot\PdfParser\Parser;
 
@@ -103,13 +101,12 @@ final class FileDataReader implements DataReader
         return file_get_contents($path);
     }
 
-    private function extractTextFromDocxNode(Section|TextRun|Text $section): string
+    private function extractTextFromDocxNode(AbstractElement $section): string
     {
         $text = '';
         if (method_exists($section, 'getText')) {
             $text .= $section->getText();
         } elseif (method_exists($section, 'getElements')) {
-            /** @var Section|TextRun|Text $childSection */
             foreach ($section->getElements() as $childSection) {
                 $text .= $this->extractTextFromDocxNode($childSection);
             }
