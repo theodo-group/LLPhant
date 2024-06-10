@@ -224,14 +224,23 @@ The only requirement is that you can read the data and that you can extract the 
 
 For now we only support text files, pdf and docx but we plan to support other data type in the future.
 
-You can use the `FileDataReader` class to read a file. It takes a path to a file or a directory as parameter.
-The second parameter is the class name of the entity that will be used to store the embedding. 
-The class needs to extend the `Document` class 
+You can use the [`FileDataReader`](src/Embeddings/DataReader/FileDataReader.php) class to read a file. It takes a path to a file or a directory as parameter.
+The second optional parameter is the class name of the entity that will be used to store the embedding.
+The class needs to extend the  [`Document`](src/Embeddings/Document.php) class 
 and even the `DoctrineEmbeddingEntityBase` class (that extends the `Document` class) if you want to use the Doctrine vector store.
+Here is an example of using a sample [`PlaceEntity`](tests/Integration/Embeddings/VectorStores/Doctrine/PlaceEntity.php) class as document type: 
 
 ```php
 $filePath = __DIR__.'/PlacesTextFiles';
 $reader = new FileDataReader($filePath, PlaceEntity::class);
+$documents = $reader->getDocuments();
+```
+
+If it's OK for you to use the default `Document` class, you can go this way:
+
+```php
+$filePath = __DIR__.'/PlacesTextFiles';
+$reader = new FileDataReader($filePath);
 $documents = $reader->getDocuments();
 ```
 
@@ -282,6 +291,8 @@ $embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
 $embedding = $embeddingGenerator->embedText('I love food');
 //You can then use the embedding to perform a similarity search
 ```
+
+There is the [`OllamaEmbeddingGenerator`](src/Embeddings/EmbeddingGenerator/Ollama/OllamaEmbeddingGenerator.php) as well, which has an embedding size of 1024.
 
 #### VectorStores
 Once you have embeddings you need to store them in a vector store.
