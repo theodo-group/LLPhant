@@ -63,7 +63,7 @@ You can also see other use cases on [Qdrant's website](https://qdrant.tech/use-c
 
 ## Usage
 
-You can use OpenAI or Ollama as LLM.
+You can use OpenAI, Mistral or Ollama as LLM.
 
 ### OpenAI
 
@@ -81,6 +81,16 @@ $config->apiKey = 'fakeapikey';
 $chat = new OpenAIChat($config);
 ```
 
+### Mistral
+
+If you want to use Mistral, you can just specify the model to use using the `OpenAIConfig` object and pass it to the `MistralAIChat`.
+
+```php
+$config = new OpenAIConfig();
+$config->model = 'fakeapikey';
+$chat = new MistralAIChat($config);
+```
+
 ### Ollama
 
 If you want to use Ollama, you can just specify the model to use using the `OllamaConfig` object and pass it to the `OllamaChat`.
@@ -95,7 +105,7 @@ $chat = new OllamaChat($config);
 
 > 💡 This class can be used to generate content, to create a chatbot or to create a text summarizer.
 
-You can use the `OpenAIChat` or `OllamaChat` to generate text or to create a chat.
+You can use the `OpenAIChat`, `MistralAIChat` or `OllamaChat` to generate text or to create a chat.
 
 We can use it to simply generate text from a prompt.
 This will ask directly an answer from the LLM.
