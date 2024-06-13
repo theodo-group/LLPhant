@@ -39,7 +39,7 @@ class AutoPHP
             $this->outputAgent);
         $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, new OpenAIChat(), $verbose,
             $this->outputAgent);
-        $this->defaultModelName = OpenAIChatModel::Gpt4Turbo->getModelName();
+        $this->defaultModelName = OpenAIChatModel::Gpt4Turbo->value;
     }
 
     public function run(int $maxIteration = 100): string

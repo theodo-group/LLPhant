@@ -2,16 +2,8 @@
 
 namespace LLPhant\Image\Enums;
 
-enum OpenAIImageStyle
+enum OpenAIImageStyle: string
 {
-    case Vivid;
-    case Natural;
-
-    public function getModelName(): string
-    {
-        return match ($this) {
-            OpenAIImageStyle::Vivid => 'vivid',
-            OpenAIImageStyle::Natural => 'natural',
-        };
-    }
+    case Vivid = 'vivid';
+    case Natural = 'natural';
 }
