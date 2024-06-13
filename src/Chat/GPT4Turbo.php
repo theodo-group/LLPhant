@@ -13,6 +13,6 @@ class GPT4Turbo extends OpenAIChat
     public function __construct(?OpenAIConfig $config = null)
     {
         parent::__construct($config);
-        $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->getModelName();
+        $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->value;
     }
 }

@@ -33,7 +33,7 @@ class MistralAIChat extends OpenAIChat
                 ->make();
         }
 
-        $config->model ??= MistralAIChatModel::large->getModelName();
+        $config->model ??= MistralAIChatModel::large->value;
         parent::__construct($config);
     }
 }
