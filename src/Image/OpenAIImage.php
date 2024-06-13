@@ -38,13 +38,14 @@ class OpenAIImage implements ImageInterface
         $this->modelOptions = $config->modelOptions ?? [];
     }
 
-    public function generateImage(string $prompt, OpenAIImageStyle $style): Image
+    public function generateImage(string $prompt, OpenAIImageStyle $style = OpenAIImageStyle::Vivid): Image
     {
         $answer = $this->client->images()->create([
             'prompt' => $prompt,
             'model' => $this->model,
             'n' => 1,
             'size' => $this->modelOptions['size'] ?? OpenAIImageSize::size_1024x1024->value,
+            'style' => $style->value,
         ]);
 
         return $this->responseToImage($answer);
