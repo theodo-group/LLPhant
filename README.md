@@ -23,6 +23,7 @@ We can find great external resource on LLPhant (ping us to add yours):
 - [Use Case](#use-case)
 - [Usage](#usage)
   - [Chat](#chat)
+  - [Image](#image)
   - [Tools](#tools)
   - [Embeddings](#embeddings)
   - [VectorStore and Search](#vectorstores)
@@ -112,6 +113,16 @@ You can add instruction so the LLM will behave in a specific manner.
 ```php
 $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
 $response = $chat->generateText('what is one + one ?'); // will return "ok"
+```
+
+### Image
+
+You can use the `OpenAIImage` to generate image.
+
+We can use it to simply generate image from a prompt.
+
+```php
+$response = $image->generateImage('A cat in the snow', OpenAIImageStyle::Vivid); // will return a LLPhant\Image\Image object
 ```
 
 ### Customizing System Messages in Question Answering
