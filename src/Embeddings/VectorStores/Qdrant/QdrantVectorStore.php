@@ -3,6 +3,7 @@
 namespace LLPhant\Embeddings\VectorStores\Qdrant;
 
 use Exception;
+use GuzzleHttp\Client;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
