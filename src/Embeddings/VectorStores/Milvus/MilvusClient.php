@@ -105,10 +105,12 @@ class MilvusClient
             'vector' => $vector,
             'limit' => $limit,
         ];
-        if ($outputFields !== null) {
+        if ($outputFields !== null)
+        {
             $body['outputFields'] = $outputFields;
         }
-        if ($filter !== null) {
+        if ($filter !== null)
+        {
             $body['filter'] = $filter;
         }
 
@@ -127,7 +129,8 @@ class MilvusClient
             'collectionName' => $collectionName,
             'id' => $id,
         ];
-        if ($outputFields !== null) {
+        if ($outputFields !== null)
+        {
             $body['outputFields'] = $outputFields;
         }
 
@@ -150,12 +153,15 @@ class MilvusClient
             'json' => $body,
         ];
 
-        try {
+        try
+        {
             $response = $this->client->request($method, $path, $options);
 
             /** @var array{code: int, data: mixed} */
             return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (ClientException $e) {
+        }
+        catch (ClientException $e)
+        {
             $response = $e->getResponse();
             $response->getBody()->getContents();
             throw new \Exception('Milvus API error: {$errorBody}', $e->getCode(), $e);

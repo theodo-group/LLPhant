@@ -43,9 +43,11 @@ class ExecutionTaskAgent extends AgentBase
         $this->outputAgent->renderTitleAndMessageGreen('🤖 ExecutionTaskAgent.', 'Prompt: '.$prompt, $this->verbose);
 
         // Send prompt to OpenAI API and retrieve the result
-        try {
+        try
+        {
             $stringOrFunctionInfo = $this->openAIChat->generateTextOrReturnFunctionCalled($prompt);
-            if ($stringOrFunctionInfo instanceof FunctionInfo) {
+            if ($stringOrFunctionInfo instanceof FunctionInfo)
+            {
                 // $toolResponse can be a very long string
                 $toolResponse = FunctionRunner::run($stringOrFunctionInfo);
                 $refinedData = is_string($toolResponse) ? $this->refineData($objective, $task,
@@ -64,7 +66,9 @@ class ExecutionTaskAgent extends AgentBase
             $task->wasSuccessful = true;
 
             return $stringOrFunctionInfo;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             var_dump('error'.$e->getMessage());
             $task->wasSuccessful = false;
 
@@ -78,15 +82,18 @@ class ExecutionTaskAgent extends AgentBase
         ?string $dataToRefine,
         int $counter = 0
     ): string {
-        if (is_null($dataToRefine)) {
+        if (is_null($dataToRefine))
+        {
             return '';
         }
 
         // Naive approach: if the data is not too long, we don't refine it
-        if (strlen($dataToRefine) <= self::MAX_REFINEMENT_REQUEST_LENGTH) {
+        if (strlen($dataToRefine) <= self::MAX_REFINEMENT_REQUEST_LENGTH)
+        {
             return $dataToRefine;
         }
-        if ($counter >= $this->refinementIterations) {
+        if ($counter >= $this->refinementIterations)
+        {
             return $dataToRefine;
         }
         $document = new Document();
@@ -99,7 +106,8 @@ class ExecutionTaskAgent extends AgentBase
 
         $splittedDocumentsTotal = count($splittedDocuments);
         $splittedDocumentsCounter = 0;
-        foreach ($splittedDocuments as $splittedDocument) {
+        foreach ($splittedDocuments as $splittedDocument)
+        {
             $splittedDocumentsCounter++;
             $this->outputAgent->render('📄Refining data: '.$splittedDocumentsCounter.' / '.$splittedDocumentsTotal,
                 $this->verbose);
@@ -111,7 +119,8 @@ class ExecutionTaskAgent extends AgentBase
             $refinedData .= $gpt->generateText($prompt).' ';
         }
 
-        if ($this->verbose) {
+        if ($this->verbose)
+        {
             $this->outputAgent->renderTitleAndMessageOrange('Refined data: ', $refinedData, $this->verbose);
         }
 

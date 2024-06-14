@@ -49,7 +49,8 @@ class AutoPHP
         $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks);
         $currentTask = $this->prioritizationTaskAgent->prioritizeTask($this->objective);
         $iteration = 1;
-        while ($currentTask instanceof Task && $maxIteration >= $iteration) {
+        while ($currentTask instanceof Task && $maxIteration >= $iteration)
+        {
             $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
 
             // TODO: add a mechanism to retrieve short-term / long-term memory
@@ -62,14 +63,16 @@ class AutoPHP
             $currentTask->result = $executionAgent->run($this->objective, $currentTask, $context);
 
             $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks);
-            if ($finalResult = $this->getObjectiveResult()) {
+            if ($finalResult = $this->getObjectiveResult())
+            {
                 $this->outputAgent->renderResult($finalResult);
 
                 return $finalResult;
             }
             $this->checkForCancellation();
 
-            if (count($this->taskManager->getUnachievedTasks()) <= 0) {
+            if (count($this->taskManager->getUnachievedTasks()) <= 0)
+            {
                 $this->creationTaskAgent->createTasks($this->objective, $this->tools);
             }
 
@@ -101,18 +104,21 @@ class AutoPHP
             ."If the objective has been completed, give the exact answer to the objective {$this->objective}.";
 
         $stringOrFunctionInfo = $model->generateTextOrReturnFunctionCalled($prompt);
-        if (! $stringOrFunctionInfo instanceof FunctionInfo) {
+        if (!$stringOrFunctionInfo instanceof FunctionInfo)
+        {
             // Shouldn't be null as OPENAI should call the function
             return null;
         }
 
         $objectiveData = FunctionRunner::run($stringOrFunctionInfo);
-        if (! is_array($objectiveData)) {
+        if (!is_array($objectiveData))
+        {
             // The wrong function has probably been called, shouldn't happen
             return null;
         }
 
-        if ($objectiveData['objectiveCompleted']) {
+        if ($objectiveData['objectiveCompleted'])
+        {
             return $objectiveData['answer'];
         }
 

@@ -29,7 +29,8 @@ class WebPageTextGetter extends ToolBase
         $this->outputAgent->renderTitleAndMessageOrange('🔧 retrieving web content of those pages :',
             implode(', ', $urls), true);
         $texts = [];
-        foreach ($urls as $url) {
+        foreach ($urls as $url)
+        {
             $texts[$url] = $this->getWebPageText($url);
         }
 
@@ -45,9 +46,11 @@ class WebPageTextGetter extends ToolBase
     {
         $this->outputAgent->renderTitleAndMessageOrange('🔧 retrieving web page content', $url, true);
 
-        try {
+        try
+        {
             $html = file_get_contents($url);
-            if ($html === false) {
+            if ($html === false)
+            {
                 throw new \Exception('Unable to retrieve web page content');
             }
             $text = (string) preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $html);
@@ -60,7 +63,9 @@ class WebPageTextGetter extends ToolBase
             $text = (string) preg_replace('/( )+/', ' ', $text);
 
             return (string) preg_replace('/((\.)|( \.))+/', '.', $text);
-        } catch (Exception) {
+        }
+        catch (Exception)
+        {
             return 'We couldn\'t retrieve the web page content from the url provided '.$url;
         }
     }

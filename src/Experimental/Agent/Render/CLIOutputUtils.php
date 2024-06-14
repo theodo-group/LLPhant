@@ -44,14 +44,17 @@ class CLIOutputUtils implements OutputAgentInterface
     public function printTasks(bool $verbose, array $tasks, ?Task $currentTask = null): void
     {
         $liItems = '';
-        foreach ($tasks as $task) {
-            if ($currentTask === $task) {
+        foreach ($tasks as $task)
+        {
+            if ($currentTask === $task)
+            {
                 $liItems .= "<li class='font-bold text-pink-400'>⚙️ - {$task->name} ({$task->description})</li>";
 
                 continue;
             }
 
-            if (is_null($task->result)) {
+            if (is_null($task->result))
+            {
                 $liItems .= "<li class='font-bold text-pink-400'>⚪️ - {$task->name} ({$task->description})</li>";
 
                 continue;
@@ -59,9 +62,12 @@ class CLIOutputUtils implements OutputAgentInterface
 
             $result = self::truncateString($verbose, $task->result, $task->name);
 
-            if ($task->wasSuccessful) {
+            if ($task->wasSuccessful)
+            {
                 $liItems .= "<li class='font-bold text-pink-400'>🟢 - {$task->name} ({$task->description}) - {$result}</li>";
-            } else {
+            }
+            else
+            {
                 $liItems .= "<li class='font-bold text-pink-400'>🔴 - {$task->name} ({$task->description})</li>";
             }
         }
@@ -76,14 +82,17 @@ class CLIOutputUtils implements OutputAgentInterface
     private static function truncateString(bool $verbose, string $message, ?string $title = null): string
     {
         $maxSize = 250;
-        if ($title) {
+        if ($title)
+        {
             $maxSize -= strlen($title);
         }
 
-        if (! $verbose) {
+        if (!$verbose)
+        {
             $message = str_replace('\n', '', $message);
             $message = str_replace('\r', '', $message);
-            if (strlen($message) > $maxSize) {
+            if (strlen($message) > $maxSize)
+            {
                 $message = substr($message, 0, $maxSize).'...';
             }
         }

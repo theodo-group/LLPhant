@@ -132,17 +132,20 @@ class WebOutputUtils implements OutputAgentInterface
      */
     public function readMessagesFromFile(): array
     {
-        if (! file_exists($this->filePath)) {
+        if (!file_exists($this->filePath))
+        {
             return ['messages' => [], 'tasks' => [], 'result' => null];
         }
 
         $jsonData = file_get_contents($this->filePath);
-        if ($jsonData === false) {
+        if ($jsonData === false)
+        {
             return ['messages' => [], 'tasks' => [], 'result' => null];
         }
 
         $data = json_decode($jsonData, true, 512, JSON_THROW_ON_ERROR);
-        if (! is_array($data)) {
+        if (!is_array($data))
+        {
             return ['messages' => [], 'tasks' => [], 'result' => null];
         }
 

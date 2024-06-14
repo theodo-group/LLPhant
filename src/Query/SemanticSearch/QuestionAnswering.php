@@ -73,12 +73,14 @@ class QuestionAnswering
         $embedding = $this->embeddingGenerator->embedText($question);
         $this->retrievedDocs = $this->vectorStoreBase->similaritySearch($embedding, $k, $additionalArguments);
 
-        if ($this->retrievedDocs === []) {
+        if ($this->retrievedDocs === [])
+        {
             return "I don't know. I didn't find any document to answer the question";
         }
 
         $context = '';
-        foreach ($this->retrievedDocs as $document) {
+        foreach ($this->retrievedDocs as $document)
+        {
             $context .= $document->content.' ';
         }
 

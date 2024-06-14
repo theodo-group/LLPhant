@@ -34,7 +34,8 @@ class OllamaChat implements ChatInterface
     public function __construct(protected OllamaConfig $config)
     {
         $this->config = $config;
-        if (! isset($config->model)) {
+        if (!isset($config->model))
+        {
             throw new MissingParameterException('You need to specify a model for Ollama');
         }
         $this->client = new Client([
@@ -59,11 +60,12 @@ class OllamaChat implements ChatInterface
             'stream' => false,
         ];
 
-        if ($this->formatJson) { // force output to be in a json format (in opposition to a text)
-            $params['format'] = 'json';
+        if ($this->formatJson) // force output to be in a json format (in opposition to a text)
+        {$params['format'] = 'json';
         }
 
-        if ($this->systemMessage instanceof Message) {
+        if ($this->systemMessage instanceof Message)
+        {
             $params['system'] = $this->systemMessage->content;
         }
 
@@ -206,7 +208,8 @@ class OllamaChat implements ChatInterface
     {
         $response = $this->client->request($method, $path, ['json' => $json]);
         $status = $response->getStatusCode();
-        if ($status < 200 || $status >= 300) {
+        if ($status < 200 || $status >= 300)
+        {
             throw new HttpException(sprintf(
                 'HTTP error from Ollama (%d): %s',
                 $status,
@@ -225,15 +228,19 @@ class OllamaChat implements ChatInterface
         // Split the application/x-ndjson response into json responses
         $stream = explode("\n", $response->getBody()->getContents());
         $generator = function (array $stream) {
-            foreach ($stream as $partialResponse) {
+            foreach ($stream as $partialResponse)
+            {
                 $json = Utility::decodeJson($partialResponse);
-                if ((bool) $json['done']) {
+                if ((bool) $json['done'])
+                {
                     break;
                 }
-                if (! isset($json['response'])) {
+                if (!isset($json['response']))
+                {
                     continue;
                 }
-                if (empty($json['response'])) {
+                if (empty($json['response']))
+                {
                     continue;
                 }
                 yield $json['response'];
@@ -251,15 +258,19 @@ class OllamaChat implements ChatInterface
         // Split the application/x-ndjson response into json responses
         $stream = explode("\n", $response->getBody()->getContents());
         $generator = function (array $stream) {
-            foreach ($stream as $partialResponse) {
+            foreach ($stream as $partialResponse)
+            {
                 $json = Utility::decodeJson($partialResponse);
-                if ((bool) $json['done']) {
+                if ((bool) $json['done'])
+                {
                     break;
                 }
-                if (! isset($json['message'])) {
+                if (!isset($json['message']))
+                {
                     continue;
                 }
-                if ($json['message']['role'] !== 'assistant') {
+                if ($json['message']['role'] !== 'assistant')
+                {
                     continue;
                 }
                 yield $json['message']['content'];
@@ -282,13 +293,15 @@ class OllamaChat implements ChatInterface
     {
         $response = [];
         // The system message is always the first
-        if (isset($this->systemMessage->role)) {
+        if (isset($this->systemMessage->role))
+        {
             $response[] = [
                 'role' => $this->systemMessage->role,
                 'content' => $this->systemMessage->content,
             ];
         }
-        foreach ($messages as $msg) {
+        foreach ($messages as $msg)
+        {
             $response[] = [
                 'role' => $msg->role,
                 'content' => $msg->content,

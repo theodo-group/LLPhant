@@ -20,14 +20,16 @@ class MistralEmbeddingGenerator extends AbstractOpenAIEmbeddingGenerator
      */
     public function __construct(?OpenAIConfig $config = null)
     {
-        if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
+        if ($config instanceof OpenAIConfig && $config->client instanceof Client)
+        {
             $this->client = $config->client;
 
             return;
         }
 
         $apiKey = $config->apiKey ?? getenv('MISTRAL_API_KEY');
-        if (! $apiKey) {
+        if (!$apiKey)
+        {
             throw new Exception('You have to provide a MISTRAL_API_KEY env var to request Mistral .');
         }
 

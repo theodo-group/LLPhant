@@ -16,9 +16,12 @@ class Utility
      */
     public static function decodeJson(string $json): array
     {
-        try {
+        try
+        {
             return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
+        }
+        catch (JsonException $e)
+        {
             throw new FormatException(sprintf(
                 'JSON error decoding: %s',
                 $e->getMessage()

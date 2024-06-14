@@ -30,26 +30,31 @@ class RedisVectorStore extends VectorStoreBase
      */
     public function addDocuments(array $documents, int $numberOfDocumentsPerRequest = 0): void
     {
-        if ($documents === []) {
+        if ($documents === [])
+        {
             return;
         }
 
-        if ($numberOfDocumentsPerRequest === 0) {
+        if ($numberOfDocumentsPerRequest === 0)
+        {
             $numberOfDocumentsPerRequest = count($documents);
         }
 
         $redisArgs = [];
         $documentCounter = 1;
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             array_push($redisArgs, ...$this->generateRedisJsonSetArguments($document));
-            if ($documentCounter % $numberOfDocumentsPerRequest === 0) {
+            if ($documentCounter % $numberOfDocumentsPerRequest === 0)
+            {
                 $this->client->jsonmset(...$redisArgs);
                 $redisArgs = [];
             }
             $documentCounter++;
         }
 
-        if ($redisArgs !== []) {
+        if ($redisArgs !== [])
+        {
             $this->client->jsonmset(...$redisArgs);
         }
     }
@@ -65,7 +70,8 @@ class RedisVectorStore extends VectorStoreBase
         $this->createIndexIfMissing($vectorDimension);
 
         $binaryQueryVector = '';
-        foreach ($embedding as $value) {
+        foreach ($embedding as $value)
+        {
             $binaryQueryVector .= pack('f', $value);
         }
 
@@ -109,7 +115,8 @@ class RedisVectorStore extends VectorStoreBase
 
         $documents = [];
         $rawRedisResultsCount = count($rawRedisResults);
-        for ($i = 1; $i < $rawRedisResultsCount; $i += 2) {
+        for ($i = 1; $i < $rawRedisResultsCount; $i += 2)
+        {
             [$distanceLabel, $distanceValue, $redisPath, $jsonEncodedDocument] = $rawRedisResults[$i + 1];
             /** @var array{content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, embedding: float[], chunkNumber: int} $data */
             $data = json_decode($jsonEncodedDocument, true, 512, JSON_THROW_ON_ERROR);
@@ -121,10 +128,14 @@ class RedisVectorStore extends VectorStoreBase
 
     private function createIndexIfMissing(int $vectorDimension): void
     {
-        try {
+        try
+        {
             $this->client->ftinfo($this->redisIndex);
-        } catch (ServerException $e) {
-            if ($e->getMessage() !== 'Unknown index name') {
+        }
+        catch (ServerException $e)
+        {
+            if ($e->getMessage() !== 'Unknown index name')
+            {
                 throw $e;
             }
             $this->createIndex($vectorDimension);

@@ -9,7 +9,8 @@ class CosineDistance implements Distance
      */
     public function measure(array $vector1, array $vector2): float
     {
-        if (count($vector1) !== count($vector2)) {
+        if (count($vector1) !== count($vector2))
+        {
             throw new \InvalidArgumentException('Arrays must have the same length.');
         }
 
@@ -22,7 +23,8 @@ class CosineDistance implements Distance
         $magnitude2 = sqrt(array_sum(array_map(fn (float $a): float => $a * $a, $vector2)));
 
         // Avoid division by zero
-        if ($magnitude1 * $magnitude2 == 0) {
+        if ($magnitude1 * $magnitude2 == 0)
+        {
             return 0;
         }
 

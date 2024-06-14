@@ -23,7 +23,8 @@ class SerpApiSearch extends ToolBase
     {
         parent::__construct($verbose);
         $apiKey ??= getenv('SERP_API_KEY');
-        if (! $apiKey) {
+        if (!$apiKey)
+        {
             throw new Exception('You have to provide a SERP_API_KEY env var to request SerpApi .');
         }
         $this->apiKey = $apiKey;
@@ -40,18 +41,22 @@ class SerpApiSearch extends ToolBase
         $params = ['q' => $googleQuery, 'api_key' => $this->apiKey];
         $this->outputAgent->renderTitleAndMessageOrange('🔧 Executing tool SerpApi', $googleQuery, $this->verbose);
 
-        try {
+        try
+        {
             $response = $this->client->request('GET', '', ['query' => $params]);
             $searchResults = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
             $results = '';
 
-            if (! is_array($searchResults)) {
+            if (!is_array($searchResults))
+            {
                 throw new Exception("Request to SerpApi didn't returned values: ".$response->getBody());
             }
 
-            if (isset($searchResults['organic_results']) && is_array($searchResults['organic_results'])) {
-                foreach ($searchResults['organic_results'] as $result) {
+            if (isset($searchResults['organic_results']) && is_array($searchResults['organic_results']))
+            {
+                foreach ($searchResults['organic_results'] as $result)
+                {
                     $title = $result['title'] ?? '';
                     $snippet = $result['snippet'] ?? '';
                     $results .= $title.' '.$snippet;
@@ -63,7 +68,9 @@ class SerpApiSearch extends ToolBase
             $this->wasSuccessful = true;
 
             return $this->lastResponse;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $this->wasSuccessful = false;
             throw new Exception('Request to SerpApi failed: '.$e->getMessage(), $e->getCode(), $e);
         }
@@ -79,18 +86,22 @@ class SerpApiSearch extends ToolBase
         $params = ['q' => $googleQuery, 'api_key' => $this->apiKey];
         $this->outputAgent->renderTitleAndMessageOrange('🔧 Executing tool SerpApi', $googleQuery, $this->verbose);
 
-        try {
+        try
+        {
             $response = $this->client->request('GET', '', ['query' => $params]);
             $searchResults = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
             $results = '';
 
-            if (! is_array($searchResults)) {
+            if (!is_array($searchResults))
+            {
                 throw new Exception("Request to SerpApi didn't returned values: ".$response->getBody());
             }
 
-            if (isset($searchResults['organic_results']) && is_array($searchResults['organic_results'])) {
-                foreach ($searchResults['organic_results'] as $result) {
+            if (isset($searchResults['organic_results']) && is_array($searchResults['organic_results']))
+            {
+                foreach ($searchResults['organic_results'] as $result)
+                {
                     $title = $result['title'] ?? '';
                     $snippet = $result['snippet'] ?? '';
                     $link = $result['link'] ?? '';
@@ -100,14 +111,16 @@ class SerpApiSearch extends ToolBase
 
             $gpt = new OpenAIChat();
             $prompt = 'Return ONLY the best URL of the page containing the information about '.$informationWeAreLookingFor.' from this list: '.$results;
-            if ($this->verbose) {
+            if ($this->verbose)
+            {
                 $this->outputAgent->render('Prompt sent to OpenAI: '.$prompt, $this->verbose);
             }
 
             $gptAnswer = $gpt->generateText('Return the best URL of the page containing the information about '.$informationWeAreLookingFor.' from this list: '.$results);
             $URLs = StringParser::extractURL($gptAnswer);
 
-            if ($URLs === []) {
+            if ($URLs === [])
+            {
                 $this->wasSuccessful = false;
 
                 return '';
@@ -119,7 +132,9 @@ class SerpApiSearch extends ToolBase
             $this->wasSuccessful = true;
 
             return $this->lastResponse;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $this->wasSuccessful = false;
             throw new Exception('Request to SerpApi failed: '.$e->getMessage(), $e->getCode(), $e);
         }

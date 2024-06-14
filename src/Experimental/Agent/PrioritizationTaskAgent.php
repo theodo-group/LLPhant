@@ -15,15 +15,18 @@ class PrioritizationTaskAgent extends AgentBase
 
     public function prioritizeTask(string $objective): ?Task
     {
-        if (count($this->taskManager->getUnachievedTasks()) <= 1) {
+        if (count($this->taskManager->getUnachievedTasks()) <= 1)
+        {
             return $this->taskManager->getNextTask();
         }
-        if ($this->taskManager->getAchievedTasks() === []) {
+        if ($this->taskManager->getAchievedTasks() === [])
+        {
             return $this->taskManager->getNextTask();
         }
 
         $unachievedTasks = '';
-        foreach ($this->taskManager->getUnachievedTasks() as $key => $task) {
+        foreach ($this->taskManager->getUnachievedTasks() as $key => $task)
+        {
             $unachievedTasks .= "id:{$key} name: {$task->name}.";
         }
         $achievedTasks = $this->taskManager->getAchievedTasksNameAndResult();
@@ -39,9 +42,11 @@ class PrioritizationTaskAgent extends AgentBase
         $this->outputAgent->renderTitleAndMessageGreen('🤖 PrioritizationTaskAgent.', 'Response: '.$response, $this->verbose);
 
         // Look for the first number in the response
-        if (preg_match('/\d+/', $response, $matches)) {
+        if (preg_match('/\d+/', $response, $matches))
+        {
             $firstNumber = $matches[0];
-            if (isset($this->taskManager->getUnachievedTasks()[$firstNumber])) {
+            if (isset($this->taskManager->getUnachievedTasks()[$firstNumber]))
+            {
 
                 return $this->taskManager->getUnachievedTasks()[$firstNumber];
             }

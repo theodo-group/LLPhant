@@ -28,7 +28,8 @@ final class EmbeddingFormatter
     public static function formatEmbeddings(array $documents, string $header = ''): array
     {
         $formattedDocuments = [];
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             $formattedDocuments[] = self::formatEmbedding($document, $header);
         }
 

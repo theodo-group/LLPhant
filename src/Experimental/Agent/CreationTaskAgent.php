@@ -28,7 +28,8 @@ class CreationTaskAgent extends AgentBase
         $addTasksFunction = new FunctionInfo('addTasks', $this->taskManager,
             'add tasks to the list of tasks to be completed', [$param], [$param]);
         $this->openAIChat->addTool($addTasksFunction);
-        foreach ($tools as $tool) {
+        foreach ($tools as $tool)
+        {
             $this->openAIChat->addTool($tool);
         }
         $this->openAIChat->requiredFunction = $addTasksFunction;
@@ -41,12 +42,15 @@ class CreationTaskAgent extends AgentBase
      */
     public function createTasks(string $objective, array $tools): void
     {
-        if (empty($this->taskManager->getAchievedTasks())) {
+        if (empty($this->taskManager->getAchievedTasks()))
+        {
             $prompt = 'You are a task creation AI. '
                 ."The objective is: {$objective}."
                 .'You need to create tasks to do the objective.';
 
-        } else {
+        }
+        else
+        {
             // Join the task list into a string for the prompt
             $unachievedTasks = implode(', ', array_column($this->taskManager->getUnachievedTasks(), 'name'));
             $achievedTasks = $this->taskManager->getAchievedTasksNameAndResult();

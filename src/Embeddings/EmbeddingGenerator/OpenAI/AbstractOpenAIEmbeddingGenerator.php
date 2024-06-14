@@ -23,11 +23,15 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
      */
     public function __construct(?OpenAIConfig $config = null)
     {
-        if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
+        if ($config instanceof OpenAIConfig && $config->client instanceof Client)
+        {
             $this->client = $config->client;
-        } else {
+        }
+        else
+        {
             $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
-            if (! $apiKey) {
+            if (!$apiKey)
+            {
                 throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
             }
 
@@ -67,7 +71,8 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
     public function embedDocuments(array $documents): array
     {
         $embedDocuments = [];
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             $embedDocuments[] = $this->embedDocument($document);
         }
 

@@ -46,8 +46,10 @@ class FileSystemVectorStore extends VectorStoreBase
         $distances = [];
         $documentsPool = $this->readDocumentsFromFile();
 
-        foreach ($documentsPool as $index => $document) {
-            if ($document->embedding === null) {
+        foreach ($documentsPool as $index => $document)
+        {
+            if ($document->embedding === null)
+            {
                 throw new Exception("Document with the following content has no embedding: {$document->content}");
             }
             $dist = $this->distance->measure($embedding, $document->embedding);
@@ -59,7 +61,8 @@ class FileSystemVectorStore extends VectorStoreBase
         $topKIndices = array_slice(array_keys($distances), 0, $k, true);
 
         $results = [];
-        foreach ($topKIndices as $index) {
+        foreach ($topKIndices as $index)
+        {
             $results[] = $documentsPool[$index];
         }
 
@@ -101,19 +104,22 @@ class FileSystemVectorStore extends VectorStoreBase
     private function readDocumentsFromFile(): array
     {
         // Check if file exists and we can open it
-        if (! is_readable($this->filePath)) {
+        if (!is_readable($this->filePath))
+        {
             return [];
         }
 
         // Get the JSON data from the file
         $jsonData = file_get_contents($this->filePath);
-        if ($jsonData === false) {
+        if ($jsonData === false)
+        {
             return [];
         }
 
         // Decode the JSON data into an array
         $data = json_decode($jsonData, true, 512, JSON_THROW_ON_ERROR);
-        if (! is_array($data)) {
+        if (!is_array($data))
+        {
             return [];
         }
 

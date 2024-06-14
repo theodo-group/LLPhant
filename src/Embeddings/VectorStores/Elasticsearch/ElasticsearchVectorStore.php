@@ -23,7 +23,8 @@ class ElasticsearchVectorStore extends VectorStoreBase
         $existResponse = $client->indices()->exists(['index' => $indexName]);
         $existStatusCode = $existResponse->getStatusCode();
 
-        if ($existStatusCode === 200) {
+        if ($existStatusCode === 200)
+        {
             return;
         }
 
@@ -62,7 +63,8 @@ class ElasticsearchVectorStore extends VectorStoreBase
      */
     public function addDocument(Document $document): void
     {
-        if ($document->embedding === null) {
+        if ($document->embedding === null)
+        {
             throw new Exception('document embedding must be set before adding a document');
         }
         $this->setVectorDimIfNotSet(count((array) $document->embedding));
@@ -88,16 +90,19 @@ class ElasticsearchVectorStore extends VectorStoreBase
      */
     public function addDocuments(array $documents, int $numberOfDocumentsPerRequest = 0): void
     {
-        if ($documents === []) {
+        if ($documents === [])
+        {
             return;
         }
-        if ($documents[0]->embedding === null) {
+        if ($documents[0]->embedding === null)
+        {
             throw new Exception('document embedding must be set before adding a document');
         }
         $this->setVectorDimIfNotSet(count((array) $documents[0]->embedding));
 
         $params = ['body' => []];
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             $params['body'][] = [
                 'index' => [
                     '_index' => $this->indexName,
@@ -128,7 +133,8 @@ class ElasticsearchVectorStore extends VectorStoreBase
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
         $numCandidates = max(50, $k * 4);
-        if (array_key_exists('num_candidates', $additionalArguments)) {
+        if (array_key_exists('num_candidates', $additionalArguments))
+        {
             $numCandidates = $additionalArguments['num_candidates'];
         }
         $searchParams = [
@@ -147,14 +153,16 @@ class ElasticsearchVectorStore extends VectorStoreBase
                 ],
             ],
         ];
-        if (array_key_exists('filter', $additionalArguments)) {
+        if (array_key_exists('filter', $additionalArguments))
+        {
             $searchParams['body']['knn']['filter'] = $additionalArguments['filter'];
         }
         /** @var array{hits: array{hits: array{array{_source: array{embedding: float[], content: string, formattedContent: string, sourceType: string, sourceName: string, hash: string, chunkNumber: int}}}}} $rawResponse */
         $rawResponse = $this->client->search($searchParams);
 
         $documents = [];
-        foreach ($rawResponse['hits']['hits'] as $hit) {
+        foreach ($rawResponse['hits']['hits'] as $hit)
+        {
             $document = new Document();
             $document->embedding = $hit['_source']['embedding'];
             $document->content = $hit['_source']['content'];
@@ -171,7 +179,8 @@ class ElasticsearchVectorStore extends VectorStoreBase
 
     private function setVectorDimIfNotSet(int $vectorDim): void
     {
-        if ($this->vectorDimSet) {
+        if ($this->vectorDimSet)
+        {
             return;
         }
         /** @var array{string: array{mappings: array{embedding: array{mapping: array{embedding: array{dims: int}}}}}} $response */

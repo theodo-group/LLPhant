@@ -34,8 +34,10 @@ class MemoryVectorStore extends VectorStoreBase
     {
         $distances = [];
 
-        foreach ($this->documentsPool as $index => $document) {
-            if ($document->embedding === null) {
+        foreach ($this->documentsPool as $index => $document)
+        {
+            if ($document->embedding === null)
+            {
                 throw new Exception("Document with the following content has no embedding: {$document->content}");
             }
             $dist = $this->distance->measure($embedding, $document->embedding);
@@ -47,7 +49,8 @@ class MemoryVectorStore extends VectorStoreBase
         $topKIndices = array_slice(array_keys($distances), 0, $k, true);
 
         $results = [];
-        foreach ($topKIndices as $index) {
+        foreach ($topKIndices as $index)
+        {
             $results[] = $this->documentsPool[$index];
         }
 

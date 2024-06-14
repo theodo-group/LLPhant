@@ -15,18 +15,21 @@ class FunctionBuilder
         $parameters = [];
         $requiredParameters = [];
 
-        foreach ($params as $param) {
+        foreach ($params as $param)
+        {
             /** @var ReflectionNamedType $reflectionType */
             $reflectionType = $param->getType();
 
             $newParameter = new Parameter($param->getName(), TypeMapper::mapPhpTypeToJsonSchemaType($reflectionType), '');
 
-            if ($newParameter->type === 'array') {
+            if ($newParameter->type === 'array')
+            {
                 $newParameter->itemsOrProperties = self::getArrayType($reflection->getDocComment() ?: '', $param->getName());
             }
 
             $parameters[] = $newParameter;
-            if (! $param->isOptional()) {
+            if (!$param->isOptional())
+            {
                 $requiredParameters[] = $newParameter;
             }
         }
@@ -43,7 +46,8 @@ class FunctionBuilder
     {
         // Use a regex to find the parameter type
         $pattern = "/@param\s+([a-zA-Z0-9_|\\\[\]]+)\s+\\$".$paramName.'/';
-        if (preg_match($pattern, $doc, $matches)) {
+        if (preg_match($pattern, $doc, $matches))
+        {
             // If the type is an array type (e.g., string[]), return the type without the brackets
             return preg_replace('/\[\]$/', '', $matches[1]);
         }

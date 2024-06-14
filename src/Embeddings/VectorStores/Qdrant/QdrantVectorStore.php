@@ -59,11 +59,13 @@ class QdrantVectorStore extends VectorStoreBase
     {
         $points = new PointsStruct();
 
-        if ($documents === []) {
+        if ($documents === [])
+        {
             return;
         }
 
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             $this->createPointFromDocument($points, $document);
         }
 
@@ -80,20 +82,26 @@ class QdrantVectorStore extends VectorStoreBase
         $vectorStruct = new VectorStruct($embedding, QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME);
         $filter = new Filter();
 
-        if (isset($additionalArguments['must'])) {
-            foreach ($additionalArguments['must'] as $condition) {
+        if (isset($additionalArguments['must']))
+        {
+            foreach ($additionalArguments['must'] as $condition)
+            {
                 $filter->addMust($condition);
             }
         }
 
-        if (isset($additionalArguments['must_not'])) {
-            foreach ($additionalArguments['must_not'] as $condition) {
+        if (isset($additionalArguments['must_not']))
+        {
+            foreach ($additionalArguments['must_not'] as $condition)
+            {
                 $filter->addMustNot($condition);
             }
         }
 
-        if (isset($additionalArguments['should'])) {
-            foreach ($additionalArguments['should'] as $condition) {
+        if (isset($additionalArguments['should']))
+        {
+            foreach ($additionalArguments['should'] as $condition)
+            {
                 $filter->addShould($condition);
             }
         }
@@ -111,12 +119,14 @@ class QdrantVectorStore extends VectorStoreBase
         $arrayResponse = $response->__toArray();
         $results = $arrayResponse['result'];
 
-        if ((is_countable($results) ? count($results) : 0) === 0) {
+        if ((is_countable($results) ? count($results) : 0) === 0)
+        {
             return [];
         }
 
         $documents = [];
-        foreach ($results as $onePoint) {
+        foreach ($results as $onePoint)
+        {
             $document = new Document();
             $document->content = $onePoint['payload']['content'];
             $document->hash = $onePoint['payload']['hash'];
@@ -133,7 +143,8 @@ class QdrantVectorStore extends VectorStoreBase
      */
     private function createPointFromDocument(PointsStruct $points, Document $document): void
     {
-        if (! is_array($document->embedding)) {
+        if (!is_array($document->embedding))
+        {
             throw new Exception('Impossible to save a document without its vectors. You need to call an embeddingGenerator: $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);');
         }
 

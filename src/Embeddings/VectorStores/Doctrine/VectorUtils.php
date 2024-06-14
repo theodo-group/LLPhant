@@ -9,7 +9,8 @@ class VectorUtils
      */
     public static function getVectorAsString(array $vector): string
     {
-        if ($vector === []) {
+        if ($vector === [])
+        {
             return '';
         }
 

@@ -24,7 +24,8 @@ class Chat extends Controller
         $filesVectorStore = new FileSystemVectorStore();
         $embeddingGenerator = new OpenAIADA002EmbeddingGenerator();
 
-        if ($filesVectorStore->getNumberOfDocuments() === 0) {
+        if ($filesVectorStore->getNumberOfDocuments() === 0)
+        {
             $dataReader = new FileDataReader(__DIR__.'/The_Star_H.G_Wells.txt');
             $documents = $dataReader->getDocuments();
             $splittedDocuments = DocumentSplitter::splitDocuments($documents, 2000);
@@ -45,7 +46,8 @@ class Chat extends Controller
         $data = json_decode($bodyContent);
 
         $messages = [];
-        foreach ($data->messages as $value) {
+        foreach ($data->messages as $value)
+        {
             $message = new Message();
             $message->content = $value->content;
             $message->role = ChatRole::from($value->role);

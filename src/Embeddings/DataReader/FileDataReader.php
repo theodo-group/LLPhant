@@ -26,17 +26,20 @@ final class FileDataReader implements DataReader
      */
     public function getDocuments(): array
     {
-        if (! file_exists($this->filePath)) {
+        if (!file_exists($this->filePath))
+        {
             return [];
         }
 
         // If it's a directory
-        if (is_dir($this->filePath)) {
+        if (is_dir($this->filePath))
+        {
             return $this->getDocumentsFromDirectory($this->filePath);
         }
         // If it's a file
         $content = $this->getContentFromFile($this->filePath);
-        if ($content === false) {
+        if ($content === false)
+        {
             return [];
         }
 
@@ -50,16 +53,23 @@ final class FileDataReader implements DataReader
     {
         $documents = [];
         // Open the directory
-        if ($handle = opendir($directory)) {
+        if ($handle = opendir($directory))
+        {
             // Read the directory contents
-            while (($entry = readdir($handle)) !== false) {
+            while (($entry = readdir($handle)) !== false)
+            {
                 $fullPath = $directory.'/'.$entry;
-                if ($entry != '.' && $entry != '..') {
-                    if (is_dir($fullPath)) {
+                if ($entry != '.' && $entry != '..')
+                {
+                    if (is_dir($fullPath))
+                    {
                         $documents = [...$documents, ...$this->getDocumentsFromDirectory($fullPath)];
-                    } else {
+                    }
+                    else
+                    {
                         $content = $this->getContentFromFile($fullPath);
-                        if ($content !== false) {
+                        if ($content !== false)
+                        {
                             $documents[] = $this->getDocument($content, $entry);
                         }
                     }
@@ -77,21 +87,25 @@ final class FileDataReader implements DataReader
     {
         $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        if (! $this->validExtension($fileExtension)) {
+        if (!$this->validExtension($fileExtension))
+        {
             return false;
         }
 
-        if ($fileExtension === 'pdf') {
+        if ($fileExtension === 'pdf')
+        {
             $parser = new Parser();
             $pdf = $parser->parseFile($path);
 
             return $pdf->getText();
         }
 
-        if ($fileExtension === 'docx') {
+        if ($fileExtension === 'docx')
+        {
             $phpWord = IOFactory::load($path);
             $fullText = '';
-            foreach ($phpWord->getSections() as $section) {
+            foreach ($phpWord->getSections() as $section)
+            {
                 $fullText .= $this->extractTextFromDocxNode($section);
             }
 
@@ -104,10 +118,14 @@ final class FileDataReader implements DataReader
     private function extractTextFromDocxNode(AbstractElement $section): string
     {
         $text = '';
-        if (method_exists($section, 'getText')) {
+        if (method_exists($section, 'getText'))
+        {
             $text .= $section->getText();
-        } elseif (method_exists($section, 'getElements')) {
-            foreach ($section->getElements() as $childSection) {
+        }
+        elseif (method_exists($section, 'getElements'))
+        {
+            foreach ($section->getElements() as $childSection)
+            {
                 $text .= $this->extractTextFromDocxNode($childSection);
             }
         }
@@ -127,7 +145,8 @@ final class FileDataReader implements DataReader
 
     private function validExtension(string $fileExtension): bool
     {
-        if ($this->extensions === []) {
+        if ($this->extensions === [])
+        {
             return true;
         }
 

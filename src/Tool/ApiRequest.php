@@ -23,7 +23,8 @@ class ApiRequest extends ToolBase
      */
     public function get_data_from_url(string $url): string
     {
-        try {
+        try
+        {
             $this->outputAgent->renderTitleAndMessageOrange('🔧 Executing tool ApiRequest', $url, $this->verbose);
             $client = new Client();
             $response = $client->request('GET', $url);
@@ -32,7 +33,9 @@ class ApiRequest extends ToolBase
             $this->outputAgent->render("Results from ApiRequest to {$url}: {$rawContent}", $this->verbose);
             $this->wasSuccessful = true;
 
-        } catch (GuzzleException $e) {
+        }
+        catch (GuzzleException $e)
+        {
             $this->wasSuccessful = false;
             $this->lastResponse = $e->getMessage();
         }

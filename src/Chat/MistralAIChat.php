@@ -16,13 +16,16 @@ class MistralAIChat extends OpenAIChat
 
     public function __construct(?OpenAIConfig $config = null)
     {
-        if (! $config instanceof OpenAIConfig) {
+        if (!$config instanceof OpenAIConfig)
+        {
             $config = new OpenAIConfig();
         }
 
-        if (! $config->client instanceof Client) {
+        if (!$config->client instanceof Client)
+        {
             $apiKey = $config->apiKey ?? getenv('MISTRAL_API_KEY');
-            if (! $apiKey) {
+            if (!$apiKey)
+            {
                 throw new Exception('You have to provide a MISTRAL_API_KEY env var to request Mistral AI.');
             }
 

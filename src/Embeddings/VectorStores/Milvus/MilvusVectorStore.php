@@ -25,7 +25,8 @@ class MilvusVectorStore extends VectorStoreBase
 
     public function addDocuments(array $documents, int $numberOfDocumentsPerRequest = 0): void
     {
-        if ($documents === []) {
+        if ($documents === [])
+        {
             return;
         }
         $embeddingDimension = count((array) $documents[0]->embedding);
@@ -45,7 +46,8 @@ class MilvusVectorStore extends VectorStoreBase
                 $documents
             )
         );
-        if ($response['code'] !== 200) {
+        if ($response['code'] !== 200)
+        {
             throw new \Exception('Error while inserting data');
         }
     }
@@ -65,7 +67,8 @@ class MilvusVectorStore extends VectorStoreBase
             array_key_exists('filter', $additionalArguments) ? $additionalArguments['filter'] : '',
             ['id', 'content', 'formattedContent', 'sourceType', 'sourceName', 'hash', 'chunkNumber', 'embedding']
         );
-        if ($response['code'] !== 200) {
+        if ($response['code'] !== 200)
+        {
             throw new \Exception('Error while searching vector');
         }
 
@@ -74,7 +77,8 @@ class MilvusVectorStore extends VectorStoreBase
 
     private function createCollectionIfNotExist(int $dimension): void
     {
-        if ($this->collectionExists) {
+        if ($this->collectionExists)
+        {
             return;
         }
         // It returns 200 if the collection exist AND is the same
@@ -85,7 +89,8 @@ class MilvusVectorStore extends VectorStoreBase
             primaryField: 'id',
             vectorField: 'embedding'
         );
-        if ($response['code'] !== 200) {
+        if ($response['code'] !== 200)
+        {
             throw new \Exception('Error while creating collection');
         }
         $this->collectionExists = true;

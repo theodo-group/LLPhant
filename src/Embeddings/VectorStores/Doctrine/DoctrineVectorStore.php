@@ -25,13 +25,15 @@ final class DoctrineVectorStore extends VectorStoreBase
         private readonly EntityManagerInterface $entityManager,
         public readonly string $entityClassName
     ) {
-        if (! interface_exists(EntityManagerInterface::class)) {
+        if (!interface_exists(EntityManagerInterface::class))
+        {
             throw new \RuntimeException('To use this functionality, you must install the `doctrine/orm` package: `composer require doctrine/orm`.');
         }
 
         $conn = $entityManager->getConnection();
         $registeredTypes = Type::getTypesMap();
-        if (! array_key_exists(VectorType::VECTOR, $registeredTypes)) {
+        if (!array_key_exists(VectorType::VECTOR, $registeredTypes))
+        {
             Type::addType(VectorType::VECTOR, VectorType::class);
             $conn->getDatabasePlatform()->registerDoctrineTypeMapping('vector', VectorType::VECTOR);
         }
@@ -54,10 +56,12 @@ final class DoctrineVectorStore extends VectorStoreBase
      */
     public function addDocuments(array $documents): void
     {
-        if ($documents === []) {
+        if ($documents === [])
+        {
             return;
         }
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             $this->persistDocument($document);
         }
 
@@ -80,7 +84,8 @@ final class DoctrineVectorStore extends VectorStoreBase
             ->setParameter('embeddingString', VectorUtils::getVectorAsString($embedding))
             ->setMaxResults($k);
 
-        foreach ($additionalArguments as $key => $value) {
+        foreach ($additionalArguments as $key => $value)
+        {
             $paramName = 'where_'.$key;
             $qb
                 ->andWhere(sprintf('e.%s = :%s', $key, $paramName))
@@ -97,11 +102,13 @@ final class DoctrineVectorStore extends VectorStoreBase
      */
     private function persistDocument(Document $document): void
     {
-        if (empty($document->embedding)) {
+        if (empty($document->embedding))
+        {
             throw new Exception('Trying to save a document in a vectorStore without embedding');
         }
 
-        if (! $document instanceof DoctrineEmbeddingEntityBase) {
+        if (!$document instanceof DoctrineEmbeddingEntityBase)
+        {
             throw new Exception('Document needs to be an instance of DoctrineEmbeddingEntityBase');
         }
 

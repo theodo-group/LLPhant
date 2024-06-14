@@ -16,8 +16,10 @@ use LLPhant\Query\SemanticSearch\QuestionAnswering;
 
 beforeEach(function () {
     $tempFilePaths = [\sys_get_temp_dir().'/QAQueryTest.json', \sys_get_temp_dir().'/QAQueryTest_cosine.json'];
-    foreach ($tempFilePaths as $filePath) {
-        if (file_exists($filePath)) {
+    foreach ($tempFilePaths as $filePath)
+    {
+        if (file_exists($filePath))
+        {
             unlink($filePath);
         }
     }

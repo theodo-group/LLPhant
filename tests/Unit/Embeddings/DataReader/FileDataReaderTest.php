@@ -46,11 +46,14 @@ it('can read pdf and texts ', function () {
 
     $foundPDF = false;
     $foundText = false;
-    foreach ($documents as $document) {
-        if ($document->content === 'This data is from a pdf') {
+    foreach ($documents as $document)
+    {
+        if ($document->content === 'This data is from a pdf')
+        {
             $foundPDF = true;
         }
-        if ($document->content === "hello test!\n") {
+        if ($document->content === "hello test!\n")
+        {
             $foundText = true;
         }
     }

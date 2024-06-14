@@ -12,18 +12,22 @@ final class DocumentSplitter
     public static function splitDocument(Document $document, int $maxLength = 1000, string $separator = ' '): array
     {
         $text = $document->content;
-        if (empty($text)) {
+        if (empty($text))
+        {
             return [];
         }
-        if ($maxLength <= 0) {
+        if ($maxLength <= 0)
+        {
             return [];
         }
 
-        if ($separator === '') {
+        if ($separator === '')
+        {
             return [];
         }
 
-        if (strlen($text) <= $maxLength) {
+        if (strlen($text) <= $maxLength)
+        {
             return [$document];
         }
 
@@ -31,25 +35,34 @@ final class DocumentSplitter
         $words = explode($separator, $text);
         $currentChunk = '';
 
-        foreach ($words as $word) {
-            if (strlen($currentChunk.$separator.$word) <= $maxLength || empty($currentChunk)) {
-                if (empty($currentChunk)) {
+        foreach ($words as $word)
+        {
+            if (strlen($currentChunk.$separator.$word) <= $maxLength || empty($currentChunk))
+            {
+                if (empty($currentChunk))
+                {
                     $currentChunk = $word;
-                } else {
+                }
+                else
+                {
                     $currentChunk .= $separator.$word;
                 }
-            } else {
+            }
+            else
+            {
                 $chunks[] = trim($currentChunk);
                 $currentChunk = $word;
             }
         }
 
-        if (! empty($currentChunk)) {
+        if (!empty($currentChunk))
+        {
             $chunks[] = trim($currentChunk);
         }
         $splittedDocuments = [];
         $chunkNumber = 0;
-        foreach ($chunks as $chunk) {
+        foreach ($chunks as $chunk)
+        {
             $className = $document::class;
             $newDocument = new $className();
             $newDocument->content = $chunk;
@@ -71,7 +84,8 @@ final class DocumentSplitter
     public static function splitDocuments(array $documents, int $maxLength = 1000, string $separator = '.'): array
     {
         $splittedDocuments = [];
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             $splittedDocuments = array_merge($splittedDocuments, DocumentSplitter::splitDocument($document, $maxLength, $separator));
         }
 

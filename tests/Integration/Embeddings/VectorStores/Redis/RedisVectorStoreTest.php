@@ -12,7 +12,8 @@ it('tests a full embedding flow with Redis', function () {
     // Get the already embeded france.txt and paris.txt documents
     $path = __DIR__.'/../EmbeddedMock/francetxt_paristxt.json';
     $rawFileContent = file_get_contents($path);
-    if (! $rawFileContent) {
+    if (!$rawFileContent)
+    {
         throw new \Exception('File not found');
     }
 
@@ -22,7 +23,8 @@ it('tests a full embedding flow with Redis', function () {
     // Get the embedding of "France the country"
     $path = __DIR__.'/../EmbeddedMock/france_the_country_embedding.json';
     $rawFileContent = file_get_contents($path);
-    if (! $rawFileContent) {
+    if (!$rawFileContent)
+    {
         throw new \Exception('File not found');
     }
     /** @var float[] $embeddingQuery */

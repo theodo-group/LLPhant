@@ -22,7 +22,8 @@ class TypeMapper
     {
         $name = $reflectionType->getName();
 
-        if (! isset(self::MAPPING[$name])) {
+        if (!isset(self::MAPPING[$name]))
+        {
             throw new InvalidArgumentException("Unsupported type: {$name}");
         }
 

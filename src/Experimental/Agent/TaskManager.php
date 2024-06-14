@@ -14,8 +14,10 @@ class TaskManager
     {
 
         $tasksObject = [];
-        foreach ($tasks as $task) {
-            if (! is_array($task)) {
+        foreach ($tasks as $task)
+        {
+            if (!is_array($task))
+            {
                 continue;
             }
             $tasksObject[] = new Task($task['name'], $task['description']);
@@ -26,8 +28,10 @@ class TaskManager
 
     public function getNextTask(): ?Task
     {
-        foreach ($this->tasks as $task) {
-            if ($task->result === null) {
+        foreach ($this->tasks as $task)
+        {
+            if ($task->result === null)
+            {
                 return $task;
             }
         }
@@ -41,8 +45,10 @@ class TaskManager
     public function getAchievedTasks(): array
     {
         $achievedTasks = [];
-        foreach ($this->tasks as $task) {
-            if ($task->result !== null) {
+        foreach ($this->tasks as $task)
+        {
+            if ($task->result !== null)
+            {
                 $achievedTasks[] = $task;
             }
         }
@@ -56,8 +62,10 @@ class TaskManager
     public function getUnachievedTasks(): array
     {
         $unachievedTasks = [];
-        foreach ($this->tasks as $task) {
-            if ($task->result === null) {
+        foreach ($this->tasks as $task)
+        {
+            if ($task->result === null)
+            {
                 $unachievedTasks[] = $task;
             }
         }
@@ -68,7 +76,8 @@ class TaskManager
     public function getAchievedTasksNameAndResult(): string
     {
         $previousCompletedTask = '';
-        foreach ($this->getAchievedTasks() as $task) {
+        foreach ($this->getAchievedTasks() as $task)
+        {
             $previousCompletedTask .= "Task: {$task->name}. Result: {$task->result} \n";
         }
 
@@ -78,7 +87,8 @@ class TaskManager
     public function getUnachievedTasksNameAndResult(): string
     {
         $unachievedTasks = '';
-        foreach ($this->getUnachievedTasks() as $task) {
+        foreach ($this->getUnachievedTasks() as $task)
+        {
             $unachievedTasks .= "Task: {$task->name}.";
         }
 

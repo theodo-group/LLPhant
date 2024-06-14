@@ -10,12 +10,14 @@ class ToolFormatter
      */
     public static function formatFunctionsToOpenAITools(array $functions): array
     {
-        if ($functions === []) {
+        if ($functions === [])
+        {
             return [];
         }
 
         $toolsOpenAI = [];
-        foreach ($functions as $function) {
+        foreach ($functions as $function)
+        {
             $toolsOpenAI[] = self::formatOneToolToOpenAI($function);
         }
 
@@ -30,12 +32,14 @@ class ToolFormatter
     public static function formatOneToolToOpenAI(FunctionInfo $functionInfo): array
     {
         $parametersOpenAI = [];
-        foreach ($functionInfo->parameters as $parameter) {
+        foreach ($functionInfo->parameters as $parameter)
+        {
             $param = FunctionFormatter::formatParameter($parameter);
             $parametersOpenAI[$parameter->name] = $param;
         }
 
-        if ($parametersOpenAI === []) {
+        if ($parametersOpenAI === [])
+        {
             return [
                 'type' => 'function',
                 'function' => [
@@ -46,7 +50,8 @@ class ToolFormatter
         }
 
         $requiredParametersOpenAI = [];
-        foreach ($functionInfo->requiredParameters as $requiredParameter) {
+        foreach ($functionInfo->requiredParameters as $requiredParameter)
+        {
             $requiredParametersOpenAI[] = $requiredParameter->name;
         }
 
@@ -69,7 +74,8 @@ class ToolFormatter
      */
     public static function formatToolChoice(?FunctionInfo $requiredFunction): ?array
     {
-        if (! $requiredFunction instanceof FunctionInfo) {
+        if (!$requiredFunction instanceof FunctionInfo)
+        {
             return null;
         }
 

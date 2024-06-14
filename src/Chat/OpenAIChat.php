@@ -43,11 +43,15 @@ class OpenAIChat implements ChatInterface
 
     public function __construct(?OpenAIConfig $config = null)
     {
-        if ($config instanceof OpenAIConfig && $config->client instanceof ClientContract) {
+        if ($config instanceof OpenAIConfig && $config->client instanceof ClientContract)
+        {
             $this->client = $config->client;
-        } else {
+        }
+        else
+        {
             $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
-            if (! $apiKey) {
+            if (!$apiKey)
+            {
                 throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
             }
 
@@ -83,11 +87,13 @@ class OpenAIChat implements ChatInterface
 
         $toolsToCall = $this->getToolsToCall($answer);
 
-        foreach ($toolsToCall as $toolToCall) {
+        foreach ($toolsToCall as $toolToCall)
+        {
             $this->lastFunctionCalled = $toolToCall;
         }
 
-        if ($this->lastFunctionCalled instanceof FunctionInfo) {
+        if ($this->lastFunctionCalled instanceof FunctionInfo)
+        {
             return $this->lastFunctionCalled;
         }
 
@@ -120,11 +126,13 @@ class OpenAIChat implements ChatInterface
         $toolsToCall = $this->getToolsToCall($answer);
 
         $this->lastFunctionCalled = null;
-        foreach ($toolsToCall as $toolToCall) {
+        foreach ($toolsToCall as $toolToCall)
+        {
             $this->lastFunctionCalled = $toolToCall;
         }
 
-        if ($this->lastFunctionCalled instanceof FunctionInfo) {
+        if ($this->lastFunctionCalled instanceof FunctionInfo)
+        {
             return $this->lastFunctionCalled;
         }
 
@@ -213,11 +221,13 @@ class OpenAIChat implements ChatInterface
         $openAiArgs = $this->getOpenAiArgs($messages);
         $stream = $this->client->chat()->createStreamed($openAiArgs);
         $generator = function (StreamResponse $stream) {
-            foreach ($stream as $partialResponse) {
+            foreach ($stream as $partialResponse)
+            {
                 $toolCalls = $partialResponse->choices[0]->delta->toolCalls ?? [];
                 $toolsCalled = [];
                 /** @var CreateStreamedResponseToolCall $toolCall */
-                foreach ($toolCalls as $toolCall) {
+                foreach ($toolCalls as $toolCall)
+                {
                     $toolsCalled[] = [
                         'function' => $toolCall->function->name,
                         'arguments' => $toolCall->function->arguments,
@@ -225,19 +235,24 @@ class OpenAIChat implements ChatInterface
                 }
 
                 // $functionName should be always set if finishReason is function_call
-                if ($partialResponse->choices[0]->finishReason === 'function_call' && $toolsCalled !== []) {
-                    foreach ($toolsCalled as $toolCalled) {
-                        if (is_string($toolCalled['function']) && is_string($toolCalled['arguments'])) {
+                if ($partialResponse->choices[0]->finishReason === 'function_call' && $toolsCalled !== [])
+                {
+                    foreach ($toolsCalled as $toolCalled)
+                    {
+                        if (is_string($toolCalled['function']) && is_string($toolCalled['arguments']))
+                        {
                             $this->callFunction($toolCalled['function'], $toolCalled['arguments']);
                         }
                     }
                 }
 
-                if (! is_null($partialResponse->choices[0]->finishReason)) {
+                if (!is_null($partialResponse->choices[0]->finishReason))
+                {
                     break;
                 }
 
-                if (! ($partialResponse->choices[0]->delta->content)) {
+                if (!($partialResponse->choices[0]->delta->content))
+                {
                     continue;
                 }
 
@@ -256,7 +271,8 @@ class OpenAIChat implements ChatInterface
     {
         // The system message should be the first
         $finalMessages = [];
-        if (isset($this->systemMessage)) {
+        if (isset($this->systemMessage))
+        {
             $finalMessages[] = $this->systemMessage;
         }
 
@@ -266,11 +282,13 @@ class OpenAIChat implements ChatInterface
 
         $openAiArgs = [...$openAiArgs, 'model' => $this->model, 'messages' => $finalMessages];
 
-        if ($this->tools !== []) {
+        if ($this->tools !== [])
+        {
             $openAiArgs['tools'] = ToolFormatter::formatFunctionsToOpenAITools($this->tools);
         }
 
-        if ($this->requiredFunction instanceof FunctionInfo) {
+        if ($this->requiredFunction instanceof FunctionInfo)
+        {
             $openAiArgs['tool_choice'] = ToolFormatter::formatToolChoice($this->requiredFunction);
         }
 
@@ -283,7 +301,8 @@ class OpenAIChat implements ChatInterface
     private function handleTools(CreateResponse $answer): void
     {
         /** @var CreateResponseToolCall $toolCall */
-        foreach ($answer->choices[0]->message->toolCalls as $toolCall) {
+        foreach ($answer->choices[0]->message->toolCalls as $toolCall)
+        {
             $functionName = $toolCall->function->name;
             $arguments = $toolCall->function->arguments;
 
@@ -300,7 +319,8 @@ class OpenAIChat implements ChatInterface
     {
         $functionInfos = [];
         /** @var CreateResponseToolCall $toolCall */
-        foreach ($answer->choices[0]->message->toolCalls as $toolCall) {
+        foreach ($answer->choices[0]->message->toolCalls as $toolCall)
+        {
             $functionName = $toolCall->function->name;
             $arguments = $toolCall->function->arguments;
             $functionInfo = $this->getFunctionInfoFromName($functionName);
@@ -317,8 +337,10 @@ class OpenAIChat implements ChatInterface
      */
     private function getFunctionInfoFromName(string $functionName): FunctionInfo
     {
-        foreach ($this->tools as $function) {
-            if ($function->name === $functionName) {
+        foreach ($this->tools as $function)
+        {
+            if ($function->name === $functionName)
+            {
                 return $function;
             }
         }

@@ -46,11 +46,13 @@ final class OllamaEmbeddingGenerator implements EmbeddingGeneratorInterface
         ]);
 
         $searchResults = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-        if (! is_array($searchResults)) {
+        if (!is_array($searchResults))
+        {
             throw new Exception("Request to Ollama didn't returned an array: ".$response->getBody()->getContents());
         }
 
-        if (! isset($searchResults['embedding'])) {
+        if (!isset($searchResults['embedding']))
+        {
             throw new Exception("Request to Ollama didn't returned expected format: ".$response->getBody()->getContents());
         }
 
@@ -72,7 +74,8 @@ final class OllamaEmbeddingGenerator implements EmbeddingGeneratorInterface
     public function embedDocuments(array $documents): array
     {
         $embedDocuments = [];
-        foreach ($documents as $document) {
+        foreach ($documents as $document)
+        {
             $embedDocuments[] = $this->embedDocument($document);
         }
 

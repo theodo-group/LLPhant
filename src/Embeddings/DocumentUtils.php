@@ -42,7 +42,8 @@ class DocumentUtils
     public static function createDocumentsFromArray(array $documentDataArray): array
     {
         $documents = [];
-        foreach ($documentDataArray as $documentData) {
+        foreach ($documentDataArray as $documentData)
+        {
             $documents[] = self::createDocumentFromArray($documentData);
         }
 

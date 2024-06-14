@@ -24,11 +24,15 @@ class OpenAIImage implements ImageInterface
 
     public function __construct(?OpenAIConfig $config = null)
     {
-        if ($config instanceof OpenAIConfig && $config->client instanceof ClientContract) {
+        if ($config instanceof OpenAIConfig && $config->client instanceof ClientContract)
+        {
             $this->client = $config->client;
-        } else {
+        }
+        else
+        {
             $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
-            if (! $apiKey) {
+            if (!$apiKey)
+            {
                 throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
             }
 
