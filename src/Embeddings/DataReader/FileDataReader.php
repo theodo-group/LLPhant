@@ -98,6 +98,14 @@ final class FileDataReader implements DataReader
             return $fullText;
         }
 
+        if (strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'html'
+            && class_exists('\Html2Text\Html2Text')
+        ) {
+            $html = new \Html2Text\Html2Text(file_get_contents($path));
+            $fullText = $html->getText();
+            return $fullText;
+        }
+
         return file_get_contents($path);
     }
 
