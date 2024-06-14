@@ -28,7 +28,7 @@
     "require-dev": {
         "doctrine/orm": "^2.13.0",
         "elasticsearch/elasticsearch": "^8.10",
-        "hkulekci/qdrant": "^v0.4",
+        "hkulekci/qdrant": "^v0.5",
         "laravel/pint": "^v1.13.7",
         "mockery/mockery": "^1.6",
         "pestphp/pest": "2.32.0",
