@@ -8,5 +8,7 @@ abstract class ToolBase
 
     public bool $wasSuccessful;
 
-    public function __construct(public bool $verbose) {}
+    public function __construct(public bool $verbose)
+    {
+    }
 }

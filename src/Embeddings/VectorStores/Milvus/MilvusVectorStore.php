@@ -15,7 +15,8 @@ class MilvusVectorStore extends VectorStoreBase
     public function __construct(
         public MilvusClient $client,
         public string $collectionName = self::MILVUS_COLLECTION_NAME
-    ) {}
+    ) {
+    }
 
     public function addDocument(Document $document): void
     {

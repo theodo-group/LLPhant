@@ -6,4 +6,6 @@ namespace LLPhant\Exception;
 
 use Throwable;
 
-interface LLPhantException extends Throwable {}
+interface LLPhantException extends Throwable
+{
+}
