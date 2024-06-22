@@ -22,6 +22,7 @@ class ChromaDBVectorStore extends VectorStoreBase
         string $tenant = 'default_tenant',
         ?string $authToken = null,
         string $collection = 'default_collection',
+        private readonly int $apiBatchSize = 5
     ) {
         $factory = ChromaDB::factory()
             ->withHost($host)
@@ -60,7 +61,7 @@ class ChromaDBVectorStore extends VectorStoreBase
      */
     public function addDocuments(array $documents): void
     {
-        $chromaDBApiBuffer = new ChromaDBApiBuffer($this->currentCollection);
+        $chromaDBApiBuffer = new ChromaDBApiBuffer($this->currentCollection, $this->apiBatchSize);
         foreach ($documents as $document) {
             $chromaDBApiBuffer->add(
                 $this->getId($document),
