@@ -282,7 +282,7 @@ $embedding = $llm->embedText('I love food');
 ## VectorStores
 Once you have embeddings you need to store them in a vector store.
 The vector store is a database that can store vectors and perform a similarity search.
-There are currently 4 vectorStore class:
+There are currently these vectorStore classes:
 - MemoryVectorStore stores the embeddings in the memory
 - FileSystemVectorStore stores the embeddings in a file
 - DoctrineVectorStore stores the embeddings in a postgresql database. (require doctrine/orm) 
@@ -291,6 +291,7 @@ There are currently 4 vectorStore class:
 - ElasticsearchVectorStore stores the embeddings in a [Elasticsearch](https://www.elastic.co/) database. (require
   elasticsearch/elasticsearch)
 - MilvusVectorStore stores the embeddings in a [Milvus](https://milvus.io/) database.
+- ChromaDBVectorStore stores the embeddings in a [ChromaDB](https://www.trychroma.com/) database.
 
 Example of usage with the `DoctrineVectorStore` class to store the embeddings in a database:
 
@@ -371,7 +372,7 @@ $vectorStore = new RedisVectorStore($redisClient, 'llphant_custom_index'); // Th
 
 You can now use the RedisVectorStore as any other VectorStore.
 
-## Elasticsearch VectorStore
+### Elasticsearch VectorStore
 
 Prerequisites :
 
@@ -394,7 +395,7 @@ $vectorStore = new ElasticsearchVectorStore($client, 'llphant_custom_index'); //
 
 You can now use the ElasticsearchVectorStore as any other VectorStore.
 
-## Milvus VectorStore
+### Milvus VectorStore
 
 Prerequisites : Milvus server running (see [Milvus docs](https://milvus.io/docs))
 
@@ -405,8 +406,18 @@ and pass it to the MilvusVectorStore constructor :
 $client = new MilvusClient('localhost', '19530', 'root', 'milvus');
 $vectorStore = new MilvusVectorStore($client);
 ````
+### ChromaDB VectorStore
 
-You can now use the MilvusVectorStore as any other VectorStore.
+Prerequisites : Chroma server running (see [Chroma docs](https://docs.trychroma.com/)). 
+You can run it locally using this [docker compose file](https://github.com/theodo-group/LLPhant/blob/main/devx/docker-compose-chromadb.yml).
+
+Then create a new ChromaDB vector store (`LLPhant\Embeddings\VectorStores\ChromaDB\ChromaDBVectorStore`), for example:
+
+```php
+$vectorStore = new ChromaDBVectorStore(host: 'my_host', authToken: 'my_optional_auth_token');
+````
+
+You can now use this vector store as any other VectorStore.
 
 ## Question Answering
 A popular use case of LLM is to create a chatbot that can answer questions over your private data.
