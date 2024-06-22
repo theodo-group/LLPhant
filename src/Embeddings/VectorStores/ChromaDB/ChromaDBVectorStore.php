@@ -60,10 +60,16 @@ class ChromaDBVectorStore extends VectorStoreBase
      */
     public function addDocuments(array $documents): void
     {
-        // TODO - basic implementation - to improve
+        $chromaDBApiBuffer = new ChromaDBApiBuffer($this->currentCollection);
         foreach ($documents as $document) {
-            $this->addDocument($document);
+            $chromaDBApiBuffer->add(
+                $this->getId($document),
+                $document->embedding,
+                $this->metadataFromDocument($document),
+                $document->content
+            );
         }
+        $chromaDBApiBuffer->executeCall();
     }
 
     /**

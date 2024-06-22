@@ -12,21 +12,37 @@ use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3LargeEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\ChromaDB\ChromaDBVectorStore;
 use Tests\Integration\Embeddings\VectorStores\Doctrine\PlaceEntity;
 
+/**
+ * @return array<Document>
+ */
+function documents(string ...$contents): array
+{
+    $result = [];
+    foreach ($contents as $content) {
+        $newDocument = new Document();
+        $newDocument->content = $content;
+        $result[] = $newDocument;
+    }
+
+    return $result;
+}
+
 it('creates two documents with their embeddings and perform a similarity search', function () {
 
     $vectorStore = new ChromaDBVectorStore(getenv('CHROMADB_HOST') ?: 'localhost');
 
     $embeddingGenerator = new OpenAI3LargeEmbeddingGenerator();
 
-    $paris = new Document();
-    $paris->content = 'Anna lives in Rome';
-    $paris->sourceName = 'first doc';
+    $docs = documents(
+        'Anna reads Dante',
+        'I love carbonara',
+        'Do not put pineapples on pizza',
+        'New York is in the USA',
+        'My cat is black',
+        'Anna lives in Rome'
+    );
 
-    $france = new Document();
-    $france->content = 'Anna reads Dante';
-    $france->sourceName = 'second doc';
-
-    $embeddedDocuments = $embeddingGenerator->embedDocuments([$paris, $france]);
+    $embeddedDocuments = $embeddingGenerator->embedDocuments($docs);
 
     $vectorStore->addDocuments($embeddedDocuments);
 
