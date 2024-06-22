@@ -13,9 +13,7 @@ class MemoryVectorStore extends VectorStoreBase
     /** @var Document[] */
     private array $documentsPool = [];
 
-    public function __construct(private readonly Distance $distance = new EuclideanDistanceL2())
-    {
-    }
+    public function __construct(private readonly Distance $distance = new EuclideanDistanceL2()) {}
 
     public function addDocument(Document $document): void
     {
