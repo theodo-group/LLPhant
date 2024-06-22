@@ -17,7 +17,7 @@ it('tests a full embedding flow with Qdrant', function () {
     $filePath = __DIR__.'/../PlacesTextFiles';
     $reader = new FileDataReader($filePath, Document::class);
     $documents = $reader->getDocuments();
-    $splittedDocuments = DocumentSplitter::splitDocuments($documents, 200);
+    $splittedDocuments = DocumentSplitter::splitDocuments($documents, 100, "\n");
     $formattedDocuments = EmbeddingFormatter::formatEmbeddings($splittedDocuments);
 
     $embeddingGenerator = new OpenAIADA002EmbeddingGenerator();
@@ -30,6 +30,7 @@ it('tests a full embedding flow with Qdrant', function () {
 
     $collectionName = 'places2';
     $vectorStore = new QdrantVectorStore($config, $collectionName);
+    $vectorStore->createCollectionIfDoesNotExist($collectionName, $embeddingGenerator->getEmbeddingLength());
     $vectorStore->addDocuments($embededDocuments);
     $embedding = $embeddingGenerator->embedText('France the country');
     /** @var Document[] $result */
