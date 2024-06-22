@@ -26,7 +26,9 @@ class ChromaDBApiBuffer
      */
     private array $contents = [];
 
-    public function __construct(private readonly CollectionResource $currentCollection, private readonly int $batchSize = 5) {}
+    public function __construct(private readonly CollectionResource $currentCollection, private readonly int $batchSize = 5)
+    {
+    }
 
     /**
      * @param  float[]|null  $embedding
