@@ -23,9 +23,11 @@
         "symfony/cache": "This is one of the possible types of psr/cache needed by doctrine/orm",
         "hkulekci/qdrant": "This is required for the QdrantVectoreStore.",
         "predis/predis": "This is required for the RedisVectoreStore.",
-        "elasticsearch/elasticsearch": "This is required for the ElasticsearchVectoreStore."
+        "elasticsearch/elasticsearch": "This is required for the ElasticsearchVectoreStore.",
+        "codewithkyrian/chromadb-php": "This is required for the ChromaDBVectorStore."
     },
     "require-dev": {
+        "codewithkyrian/chromadb-php": "^0.3.0",
         "doctrine/orm": "^2.13.0",
         "elasticsearch/elasticsearch": "^8.10",
         "hkulekci/qdrant": "^v0.5.3",
@@ -62,6 +64,7 @@
     },
     "scripts": {
         "lint": "pint -v",
+        "fix-lint": "pint -v --repair",
         "refactor": "rector --debug",
         "test:lint": "pint --test -v",
         "test:refactor": "rector --dry-run",
