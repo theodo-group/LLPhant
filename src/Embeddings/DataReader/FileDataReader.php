@@ -17,9 +17,7 @@ final class FileDataReader implements DataReader
      * @param  class-string<T>  $documentClassName
      * @param  string[]  $extensions
      */
-    public function __construct(public string $filePath, public readonly string $documentClassName = Document::class, private readonly array $extensions = [])
-    {
-    }
+    public function __construct(public string $filePath, public readonly string $documentClassName = Document::class, private readonly array $extensions = []) {}
 
     /**
      * @return Document[]

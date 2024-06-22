@@ -6,6 +6,4 @@ namespace LLPhant\Exception;
 
 use Exception;
 
-class MissingFeatureException extends Exception implements LLPhantException
-{
-}
+class MissingFeatureException extends Exception implements LLPhantException {}

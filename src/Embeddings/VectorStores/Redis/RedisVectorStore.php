@@ -16,9 +16,7 @@ class RedisVectorStore extends VectorStoreBase
 {
     final public const LLPHANT_INDEX = 'llphant';
 
-    public function __construct(public Client $client, public string $redisIndex = self::LLPHANT_INDEX)
-    {
-    }
+    public function __construct(public Client $client, public string $redisIndex = self::LLPHANT_INDEX) {}
 
     public function addDocument(Document $document): void
     {

@@ -6,6 +6,4 @@ namespace LLPhant\Exception;
 
 use Exception;
 
-class FormatException extends Exception implements LLPhantException
-{
-}
+class FormatException extends Exception implements LLPhantException {}

@@ -8,7 +8,5 @@ class Task
 
     public bool $doing = false;
 
-    public function __construct(public string $name, public string $description, public ?string $result = null)
-    {
-    }
+    public function __construct(public string $name, public string $description, public ?string $result = null) {}
 }
