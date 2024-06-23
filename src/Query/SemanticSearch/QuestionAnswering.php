@@ -16,7 +16,7 @@ class QuestionAnswering
 
     public string $systemMessageTemplate = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
 
-    public function __construct(public readonly VectorStoreBase $vectorStoreBase, public readonly EmbeddingGeneratorInterface $embeddingGenerator, public readonly ChatInterface $chat)
+    public function __construct(public readonly VectorStoreBase $vectorStoreBase, public readonly EmbeddingGeneratorInterface $embeddingGenerator, public readonly ChatInterface $chat, private readonly QueryTransformer $queryTransformer = new IdentityTransformer())
     {
     }
 
@@ -70,8 +70,17 @@ class QuestionAnswering
      */
     private function searchDocumentAndCreateSystemMessage(string $question, int $k, array $additionalArguments): string
     {
-        $embedding = $this->embeddingGenerator->embedText($question);
-        $this->retrievedDocs = $this->vectorStoreBase->similaritySearch($embedding, $k, $additionalArguments);
+        $questions = $this->queryTransformer->transformQuery($question);
+
+        $this->retrievedDocs = [];
+
+        foreach ($questions as $question) {
+            $embedding = $this->embeddingGenerator->embedText($question);
+            $docs = $this->vectorStoreBase->similaritySearch($embedding, $k, $additionalArguments);
+            foreach ($docs as $doc) {
+                $this->retrievedDocs[\md5($doc->content)] = $doc;
+            }
+        }
 
         if ($this->retrievedDocs === []) {
             return "I don't know. I didn't find any document to answer the question";
@@ -81,6 +90,9 @@ class QuestionAnswering
         foreach ($this->retrievedDocs as $document) {
             $context .= $document->content.' ';
         }
+
+        // Ensure retro-compatibility
+        $this->retrievedDocs = \array_values($this->retrievedDocs);
 
         return $this->getSystemMessage($context);
     }

@@ -29,7 +29,7 @@
         "doctrine/orm": "^2.13.0",
         "elasticsearch/elasticsearch": "^8.10",
         "hkulekci/qdrant": "^v0.5.3",
-        "laravel/pint": "^v1.13.7",
+        "laravel/pint": "v1.15.3",
         "mockery/mockery": "^1.6",
         "pestphp/pest": "2.32.0",
         "pestphp/pest-plugin-arch": "^2.5.0",
@@ -62,6 +62,7 @@
     },
     "scripts": {
         "lint": "pint -v",
+        "fix-lint": "pint -v --repair",
         "refactor": "rector --debug",
         "test:lint": "pint --test -v",
         "test:refactor": "rector --dry-run",
