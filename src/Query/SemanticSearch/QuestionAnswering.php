@@ -82,15 +82,13 @@ class QuestionAnswering
             }
         }
 
-        if ($this->retrievedDocs === []) {
-            return "I don't know. I didn't find any document to answer the question";
+        if ($this->retrievedDocs !== []) {
+            $context = '';
+            foreach ($this->retrievedDocs as $document) {
+                $context .= $document->content.' ';
+            }
         }
-
-        $context = '';
-        foreach ($this->retrievedDocs as $document) {
-            $context .= $document->content.' ';
-        }
-
+        
         // Ensure retro-compatibility
         $this->retrievedDocs = \array_values($this->retrievedDocs);
 
