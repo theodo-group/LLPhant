@@ -12,6 +12,7 @@ use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAIADA002EmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\FileSystem\FileSystemVectorStore;
 use LLPhant\Embeddings\VectorStores\Memory\MemoryVectorStore;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
+use LLPhant\Query\SemanticSearch\MultiQuery;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 
 beforeEach(function () {
@@ -23,7 +24,7 @@ beforeEach(function () {
     }
 });
 
-it('generates a answer based on private knowledge', function (VectorStoreBase $vectorStore) {
+it('generates an answer based on private knowledge', function (VectorStoreBase $vectorStore) {
     $dataReader = new FileDataReader(__DIR__.'/private-data.txt');
     $documents = $dataReader->getDocuments();
 
@@ -49,3 +50,30 @@ it('generates a answer based on private knowledge', function (VectorStoreBase $v
     new MemoryVectorStore(new CosineDistance()),
     new FileSystemVectorStore(\sys_get_temp_dir().'/QAQueryTest_cosine.json', new CosineDistance()),
 ]);
+
+it('generates an answer using MultiQuery', function () {
+    $vectorStore = new MemoryVectorStore();
+
+    $dataReader = new FileDataReader(__DIR__.'/private-data.txt');
+    $documents = $dataReader->getDocuments();
+
+    $splittedDocuments = DocumentSplitter::splitDocuments($documents, 500);
+
+    $embeddingGenerator = new OpenAIADA002EmbeddingGenerator();
+    $embeddedDocuments = $embeddingGenerator->embedDocuments($splittedDocuments);
+
+    $vectorStore->addDocuments($embeddedDocuments);
+
+    $chat = new OpenAIChat();
+
+    $qa = new QuestionAnswering(
+        $vectorStore,
+        $embeddingGenerator,
+        $chat,
+        new MultiQuery($chat)
+    );
+
+    $answer = $qa->answerQuestion('what is the secret of Alice?');
+
+    expect($answer)->toContain('cheese');
+});

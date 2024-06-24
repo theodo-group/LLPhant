@@ -454,3 +454,18 @@ $answer = $qa->answerQuestion('what is the secret of Alice?');
 // control the behavior of the underlying vector store, see VectorStoreBase::similaritySearch
 $answer = $qa->answerQuestion('Where does Alice live?', 2, ['type' => 'city']);
 ```
+### Multy-Query query transformation
+During the question answering process, the first step could transform the input query into something more useful for the  chat engine.
+One of these kinds of transformations could be the [`MultiQuery` transformation](https://community.fullstackretrieval.com/query-transformation/multi-query).
+This step gets the original query as input and then asks a query engine to reformulate it in order to have set of queries to use for retrieving documents
+from the vector store.
+```php
+$chat = new OpenAIChat();
+
+$qa = new QuestionAnswering(
+    $vectorStore,
+    $embeddingGenerator,
+    $chat,
+    new MultiQuery($chat)
+);
+```
