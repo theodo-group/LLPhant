@@ -88,7 +88,7 @@ class QuestionAnswering
                 $context .= $document->content.' ';
             }
         }
-        
+
         // Ensure retro-compatibility
         $this->retrievedDocs = \array_values($this->retrievedDocs);
 
