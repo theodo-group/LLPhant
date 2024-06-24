@@ -34,6 +34,22 @@ class QdrantVectorStore extends VectorStoreBase
     /**
      * @param  int  $embeddingLength  this depends on the embedding generator you use
      */
+    public function createCollectionIfDoesNotExist(string $name, int $embeddingLength): bool
+    {
+        try {
+            $this->client->collections($name)->info();
+
+            return true;
+        } catch (\Exception) {
+            $this->createCollection($name, $embeddingLength);
+
+            return false;
+        }
+    }
+
+    /**
+     * @param  int  $embeddingLength  this depends on the embedding generator you use
+     */
     public function createCollection(string $name, int $embeddingLength): Response
     {
         $createCollection = new CreateCollection();
