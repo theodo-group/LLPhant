@@ -87,7 +87,7 @@ If you want to use Mistral, you can just specify the model to use using the `Ope
 
 ```php
 $config = new OpenAIConfig();
-$config->model = 'fakeapikey';
+$config->apiKey = 'fakeapikey';
 $chat = new MistralAIChat($config);
 ```
 
