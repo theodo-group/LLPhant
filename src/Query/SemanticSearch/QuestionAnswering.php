@@ -82,11 +82,9 @@ class QuestionAnswering
             }
         }
 
-        if ($this->retrievedDocs !== []) {
-            $context = '';
-            foreach ($this->retrievedDocs as $document) {
-                $context .= $document->content.' ';
-            }
+        $context = '';
+        foreach ($this->retrievedDocs as $document) {
+            $context .= $document->content.' ';
         }
 
         // Ensure retro-compatibility
