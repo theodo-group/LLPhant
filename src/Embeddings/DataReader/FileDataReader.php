@@ -3,7 +3,9 @@
 namespace LLPhant\Embeddings\DataReader;
 
 use LLPhant\Embeddings\Document;
+use PhpOffice\PhpWord\Element\AbstractContainer;
 use PhpOffice\PhpWord\Element\AbstractElement;
+use PhpOffice\PhpWord\Element\Text;
 use PhpOffice\PhpWord\IOFactory;
 use Smalot\PdfParser\Parser;
 
@@ -11,14 +13,20 @@ final class FileDataReader implements DataReader
 {
     public string $sourceType = 'files';
 
+    private array $extensions;
+
     /**
      * @template T of Document
      *
      * @param  class-string<T>  $documentClassName
-     * @param  string[]  $extensions
      */
-    public function __construct(public string $filePath, public readonly string $documentClassName = Document::class, private readonly array $extensions = [])
+    public function __construct(public string $filePath, public readonly string $documentClassName = Document::class)
     {
+        $this->extensions = array(
+            'docx',
+            'pdf',
+            'txt',
+        );
     }
 
     /**
@@ -91,8 +99,11 @@ final class FileDataReader implements DataReader
         if ($fileExtension === 'docx') {
             $phpWord = IOFactory::load($path);
             $fullText = '';
+
             foreach ($phpWord->getSections() as $section) {
-                $fullText .= $this->extractTextFromDocxNode($section);
+                foreach ($section->getElements() as $element) {
+                    $fullText .= $this->extractTextFromDocxElement($element);
+                }
             }
 
             return $fullText;
@@ -101,15 +112,15 @@ final class FileDataReader implements DataReader
         return file_get_contents($path);
     }
 
-    private function extractTextFromDocxNode(AbstractElement $section): string
+    private function extractTextFromDocxElement(AbstractElement $element): string
     {
         $text = '';
-        if (method_exists($section, 'getText')) {
-            $text .= $section->getText();
-        } elseif (method_exists($section, 'getElements')) {
-            foreach ($section->getElements() as $childSection) {
-                $text .= $this->extractTextFromDocxNode($childSection);
+        if ($element instanceof AbstractContainer) {
+            foreach ($element->getElements() as $element) {
+                $text .= $this->extractTextFromDocxElement($element);
             }
+        } elseif ($element instanceof Text) {
+            $text .= $element->getText();
         }
 
         return $text;
