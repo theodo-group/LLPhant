@@ -3,8 +3,6 @@
 namespace LLPhant\Embeddings\DataReader;
 
 use LLPhant\Embeddings\Document;
-use PhpOffice\PhpWord\Element\AbstractElement;
-use PhpOffice\PhpWord\IOFactory;
 use Smalot\PdfParser\Parser;
 
 final class FileDataReader implements DataReader
@@ -89,30 +87,12 @@ final class FileDataReader implements DataReader
         }
 
         if ($fileExtension === 'docx') {
-            $phpWord = IOFactory::load($path);
-            $fullText = '';
-            foreach ($phpWord->getSections() as $section) {
-                $fullText .= $this->extractTextFromDocxNode($section);
-            }
+            $docxReader = new DocxReader();
 
-            return $fullText;
+            return $docxReader->getText($path);
         }
 
         return file_get_contents($path);
-    }
-
-    private function extractTextFromDocxNode(AbstractElement $section): string
-    {
-        $text = '';
-        if (method_exists($section, 'getText')) {
-            $text .= $section->getText();
-        } elseif (method_exists($section, 'getElements')) {
-            foreach ($section->getElements() as $childSection) {
-                $text .= $this->extractTextFromDocxNode($childSection);
-            }
-        }
-
-        return $text;
     }
 
     private function getDocument(string $content, string $entry): mixed
