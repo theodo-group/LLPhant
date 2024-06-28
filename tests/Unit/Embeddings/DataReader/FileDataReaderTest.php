@@ -7,37 +7,19 @@ namespace Tests\Unit\Embeddings\DataReader;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\Document;
 
-it('read one specific file', function () {
-    $filePath = __DIR__.'/FilesTestDirectory/hello.txt';
+it('can read various types of documents', function (string $docName, string $startingContent) {
+    $filePath = __DIR__.'/FilesTestDirectory/'.$docName;
     $reader = new FileDataReader($filePath);
     $documents = $reader->getDocuments();
 
-    expect($documents[0]->content)->toBe("hello test!\n");
-});
-
-it('can read pdf', function () {
-    $filePath = __DIR__.'/FilesTestDirectory/data-pdf.pdf';
-    $reader = new FileDataReader($filePath);
-    $documents = $reader->getDocuments();
-
-    expect($documents[0]->content)->toBe('This data is from a pdf');
-});
-
-it('can read docx', function () {
-    $filePath = __DIR__.'/FilesTestDirectory/data.docx';
-    $reader = new FileDataReader($filePath);
-    $documents = $reader->getDocuments();
-
-    expect($documents[0]->content)->toBe('This data is from a docx');
-});
-
-it('can read docx with text breaks', function () {
-    $filePath = __DIR__.'/FilesTestDirectory/document-with-text-breaks.docx';
-    $reader = new FileDataReader($filePath);
-    $documents = $reader->getDocuments();
-
-    expect($documents[0]->content)->toContain('Sample document with text breaks');
-});
+    expect($documents[0]->content)->toStartWith($startingContent);
+})->with([
+    ['hello.txt', "hello test!\n"],
+    ['data.docx', 'This data is from a docx'],
+    ['document-with-text-breaks.docx', 'Sample document with text breaks'],
+    ['simple_document_with_links.docx', 'This is a doc with links'],
+    ['data-pdf.pdf', 'This data is from a pdf'],
+]);
 
 it('can read pdf and texts ', function () {
     $filePath = __DIR__.'/FilesTestDirectory/';
@@ -64,7 +46,7 @@ it('can filter files based on extensions', function () {
     $reader = new FileDataReader($filePath, Document::class, ['docx']);
     $documents = $reader->getDocuments();
 
-    expect($documents)->toHaveCount(2);
+    expect($documents)->toHaveCount(3);
 });
 
 it('can read sub-directories', function () {
