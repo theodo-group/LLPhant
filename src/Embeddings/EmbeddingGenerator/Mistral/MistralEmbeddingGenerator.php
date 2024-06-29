@@ -35,6 +35,9 @@ class MistralEmbeddingGenerator extends AbstractOpenAIEmbeddingGenerator
             ->withApiKey($apiKey)
             ->withBaseUri('api.mistral.ai/v1')
             ->make();
+
+        $this->uri = 'https://api.mistral.ai/v1/embeddings';
+        $this->apiKey = $apiKey;
     }
 
     public function getEmbeddingLength(): int
