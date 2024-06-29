@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace LLPhant\Embeddings\EmbeddingGenerator\OpenAI;
 
 use Exception;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Psr7\Request;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Client;
+use Psr\Http\Client\ClientExceptionInterface;
 
 use function getenv;
 use function str_replace;
@@ -17,6 +20,12 @@ use function str_replace;
 abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
 {
     public Client $client;
+
+    public int $batch_size_limit = 50;
+
+    public string $apiKey;
+
+    protected string $uri = 'https://api.openai.com/v1/embeddings';
 
     /**
      * @throws Exception
@@ -32,6 +41,7 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
             }
 
             $this->client = OpenAI::client($apiKey);
+            $this->apiKey = $apiKey;
         }
     }
 
@@ -63,15 +73,53 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
     /**
      * @param  Document[]  $documents
      * @return Document[]
+     *
+     * @throws ClientExceptionInterface
+     * @throws \JsonException
+     * @throws Exception
      */
     public function embedDocuments(array $documents): array
     {
-        $embedDocuments = [];
-        foreach ($documents as $document) {
-            $embedDocuments[] = $this->embedDocument($document);
+        if ($this->apiKey === '' || $this->apiKey === '0') {
+            throw new Exception('You have to provide a custom client or an $apiKey to batch embeddings.');
         }
 
-        return $embedDocuments;
+        $clientForBatch = new GuzzleClient();
+
+        $texts = array_map(fn (Document $document): string => $document->formattedContent ?? $document->content, $documents);
+
+        // We create batches of 50 texts to avoid hitting the limit
+        if ($this->batch_size_limit <= 0) {
+            throw new Exception('Batch size limit must be greater than 0.');
+        }
+
+        $chunks = array_chunk($texts, $this->batch_size_limit);
+
+        foreach ($chunks as $chunkKey => $chunk) {
+            $body = [
+                'model' => $this->getModelName(),
+                'input' => $chunk,
+            ];
+
+            $requestForBatch = new Request(
+                'POST',
+                $this->uri,
+                [
+                    'Authorization' => 'Bearer '.$this->apiKey,
+                    'Content-Type' => 'application/json',
+                ],
+                json_encode($body, JSON_THROW_ON_ERROR)
+            );
+
+            $response = $clientForBatch->sendRequest($requestForBatch);
+            $jsonResponse = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+            foreach ($jsonResponse['data'] as $key => $oneEmbeddingObject) {
+                $documents[$chunkKey * $this->batch_size_limit + $key]->embedding = $oneEmbeddingObject['embedding'];
+            }
+        }
+
+        return $documents;
     }
 
     abstract public function getEmbeddingLength(): int;
