@@ -1,6 +1,6 @@
 {
     "require": {
-        "theodo-group/llphant": "^0.2.3"
+        "theodo-group/llphant": "^0.6.0"
     },
     "config": {
         "allow-plugins": {
