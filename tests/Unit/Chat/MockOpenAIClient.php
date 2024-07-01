@@ -5,6 +5,7 @@ namespace Tests\Unit\Chat;
 use OpenAI\Contracts\ClientContract;
 use OpenAI\Contracts\Resources\AssistantsContract;
 use OpenAI\Contracts\Resources\AudioContract;
+use OpenAI\Contracts\Resources\BatchesContract;
 use OpenAI\Contracts\Resources\ChatContract;
 use OpenAI\Contracts\Resources\CompletionsContract;
 use OpenAI\Contracts\Resources\EditsContract;
@@ -82,5 +83,10 @@ class MockOpenAIClient implements ClientContract
     public function threads(): ThreadsContract
     {
         // TODO: Implement threads() method.
+    }
+
+    public function batches(): BatchesContract
+    {
+        // TODO: Implement batches() method.
     }
 }
