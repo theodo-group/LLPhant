@@ -18,6 +18,12 @@ class TaskManager
             if (! is_array($task)) {
                 continue;
             }
+            if (! array_key_exists('name', $task)) {
+                continue;
+            }
+            if (! array_key_exists('description', $task)) {
+                continue;
+            }
             $tasksObject[] = new Task($task['name'], $task['description']);
         }
 
