@@ -12,7 +12,7 @@ $objective = 'find the name of wives or girlfriends from at least 2 players from
 // You can add tools to the agent, so it can use them. You need an API key to use SerpApiSearch
 // Have a look here: https://serpapi.com
 $searchApi = new SerpApiSearch();
-$function = FunctionBuilder::buildFunctionInfo($searchApi, 'search');
+$function = FunctionBuilder::buildFunctionInfo($searchApi, 'googleSearch');
 
 $autoPHP = new AutoPHP($objective, [$function]);
 $autoPHP->run();
