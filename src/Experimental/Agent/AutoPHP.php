@@ -10,11 +10,11 @@ use LLPhant\Chat\OpenAIChat;
 use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
 use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 use LLPhant\OpenAIConfig;
+use LLPhant\Query\SemanticSearch\IdentityTransformer;
+use LLPhant\Query\SemanticSearch\QueryTransformer;
 
 class AutoPHP
 {
-    public OpenAIChat $openAIChat;
-
     public TaskManager $taskManager;
 
     public CreationTaskAgent $creationTaskAgent;
@@ -34,7 +34,6 @@ class AutoPHP
         public OutputAgentInterface $outputAgent = new CLIOutputUtils(),
     ) {
         $this->taskManager = new TaskManager();
-        $this->openAIChat = new OpenAIChat();
         $this->creationTaskAgent = new CreationTaskAgent($this->taskManager, new OpenAIChat(), $tools, $verbose,
             $this->outputAgent);
         $this->prioritizationTaskAgent = new PrioritizationTaskAgent($this->taskManager, new OpenAIChat(), $verbose,
@@ -88,7 +87,7 @@ class AutoPHP
         $model = new OpenAIChat($config);
         $autoPHPInternalTool = new AutoPHPInternalTool();
         $enoughDataToFinishFunction = FunctionBuilder::buildFunctionInfo($autoPHPInternalTool, 'objectiveStatus');
-        $model->setFunctions([$enoughDataToFinishFunction]);
+        $model->setTools([$enoughDataToFinishFunction]);
         $model->requiredFunction = $enoughDataToFinishFunction;
 
         $achievedTasks = $this->taskManager->getAchievedTasksNameAndResult();
