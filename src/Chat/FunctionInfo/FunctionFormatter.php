@@ -5,7 +5,8 @@ namespace LLPhant\Chat\FunctionInfo;
 class FunctionFormatter
 {
     /**
-     * @deprecated Switch to using tools instead of functions in your code
+     * @deprecated Switch to using tools instead of functions in your code when using OpenAIChat
+     * This is pretty fine instead when using AnthropicChat
      *
      * @param  FunctionInfo[]  $functions
      * @return mixed[]
@@ -25,7 +26,8 @@ class FunctionFormatter
     }
 
     /**
-     * @deprecated Switch to using tools instead of functions in your code
+     * @deprecated Switch to using tools instead of functions in your code when using OpenAIChat
+     * This is pretty fine instead when using AnthropicChat
      *
      * @return array{name: string, description: string, parameters: array{type: string, properties: array<string, mixed[]>, required: string[]}}
      */
