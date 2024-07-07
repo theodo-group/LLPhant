@@ -5,6 +5,7 @@ namespace LLPhant\Chat;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
 use LLPhant\AnthropicConfig;
+use LLPhant\Chat\FunctionInfo\FunctionFormatter;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Exception\HttpException;
 use LLPhant\Utility;
@@ -15,7 +16,7 @@ class AnthropicChat implements ChatInterface
 {
     private const DEFAULT_URL = 'https://api.anthropic.com';
 
-    final public const CURRENT_VERSION = '2023-06-01';
+    private const CURRENT_VERSION = '2023-06-01';
 
     private ?Message $systemMessage = null;
 
@@ -27,6 +28,9 @@ class AnthropicChat implements ChatInterface
     private readonly string $model;
 
     private readonly int $maxTokens;
+
+    /** @var FunctionInfo[] */
+    private array $tools = [];
 
     public function __construct(AnthropicConfig $config = new AnthropicConfig())
     {
@@ -98,10 +102,12 @@ class AnthropicChat implements ChatInterface
      */
     public function setTools(array $tools): void
     {
+        $this->tools = $tools;
     }
 
     public function addTool(FunctionInfo $functionInfo): void
     {
+        $this->tools[] = $functionInfo;
     }
 
     /** @param FunctionInfo[] $functions */
@@ -157,10 +163,6 @@ class AnthropicChat implements ChatInterface
 
     /**
      * @param  Message[]  $messages
-     */
-
-    /**
-     * @param  Message[]  $messages
      * @return array<array<string, mixed>>
      */
     private function createMessagesArray(array $messages): array
@@ -177,7 +179,8 @@ class AnthropicChat implements ChatInterface
         return $response;
     }
 
-    /** @param Message[] $messages
+    /**
+     * @param  Message[]  $messages
      * @return array<string, mixed>
      **/
     private function createParams(array $messages, bool $stream): array
@@ -186,6 +189,7 @@ class AnthropicChat implements ChatInterface
             ...$this->modelOptions,
             'model' => $this->model,
             'messages' => $this->createMessagesArray($messages),
+            'tools' => FunctionFormatter::formatFunctionsToOpenAI($this->tools),
             'max_tokens' => $this->maxTokens,
             'stream' => $stream,
         ];
