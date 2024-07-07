@@ -67,11 +67,11 @@ You can also see other use cases on [Qdrant's website](https://qdrant.tech/use-c
 
 ## Usage
 
-You can use OpenAI, Mistral or Ollama as LLM.
+You can use OpenAI, Mistral, Ollama or Anthropic as LLM.
 
 ### OpenAI
 
-The most simple to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
+The most simple way to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
 
 ```bash
 export OPENAI_API_KEY=sk-XXXXXX
@@ -103,6 +103,26 @@ If you want to use Ollama, you can just specify the model to use using the `Olla
 $config = new OllamaConfig();
 $config->model = 'llama2';
 $chat = new OllamaChat($config);
+```
+
+### Anthropic
+
+To call Anthropic models you have to provide an API key . You can set the ANTHROPIC_API_KEY environment variable.
+
+```bash
+export ANTHROPIC_API_KEY=XXXXXX
+```
+
+You also have to specify the model to use using the `AnthropicConfig` object and pass it to the `AnthropicChat`.
+
+```php
+$chat = new AnthropicChat(new AnthropicConfig(AnthropicConfig::CLAUDE_3_5_SONNET));
+```
+
+Creating a chat with no configuration will use a CLAUDE_3_HAIKU model.
+
+```php
+$chat = new AnthropicChat();
 ```
 
 ### Chat
@@ -157,7 +177,7 @@ $qa->systemMessageTemplate = $customSystemMessage;
 
 ## Tools
 
-This feature is amazing and is available only for OpenAI.
+This feature is amazing and is available for OpenAI and (in next versions of LLPhant) Anthropic.
 
 OpenAI has refined its model to determine whether tools should be invoked.
 To utilize this, simply send a description of the available tools to OpenAI,
