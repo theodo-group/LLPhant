@@ -10,7 +10,16 @@ class FunctionBuilder
     public static function buildFunctionInfo(object $instance, string $name): FunctionInfo
     {
         $reflection = new ReflectionMethod($instance::class, $name);
+        $docComment = $reflection->getDocComment() ?: '';
         $params = $reflection->getParameters();
+        
+        $parametersDescriptions = [];
+        preg_match_all('/@param\s+\w+\s+\$(\w+)\s+(.+)/', $docComment, $matches, PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            $paramName = $match[1];
+            $paramDescription = trim($match[2]);
+            $parametersDescriptions[$paramName] = $paramDescription;
+        }
 
         $parameters = [];
         $requiredParameters = [];
@@ -19,7 +28,7 @@ class FunctionBuilder
             /** @var ReflectionNamedType $reflectionType */
             $reflectionType = $param->getType();
 
-            $newParameter = new Parameter($param->getName(), TypeMapper::mapPhpTypeToJsonSchemaType($reflectionType), '');
+            $newParameter = new Parameter($parameterName, TypeMapper::mapPhpTypeToJsonSchemaType($reflectionType), $parametersDescriptions[$parameterName] ?? '');
 
             if ($newParameter->type === 'array') {
                 $newParameter->itemsOrProperties = self::getArrayType($reflection->getDocComment() ?: '', $param->getName());
