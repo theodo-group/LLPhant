@@ -28,6 +28,7 @@ class FunctionBuilder
             /** @var ReflectionNamedType $reflectionType */
             $reflectionType = $param->getType();
 
+            $parameterName = $param->getName();
             $newParameter = new Parameter($parameterName, TypeMapper::mapPhpTypeToJsonSchemaType($reflectionType), $parametersDescriptions[$parameterName] ?? '');
 
             if ($newParameter->type === 'array') {
