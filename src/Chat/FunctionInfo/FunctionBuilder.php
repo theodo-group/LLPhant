@@ -12,7 +12,7 @@ class FunctionBuilder
         $reflection = new ReflectionMethod($instance::class, $name);
         $docComment = $reflection->getDocComment() ?: '';
         $params = $reflection->getParameters();
-        
+
         $parametersDescriptions = [];
         preg_match_all('/@param\s+\w+\s+\$(\w+)\s+(.+)/', $docComment, $matches, PREG_SET_ORDER);
         foreach ($matches as $match) {
