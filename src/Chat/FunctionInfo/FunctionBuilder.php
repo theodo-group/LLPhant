@@ -40,7 +40,6 @@ class FunctionBuilder
             }
         }
 
-        $docComment = $reflection->getDocComment() ?: '';
         // Remove PHPDoc annotations and get only the description
         $functionDescription = preg_replace('/\s*\* @.*/', '', $docComment);
         $functionDescription = trim(str_replace(['/**', '*/', '*'], '', $functionDescription ?? ''));
