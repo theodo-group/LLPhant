@@ -14,7 +14,7 @@ class FunctionBuilder
         $params = $reflection->getParameters();
 
         $parametersDescriptions = [];
-        preg_match_all('/@param\s+\w+\s+\$(\w+)\s+(.+)/', $docComment, $matches, PREG_SET_ORDER);
+        preg_match_all('/@param.+?\$(\w+)\s+(.+)/', $docComment, $matches, PREG_SET_ORDER);
         foreach ($matches as $match) {
             $paramName = $match[1];
             $paramDescription = trim($match[2]);
