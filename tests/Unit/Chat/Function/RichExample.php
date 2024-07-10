@@ -19,4 +19,17 @@ class RichExample
     {
         var_dump($stringVar, $intVar, $floatVar, $boolVar, $arrayVar);
     }
+
+    /**
+     * This is the description of the example function from the RichExample class.
+     */
+    public function exampleWithNoPhpDocForParameters(string $stringVar, int $intVar, float $floatVar, bool $boolVar, array $arrayVar): void
+    {
+        var_dump($stringVar, $intVar, $floatVar, $boolVar, $arrayVar);
+    }
+
+    public function exampleWithNoParametersAndNoPhpdoc(): void
+    {
+        echo "test";
+    }
 }
