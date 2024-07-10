@@ -30,6 +30,6 @@ class RichExample
 
     public function exampleWithNoParametersAndNoPhpdoc(): void
     {
-        echo "test";
+        echo 'test';
     }
 }
