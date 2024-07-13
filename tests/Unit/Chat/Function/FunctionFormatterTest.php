@@ -7,6 +7,7 @@ namespace Tests\Unit\Chat\Function;
 use LLPhant\Chat\FunctionInfo\FunctionFormatter;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\Parameter;
+use Tests\Integration\Chat\MailerExample;
 
 it('can format function info with basic types to OpenAI format', function () {
     $parameters = [
@@ -159,4 +160,45 @@ it('can format function info with array of objects types to OpenAI format', func
     ];
 
     expect(FunctionFormatter::formatOneFunctionToOpenAI($functionInfo))->toBe($expected);
+});
+
+it('can format function info for Anthropic', function () {
+    $subject = new Parameter('subject', 'string', 'the subject of the mail');
+    $body = new Parameter('body', 'string', 'the body of the mail');
+    $email = new Parameter('email', 'string', 'the email address');
+
+    $function = new FunctionInfo(
+        'sendMail',
+        new MailerExample(),
+        'send a mail',
+        [$subject, $body, $email]
+    );
+
+    $formattedFunction = FunctionFormatter::formatFunctionsToAnthropic([$function]);
+
+    $expected = <<<'JSON'
+    {
+        "name": "sendMail",
+        "description": "send a mail",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "subject": {
+                    "type": "string",
+                    "description": "the subject of the mail"
+                },
+                "body": {
+                    "type": "string",
+                    "description": "the body of the mail"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "the email address"
+                }
+            }
+        }
+    }
+    JSON;
+
+    expect(json_encode($formattedFunction[0], JSON_PRETTY_PRINT | JSON_FORCE_OBJECT))->toBe($expected);
 });

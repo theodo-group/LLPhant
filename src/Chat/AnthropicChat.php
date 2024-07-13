@@ -32,6 +32,8 @@ class AnthropicChat implements ChatInterface
     /** @var FunctionInfo[] */
     private array $tools = [];
 
+    public ?FunctionInfo $lastFunctionCalled = null;
+
     public function __construct(AnthropicConfig $config = new AnthropicConfig())
     {
         $this->modelOptions = $config->modelOptions;
@@ -64,7 +66,24 @@ class AnthropicChat implements ChatInterface
 
         $json = $this->getJsonMessagesResponse($params);
 
-        return $json['content'][0]['text'];
+        $responses = $json['content'];
+
+        $result = '';
+
+        foreach ($responses as $response) {
+            if ($response['type'] === 'text') {
+                if ($result !== '') {
+                    $result .= PHP_EOL;
+                }
+                $result .= $response['text'];
+            }
+
+            if ($response['type'] === 'tool_use') {
+                $this->callFunction($response['name'], $response['input']);
+            }
+        }
+
+        return $result;
     }
 
     public function generateStreamOfText(string $prompt): StreamInterface
@@ -74,8 +93,13 @@ class AnthropicChat implements ChatInterface
 
     public function generateChatOrReturnFunctionCalled(array $messages): string|FunctionInfo
     {
-        // TODO: Implement generateChatOrReturnFunctionCalled() method.
-        throw new \RuntimeException('Not yet implemented');
+        $answer = $this->generateChat($messages);
+
+        if ($this->lastFunctionCalled instanceof \LLPhant\Chat\FunctionInfo\FunctionInfo) {
+            return $this->lastFunctionCalled;
+        }
+
+        return $answer;
     }
 
     public function generateChatStream(array $messages): StreamInterface
@@ -189,7 +213,7 @@ class AnthropicChat implements ChatInterface
             ...$this->modelOptions,
             'model' => $this->model,
             'messages' => $this->createMessagesArray($messages),
-            'tools' => FunctionFormatter::formatFunctionsToOpenAI($this->tools),
+            'tools' => FunctionFormatter::formatFunctionsToAnthropic($this->tools),
             'max_tokens' => $this->maxTokens,
             'stream' => $stream,
         ];
@@ -206,5 +230,28 @@ class AnthropicChat implements ChatInterface
         $streamResponse = new AnthropicStreamResponse($response);
 
         return Utils::streamFor($streamResponse->getIterator());
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     *
+     * @throws \Exception
+     */
+    private function callFunction(string $functionName, array $arguments): void
+    {
+        $functionToCall = $this->getFunctionInfoFromName($functionName);
+        $functionToCall->callWithArguments($arguments);
+        $this->lastFunctionCalled = $functionToCall;
+    }
+
+    private function getFunctionInfoFromName(string $functionName): FunctionInfo
+    {
+        foreach ($this->tools as $function) {
+            if ($function->name === $functionName) {
+                return $function;
+            }
+        }
+
+        throw new \Exception("AI tried to call $functionName which doesn't exist");
     }
 }
