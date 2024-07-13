@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Integration\Chat;
 
 use LLPhant\Chat\AnthropicChat;
+use LLPhant\Chat\FunctionInfo\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\Parameter;
 
 it('can generate some stuff', function () {
     $chat = new AnthropicChat();
@@ -23,4 +25,28 @@ it('can generate some stuff using a stream', function () {
     $chat = new AnthropicChat();
     $response = $chat->generateStreamOfText('Can you describe the recipe for making carbonara in 5 steps');
     expect($response->__toString())->toContain('eggs');
+});
+
+it('can call a function', function () {
+    $chat = new AnthropicChat();
+
+    $subject = new Parameter('subject', 'string', 'the subject of the mail');
+    $body = new Parameter('body', 'string', 'the body of the mail');
+    $email = new Parameter('email', 'string', 'the email address');
+
+    $mockMailerExample = new MailerExample();
+
+    $function = new FunctionInfo(
+        'sendMail',
+        $mockMailerExample,
+        'send a mail',
+        [$subject, $body, $email]
+    );
+
+    $chat->addFunction($function);
+    $chat->setSystemMessage('You are an AI that deliver information using the email system. When you have enough information to answer the question of the user you send a mail');
+    $chat->generateText('Who is Marie Curie in one line? My email is student@foo.com');
+
+    expect($mockMailerExample->lastMessage)->toStartWith('The email has been sent to student@foo.com with the subject ')
+        ->and($chat->lastFunctionCalled)->toBe($function);
 });

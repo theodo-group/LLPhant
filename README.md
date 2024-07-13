@@ -177,7 +177,7 @@ $qa->systemMessageTemplate = $customSystemMessage;
 
 ## Tools
 
-This feature is amazing and is available for OpenAI and (in next versions of LLPhant) Anthropic.
+This feature is amazing and is available for OpenAI and Anthropic.
 
 OpenAI has refined its model to determine whether tools should be invoked.
 To utilize this, simply send a description of the available tools to OpenAI,

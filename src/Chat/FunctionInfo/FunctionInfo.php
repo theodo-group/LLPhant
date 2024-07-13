@@ -13,4 +13,12 @@ class FunctionInfo
     public function __construct(public string $name, public mixed $instance, public string $description, public array $parameters, public array $requiredParameters = [])
     {
     }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callWithArguments(array $arguments): void
+    {
+        $this->instance->{$this->name}(...$arguments);
+    }
 }
