@@ -15,4 +15,4 @@ $searchApi = new SerpApiSearch();
 $function = FunctionBuilder::buildFunctionInfo($searchApi, 'googleSearch');
 
 $autoPHP = new AutoPHP($objective, [$function]);
-$autoPHP->run();
+$autoPHP->run(10);

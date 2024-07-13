@@ -10,8 +10,6 @@ use LLPhant\Chat\OpenAIChat;
 use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
 use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 use LLPhant\OpenAIConfig;
-use LLPhant\Query\SemanticSearch\IdentityTransformer;
-use LLPhant\Query\SemanticSearch\QueryTransformer;
 
 class AutoPHP
 {
@@ -41,7 +39,7 @@ class AutoPHP
         $this->defaultModelName = OpenAIChatModel::Gpt4Turbo->value;
     }
 
-    public function run(int $maxIteration = 100): string
+    public function run(int $maxIteration = 10): string
     {
         $this->outputAgent->renderTitle('🐘 AutoPHP 🐘', '🎯 Objective: '.$this->objective, $this->verbose);
         $this->creationTaskAgent->createTasks($this->objective, $this->tools);
@@ -49,6 +47,8 @@ class AutoPHP
         $currentTask = $this->prioritizationTaskAgent->prioritizeTask($this->objective);
         $iteration = 1;
         while ($currentTask instanceof Task && $maxIteration >= $iteration) {
+            $this->outputAgent->render('Iteration '.$iteration, false);
+            $this->outputAgent->render('Iteration '.$iteration, false);
             $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
 
             // TODO: add a mechanism to retrieve short-term / long-term memory
