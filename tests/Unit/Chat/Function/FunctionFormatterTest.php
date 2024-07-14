@@ -171,6 +171,7 @@ it('can format function info for Anthropic', function () {
         'sendMail',
         new MailerExample(),
         'send a mail',
+        [$subject, $body, $email],
         [$subject, $body, $email]
     );
 
@@ -195,10 +196,15 @@ it('can format function info for Anthropic', function () {
                     "type": "string",
                     "description": "the email address"
                 }
-            }
+            },
+            "required": [
+                "subject",
+                "body",
+                "email"
+            ]
         }
     }
     JSON;
 
-    expect(json_encode($formattedFunction[0], JSON_PRETTY_PRINT | JSON_FORCE_OBJECT))->toBe($expected);
+    expect(json_encode($formattedFunction[0], JSON_PRETTY_PRINT))->toBe($expected);
 });

@@ -147,15 +147,16 @@ class FunctionFormatter
         return [
             'name' => $tool->name,
             'description' => $tool->description,
-            'input_schema' => self::toInputSchema($tool->parameters),
+            'input_schema' => self::toInputSchema($tool->parameters, $tool->requiredParameters),
         ];
     }
 
     /**
      * @param  Parameter[]  $parameters
+     * @param  Parameter[]  $requiredParameters
      * @return array{type: string, properties: array<string, array{type: string, description: string}>}
      */
-    private static function toInputSchema(array $parameters): array
+    private static function toInputSchema(array $parameters, array $requiredParameters): array
     {
         $result = [];
         foreach ($parameters as $parameter) {
@@ -165,9 +166,15 @@ class FunctionFormatter
             ];
         }
 
+        $requiredParametersNames = [];
+        foreach ($requiredParameters as $requiredParameter) {
+            $requiredParametersNames[] = $requiredParameter->name;
+        }
+
         return [
             'type' => 'object',
             'properties' => $result,
+            'required' => $requiredParametersNames,
         ];
     }
 }
