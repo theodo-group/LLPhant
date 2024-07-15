@@ -50,3 +50,28 @@ it('can call a function', function () {
     expect($mockMailerExample->lastMessage)->toStartWith('The email has been sent to student@foo.com with the subject ')
         ->and($chat->lastFunctionCalled)->toBe($function);
 });
+
+it('can use the result of a function', function () {
+    $chat = new AnthropicChat();
+
+    $location = new Parameter('location', 'string', 'the location i.e. the name of the city, the state or province and the nation');
+
+    $weatherExample = new WeatherExample();
+
+    $function = new FunctionInfo(
+        'currentWeatherForLocation',
+        $weatherExample,
+        'returns the current weather in the given location. The result contains the description of the weather plus the current temperature in Celsius',
+        [$location]
+    );
+
+    $chat->addFunction($function);
+    $chat->setSystemMessage('You are an AI that answers to questions about weather in certain locations by calling external services to get the information');
+    $answer = $chat->generateText('What is the weather in Venice?');
+
+    expect($weatherExample->lastMessage)->toContain('Venice')
+        ->and($chat->lastFunctionCalled)->toBe($function)
+        ->and($answer)->toContain('Venice')
+        ->and($answer)->toContain('sunny')
+        ->and($answer)->toContain('26');
+});
