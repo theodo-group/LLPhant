@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\Chat;
+namespace LLPhant\Chat\Anthropic;
 
 use Generator;
 use LLPhant\Exception\FormatException;

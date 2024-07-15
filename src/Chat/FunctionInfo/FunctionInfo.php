@@ -17,8 +17,8 @@ class FunctionInfo
     /**
      * @param  array<string, mixed>  $arguments
      */
-    public function callWithArguments(array $arguments): void
+    public function callWithArguments(array $arguments): mixed
     {
-        $this->instance->{$this->name}(...$arguments);
+        return $this->instance->{$this->name}(...$arguments);
     }
 }

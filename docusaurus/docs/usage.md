@@ -213,6 +213,27 @@ $chat->generateText('Who is Marie Curie in one line? My email is student@foo.com
 You can safely use the following types in the Parameter object: string, int, float, bool.
 The array type is supported but still experimental.
 
+With `AnthropicChat` you can also tell to the LLM engine to use the results of the tool called locally as an input for the next inference.
+Here is a simple example. Suppose we have a `WeatherExample` class with a `currentWeatherForLocation` method that calls an external service to get weather information.
+This method gets in input a string describing the location and returns a string with the description of the current weather.
+
+```php
+$chat = new AnthropicChat();
+$location = new Parameter('location', 'string', 'the name of the city, the state or province and the nation');
+$weatherExample = new WeatherExample();
+
+$function = new FunctionInfo(
+    'currentWeatherForLocation',
+    $weatherExample,
+    'returns the current weather in the given location. The result contains the description of the weather plus the current temperature in Celsius',
+    [$location]
+);
+
+$chat->addFunction($function);
+$chat->setSystemMessage('You are an AI that answers to questions about weather in certain locations by calling external services to get the information');
+$answer = $chat->generateText('What is the weather in Venice?');
+```
+
 ## Embeddings
 LLPhant support OpenAI and Mistral.
 
