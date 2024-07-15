@@ -48,7 +48,6 @@ class AutoPHP
         $iteration = 1;
         while ($currentTask instanceof Task && $maxIteration >= $iteration) {
             $this->outputAgent->render('Iteration '.$iteration, false);
-            $this->outputAgent->render('Iteration '.$iteration, false);
             $this->outputAgent->printTasks($this->verbose, $this->taskManager->tasks, $currentTask);
 
             // TODO: add a mechanism to retrieve short-term / long-term memory
