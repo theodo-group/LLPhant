@@ -237,7 +237,11 @@ class OpenAIChat implements ChatInterface
                     break;
                 }
 
-                if (! ($partialResponse->choices[0]->delta->content)) {
+                if ($partialResponse->choices[0]->delta->content === null) {
+                    continue;
+                }
+
+                if ($partialResponse->choices[0]->delta->content === '') {
                     continue;
                 }
 
