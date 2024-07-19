@@ -10,6 +10,7 @@ use Mockery;
 use OpenAI\Client;
 use OpenAI\Contracts\TransporterContract;
 use OpenAI\ValueObjects\Transporter\Response as TransporterResponse;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 it('no error when construct with no model', function () {
@@ -140,4 +141,49 @@ it('can be supplied with a custom client', function () {
     expect($response)->toBeString()
         ->and($response)->toBe("\n\nHello there, this is a fake chat response.");
     // See OpenAI\Testing\Responses\Fixtures\Chat\CreateResponseFixture
+});
+
+it('does not throw away "0" strings when creating streamed response', function () {
+    $data = [
+        'id' => 'test',
+        'object' => 'test',
+        'created' => 0,
+        'model' => 'test',
+        'choices' => [
+            [
+                'index' => 0,
+                'delta' => [
+                    'content' => '0',
+                ],
+            ],
+        ],
+    ];
+
+    $encodedDataAsChars = str_split('data:'.json_encode($data));
+
+    $stream = Mockery::mock(StreamInterface::class);
+    $stream->shouldReceive('eof')->andReturnUsing(function () use (&$encodedDataAsChars) {
+        return empty($encodedDataAsChars);
+    });
+    $stream->shouldReceive('read')->andReturnUsing(function () use (&$encodedDataAsChars) {
+        return array_shift($encodedDataAsChars) ?? "\n";
+    });
+
+    $response = Mockery::mock(ResponseInterface::class);
+    $response->allows([
+        'getBody' => $stream,
+    ]);
+
+    $transport = Mockery::mock(TransporterContract::class);
+    $transport->allows([
+        'requestStream' => $response,
+    ]);
+
+    $config = new OpenAIConfig();
+    $config->client = new Client($transport);
+    $chat = new OpenAIChat($config);
+
+    $response = $chat->generateChatStream([Message::user('here the question')]);
+    expect($response)->toBeInstanceof(StreamInterface::class);
+    expect($response->read(100))->toBe('0');
 });
