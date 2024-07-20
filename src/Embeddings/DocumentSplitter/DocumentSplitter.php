@@ -9,7 +9,7 @@ final class DocumentSplitter
     /**
      * @return Document[]
      */
-    public static function splitDocument(Document $document, int $maxLength = 1000, string $separator = ' '): array
+    public static function splitDocument(Document $document, int $maxLength = 1000, string $separator = ' ', int $wordOverlap = 0): array
     {
         $text = $document->content;
         if (empty($text)) {
@@ -29,24 +29,16 @@ final class DocumentSplitter
 
         $chunks = [];
         $words = explode($separator, $text);
-        $currentChunk = '';
-
-        foreach ($words as $word) {
-            if (strlen($currentChunk.$separator.$word) <= $maxLength || empty($currentChunk)) {
-                if (empty($currentChunk)) {
-                    $currentChunk = $word;
-                } else {
-                    $currentChunk .= $separator.$word;
-                }
-            } else {
-                $chunks[] = trim($currentChunk);
-                $currentChunk = $word;
-            }
+        if ($wordOverlap > 0) {
+            $chunks = self::createChunksWithOverlap($words, $maxLength, $separator, $wordOverlap);
+        } else {
+            // This method is not really necessary anymore.
+            // The new `createChunksWithOverlap` method handles this too.
+            // But to prevent possible bugs when introducing the new method,
+            // We will handle this case with the old method for now.
+            $chunks = self::createChunksWithoutOverlap($words, $maxLength, $separator);
         }
 
-        if (! empty($currentChunk)) {
-            $chunks[] = trim($currentChunk);
-        }
         $splittedDocuments = [];
         $chunkNumber = 0;
         foreach ($chunks as $chunk) {
@@ -68,13 +60,88 @@ final class DocumentSplitter
      * @param  Document[]  $documents
      * @return Document[]
      */
-    public static function splitDocuments(array $documents, int $maxLength = 1000, string $separator = '.'): array
+    public static function splitDocuments(array $documents, int $maxLength = 1000, string $separator = '.', int $wordOverlap = 0): array
     {
         $splittedDocuments = [];
         foreach ($documents as $document) {
-            $splittedDocuments = array_merge($splittedDocuments, DocumentSplitter::splitDocument($document, $maxLength, $separator));
+            $splittedDocuments = array_merge($splittedDocuments, DocumentSplitter::splitDocument($document, $maxLength, $separator, $wordOverlap));
         }
 
         return $splittedDocuments;
+    }
+
+    /**
+     * @param  array<string>  $words
+     * @return array<string>
+     */
+    private static function createChunksWithoutOverlap(array $words, int $maxLength, string $separator): array
+    {
+        $chunks = [];
+        $currentChunk = '';
+        foreach ($words as $word) {
+            if (strlen($currentChunk.$separator.$word) <= $maxLength || empty($currentChunk)) {
+                if (empty($currentChunk)) {
+                    $currentChunk = $word;
+                } else {
+                    $currentChunk .= $separator.$word;
+                }
+            } else {
+                $chunks[] = trim($currentChunk);
+                $currentChunk = $word;
+            }
+        }
+
+        if (! empty($currentChunk)) {
+            $chunks[] = trim($currentChunk);
+        }
+
+        return $chunks;
+    }
+
+    /**
+     * @param  array<string>  $words
+     * @return array<string>
+     */
+    private static function createChunksWithOverlap(array $words, int $maxLength, string $separator, int $wordOverlap): array
+    {
+        $chunks = [];
+        $currentChunk = [];
+        $currentChunkLength = 0;
+        foreach ($words as $word) {
+            if ($word === '') {
+                continue;
+            }
+
+            if ($currentChunkLength + strlen($separator.$word) <= $maxLength || $currentChunk === []) {
+                $currentChunk[] = $word;
+                $currentChunkLength = self::calcChunkLength($currentChunk, $separator);
+            } else {
+                // Add the chunk with overlap
+                $chunks[] = implode($separator, $currentChunk);
+
+                // Calculate overlap words
+                $calculatedOverlap = min($wordOverlap, count($currentChunk) - 1);
+                $overlapWords = $calculatedOverlap > 0 ? array_slice($currentChunk, -$calculatedOverlap) : [];
+
+                // Start a new chunk with overlap words
+                $currentChunk = [...$overlapWords, $word];
+                $currentChunk[0] = trim($currentChunk[0]);
+                $currentChunkLength = self::calcChunkLength($currentChunk, $separator);
+            }
+        }
+
+        if ($currentChunk !== []) {
+            $chunks[] = implode($separator, $currentChunk);
+        }
+
+        return $chunks;
+    }
+
+    /**
+     * @param  array<string>  $currentChunk
+     */
+    private static function calcChunkLength(array $currentChunk, string $separator): int
+    {
+        return array_sum(array_map('strlen', $currentChunk)) + count($currentChunk) * strlen($separator) - 1;
     }
 }
