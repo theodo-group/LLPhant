@@ -5,13 +5,13 @@ use LLPhant\Query\SemanticSearch\MultiQuery;
 
 it('Returns an array whose first line is the original query', function () {
     $answer = "First line\nSecond line\nThird line";
-    $chat = Mockery::mock(ChatInterface::class);
-    $chat->allows([
+    $mockChat = Mockery::mock(ChatInterface::class);
+    $mockChat->allows([
         'setSystemMessage' => null,
         'generateText' => $answer,
     ]);
 
-    $multiQuery = new MultiQuery($chat);
+    $multiQuery = new MultiQuery($mockChat);
 
     expect($multiQuery->transformQuery('Original query'))
         ->toBe(['Original query', 'First line', 'Second line', 'Third line']);
