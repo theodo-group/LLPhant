@@ -8,6 +8,7 @@ use LLPhant\Chat\ChatInterface;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
+use LLPhant\Query\SemanticSearch\QueryTransformer;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
 use Mockery;
 
@@ -50,6 +51,36 @@ it('retrieved Documents', function () {
     $docs = $qa->getRetrievedDocuments();
 
     expect($docs)->toBe($this->docs);
+});
+
+it('passes only the desired number of documents even when using a queryTransformer that multiplies queries', function () {
+    $multiQuery = new class implements QueryTransformer
+    {
+        public function transformQuery(string $query): array
+        {
+            return ['Query 1', 'Query 2', 'Query 3', 'Query 4', 'Query 5'];
+        }
+    };
+
+    $i = 1;
+    $progressiveVectorStore = Mockery::mock(VectorStoreBase::class);
+    $progressiveVectorStore->shouldReceive('similaritySearch')->andReturnUsing(function () use (&$i) {
+        $doc = new Document();
+        $doc->content = 'Answer '.$i;
+        $i++;
+
+        return [$doc];
+    });
+
+    $chat = Mockery::spy(ChatInterface::class);
+
+    $qa = new QuestionAnswering($progressiveVectorStore, $this->embedding, $chat, $multiQuery);
+
+    $qa->answerQuestion($this->question, 2);
+
+    $chat->shouldHaveReceived('setSystemMessage')->withArgs(function (string $message) {
+        return \str_contains($message, 'Answer 2') && ! \str_contains($message, 'Answer 3');
+    });
 });
 
 /**

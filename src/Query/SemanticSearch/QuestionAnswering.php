@@ -83,7 +83,12 @@ class QuestionAnswering
         }
 
         $context = '';
+        $i = 0;
         foreach ($this->retrievedDocs as $document) {
+            if ($i >= $k) {
+                break;
+            }
+            $i++;
             $context .= $document->content.' ';
         }
 
