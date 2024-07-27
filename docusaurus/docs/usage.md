@@ -440,6 +440,30 @@ $vectorStore = new ChromaDBVectorStore(host: 'my_host', authToken: 'my_optional_
 
 You can now use this vector store as any other VectorStore.
 
+### AstraDB VectorStore
+
+Prerequisites : an [AstraDB account](https://accounts.datastax.com/session-service/v1/login) where you can create and delete databases (see [AstraDB docs](https://docs.datastax.com/en/astra-db-serverless/index.html)). 
+At the moment you can not run this DB it locally. You have to set `ASTRADB_ENDPOINT` and `ASTRADB_TOKEN` environment variables with data needed to connect to your instance.
+
+Then create a new AstraDB vector store (`LLPhant\Embeddings\VectorStores\AstraDB\AstraDBVectorStore`), for example:
+
+```php
+$vectorStore = new AstraDBVectorStore(new AstraDBClient(collectionName: 'my_collection')));
+
+// You can use any enbedding generator, but the embedding length must match what is defined for your collection
+$embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
+
+$currentEmbeddingLength = $vectorStore->getEmbeddingLength();
+if ($currentEmbeddingLength === 0) {
+    $vectorStore->createCollection($embeddingGenerator->getEmbeddingLength());
+} elseif ($embeddingGenerator->getEmbeddingLength() !== $currentEmbeddingLength) {
+    $vectorStore->deleteCollection();
+    $vectorStore->createCollection($embeddingGenerator->getEmbeddingLength());
+}
+````
+
+You can now use this vector store as any other VectorStore.
+
 ## Question Answering
 A popular use case of LLM is to create a chatbot that can answer questions over your private data.
 You can build one using LLPhant using the `QuestionAnswering` class.

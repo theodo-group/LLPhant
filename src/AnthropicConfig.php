@@ -19,7 +19,8 @@ class AnthropicConfig
     /**
      * @param  array<string, mixed>  $modelOptions
      */
-    public function __construct(public readonly string $model = self::CLAUDE_3_HAIKU,
+    public function __construct(
+        public readonly string $model = self::CLAUDE_3_HAIKU,
         public readonly int $maxTokens = 1024,
         public readonly array $modelOptions = [],
         public readonly ?string $apiKey = null,
