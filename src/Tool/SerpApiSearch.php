@@ -27,6 +27,7 @@ class SerpApiSearch extends ToolBase
             throw new Exception('You have to provide a SERP_API_KEY env var to request SerpApi .');
         }
         $this->apiKey = $apiKey;
+        //todo refactor this to inject ClientInterface
         $this->client = new Client(['base_uri' => 'https://serpapi.com/search']);
     }
 
