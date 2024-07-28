@@ -37,3 +37,6 @@ jobs:
 
     - name: Unit Tests
       run: composer test:unit
+
+    - name: Composer Audit
+      run: composer audit
