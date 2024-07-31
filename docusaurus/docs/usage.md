@@ -3,7 +3,11 @@ sidebar_position: 3
 ---
 
 # Usage
-The most simple to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
+You can use OpenAI, Mistral, Ollama or Anthropic as LLM engines.
+
+## OpenAI
+
+The most simple way to allow the call to OpenAI is to set the OPENAI_API_KEY environment variable.
 
 ```bash
 export OPENAI_API_KEY=sk-XXXXXX
@@ -13,10 +17,48 @@ You can also create an OpenAIConfig object and pass it to the constructor of the
 
 ```php
 $config = new OpenAIConfig();
-// optional: wire a PSR-18 HTTP client, such as symfony/http-client
-$config->client = new PSR18Client();
 $config->apiKey = 'fakeapikey';
 $chat = new OpenAIChat($config);
+```
+
+## Mistral
+
+If you want to use Mistral, you can just specify the model to use using the `OpenAIConfig` object and pass it to the `MistralAIChat`.
+
+```php
+$config = new OpenAIConfig();
+$config->apiKey = 'fakeapikey';
+$chat = new MistralAIChat($config);
+```
+
+## Ollama
+
+If you want to use Ollama, you can just specify the model to use using the `OllamaConfig` object and pass it to the `OllamaChat`.
+
+```php
+$config = new OllamaConfig();
+$config->model = 'llama2';
+$chat = new OllamaChat($config);
+```
+
+## Anthropic
+
+To call Anthropic models you have to provide an API key . You can set the ANTHROPIC_API_KEY environment variable.
+
+```bash
+export ANTHROPIC_API_KEY=XXXXXX
+```
+
+You also have to specify the model to use using the `AnthropicConfig` object and pass it to the `AnthropicChat`.
+
+```php
+$chat = new AnthropicChat(new AnthropicConfig(AnthropicConfig::CLAUDE_3_5_SONNET));
+```
+
+Creating a chat with no configuration will use a CLAUDE_3_HAIKU model.
+
+```php
+$chat = new AnthropicChat();
 ```
 
 ## Chat
