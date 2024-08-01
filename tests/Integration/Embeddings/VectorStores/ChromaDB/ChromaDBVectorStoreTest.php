@@ -5,27 +5,12 @@ declare(strict_types=1);
 namespace Tests\Integration\Embeddings\VectorStores\ChromaDB;
 
 use LLPhant\Embeddings\DataReader\FileDataReader;
-use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3LargeEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\ChromaDB\ChromaDBVectorStore;
+use Tests\Fixtures\DocumentFixtures;
 use Tests\Integration\Embeddings\VectorStores\Doctrine\PlaceEntity;
-
-/**
- * @return array<Document>
- */
-function documents(string ...$contents): array
-{
-    $result = [];
-    foreach ($contents as $content) {
-        $newDocument = new Document();
-        $newDocument->content = $content;
-        $result[] = $newDocument;
-    }
-
-    return $result;
-}
 
 it('creates two documents with their embeddings and perform a similarity search', function () {
 
@@ -33,7 +18,7 @@ it('creates two documents with their embeddings and perform a similarity search'
 
     $embeddingGenerator = new OpenAI3LargeEmbeddingGenerator();
 
-    $docs = documents(
+    $docs = DocumentFixtures::documents(
         'Anna reads Dante',
         'I love carbonara',
         'Do not put pineapples on pizza',

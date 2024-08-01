@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Tests\Integration\Query\SemanticSearch;
+
 use LLPhant\Chat\ChatInterface;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\OpenAIConfig;

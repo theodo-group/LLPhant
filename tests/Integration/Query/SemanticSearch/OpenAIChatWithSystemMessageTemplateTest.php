@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace Tests\Integration\Query\SemanticSearch;
 
 use LLPhant\Chat\ChatInterface;
 use LLPhant\Chat\OpenAIChat;
