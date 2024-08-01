@@ -16,7 +16,11 @@ class QuestionAnswering
 
     public string $systemMessageTemplate = "Use the following pieces of context to answer the question of the user. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\n{context}.";
 
-    public function __construct(public readonly VectorStoreBase $vectorStoreBase, public readonly EmbeddingGeneratorInterface $embeddingGenerator, public readonly ChatInterface $chat, private readonly QueryTransformer $queryTransformer = new IdentityTransformer())
+    public function __construct(public readonly VectorStoreBase $vectorStoreBase,
+        public readonly EmbeddingGeneratorInterface $embeddingGenerator,
+        public readonly ChatInterface $chat,
+        private readonly QueryTransformer $queryTransformer = new IdentityTransformer(),
+        private readonly RetrievedDocumentsTransformer $retrievedDocumentsTransformer = new IdentityDocumentsTransformer())
     {
     }
 
@@ -78,9 +82,15 @@ class QuestionAnswering
             $embedding = $this->embeddingGenerator->embedText($question);
             $docs = $this->vectorStoreBase->similaritySearch($embedding, $k, $additionalArguments);
             foreach ($docs as $doc) {
+                //md5 is needed for removing duplicates
                 $this->retrievedDocs[\md5($doc->content)] = $doc;
             }
         }
+
+        // Ensure retro-compatibility and help in resorting the array
+        $this->retrievedDocs = \array_values($this->retrievedDocs);
+
+        $this->retrievedDocs = $this->retrievedDocumentsTransformer->transformDocuments($questions, $this->retrievedDocs);
 
         $context = '';
         $i = 0;
@@ -91,9 +101,6 @@ class QuestionAnswering
             $i++;
             $context .= $document->content.' ';
         }
-
-        // Ensure retro-compatibility
-        $this->retrievedDocs = \array_values($this->retrievedDocs);
 
         return $this->getSystemMessage($context);
     }

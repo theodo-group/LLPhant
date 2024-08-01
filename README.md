@@ -585,6 +585,25 @@ $qa = new QuestionAnswering(
 );
 ```
 
+### RetrievedDocumentsTransformer and Reranking
+The list of documents retrieved from a vector store can be transformed before sending them to the Chat as a context.
+One of these transformation can be a [Reranking](https://medium.com/@ashpaklmulani/improve-retrieval-augmented-generation-rag-with-re-ranking-31799c670f8e) phase, that sorts documents based on relevance to the questions.
+The number of documents returned by the reranker can be less or equal that the number returned by the vector store.
+Here is an example:
+```php
+$nrOfOutputDocuments = 3;
+$reranker = new LLMReranker(chat(), $nrOfOutputDocuments);
+
+$qa = new QuestionAnswering(
+    new MemoryVectorStore(),
+    new OpenAI3SmallEmbeddingGenerator(),
+    new OpenAIChat(new OpenAIConfig()),
+    retrievedDocumentsTransformer: $reranker
+);
+
+$answer = $qa->answerQuestion('Who is the composer of "La traviata"?', 10);
+```
+
 ## AutoPHP
 You can now make your [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT) clone in PHP using LLPhant.
 
