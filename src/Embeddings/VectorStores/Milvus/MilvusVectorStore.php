@@ -3,12 +3,15 @@
 namespace LLPhant\Embeddings\VectorStores\Milvus;
 
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\DocumentStore\DocumentStore;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 
-class MilvusVectorStore extends VectorStoreBase
+class MilvusVectorStore extends VectorStoreBase implements DocumentStore
 {
     final public const MILVUS_COLLECTION_NAME = 'llphant';
+
+    final public const OUTPUTFIELDS = ['id', 'content', 'formattedContent', 'sourceType', 'sourceName', 'hash', 'chunkNumber', 'embedding'];
 
     public bool $collectionExists = false;
 
@@ -45,9 +48,7 @@ class MilvusVectorStore extends VectorStoreBase
                 $documents
             )
         );
-        if ($response['code'] !== 200) {
-            throw new \Exception('Error while inserting data');
-        }
+        $this->checkResponseCode($response);
     }
 
     /**
@@ -63,11 +64,9 @@ class MilvusVectorStore extends VectorStoreBase
             $embedding,
             $k,
             array_key_exists('filter', $additionalArguments) ? $additionalArguments['filter'] : '',
-            ['id', 'content', 'formattedContent', 'sourceType', 'sourceName', 'hash', 'chunkNumber', 'embedding']
+            self::OUTPUTFIELDS
         );
-        if ($response['code'] !== 200) {
-            throw new \Exception('Error while searching vector');
-        }
+        $this->checkResponseCode($response);
 
         return DocumentUtils::createDocumentsFromArray($response['data']);
     }
@@ -85,9 +84,53 @@ class MilvusVectorStore extends VectorStoreBase
             primaryField: 'id',
             vectorField: 'embedding'
         );
-        if ($response['code'] !== 200) {
-            throw new \Exception('Error while creating collection');
-        }
+        $this->checkResponseCode($response);
         $this->collectionExists = true;
+    }
+
+    public function fetchDocumentsByChunkRange(string $sourceType, string $sourceName, int $leftIndex, int $rightIndex): iterable
+    {
+        $response = $this->client->query(
+            $this->collectionName,
+            self::OUTPUTFIELDS,
+            "sourceType == \"$sourceType\" and sourceName == \"$sourceName\" and ($leftIndex <= chunkNumber <= $rightIndex)",
+        );
+        $this->checkResponseCode($response);
+
+        $documents = DocumentUtils::createDocumentsFromArray($response['data']);
+
+        \usort($documents, fn (Document $d1, Document $d2): int => $d1->chunkNumber <=> $d2->chunkNumber);
+
+        return $documents;
+    }
+
+    /**
+     * @param  array<string, array<array<string, array<float>|int|string>>|int>  $response
+     */
+    private function checkResponseCode(array $response): void
+    {
+        /** @var int $responseCode */
+        $responseCode = $response['code'];
+        if ($responseCode !== 200) {
+            $msg = "Error while creating collection ($responseCode)";
+            if (\array_key_exists('message', $response)) {
+                /** @var string $responseMessage */
+                $responseMessage = $response['message'];
+                $msg .= ': '.$responseMessage;
+            }
+            throw new \Exception($msg);
+        }
+    }
+
+    public function deleteCollection(): bool
+    {
+        if (! $this->collectionExists) {
+            return false;
+        }
+
+        $response = $this->client->deleteCollection($this->collectionName);
+        $this->checkResponseCode($response);
+
+        return true;
     }
 }

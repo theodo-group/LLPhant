@@ -26,6 +26,9 @@ class DoctrineEmbeddingEntityBase extends Document
     #[ORM\Column(type: Types::TEXT)]
     public string $sourceName = 'manual';
 
+    #[ORM\Column(type: Types::INTEGER)]
+    public int $chunkNumber = 0;
+
     public function getId(): int
     {
         return $this->id;

@@ -90,3 +90,45 @@ it('tests a full embedding flow with Doctrine', function () {
     // We check that the search return the correct entities in the right order
     expect(explode(' ', $result[0]->content)[0])->toBe('France');
 });
+
+it('can filter documents by chunk number', function () {
+    $config = ORMSetup::createAttributeMetadataConfiguration(
+        [__DIR__.'/src'],
+        true
+    );
+
+    $connectionParams = [
+        'dbname' => 'postgres',
+        'user' => 'myuser',
+        'password' => '!ChangeMe!',
+        'host' => getenv('PGVECTOR_HOST') ?: 'localhost',
+        'driver' => 'pdo_pgsql',
+    ];
+
+    $connection = DriverManager::getConnection($connectionParams);
+    $connection->executeQuery('TRUNCATE TABLE test_doc');
+    $entityManager = new EntityManager($connection, $config);
+
+    $vectorStore = new DoctrineVectorStore($entityManager, SampleDocEntity::class);
+    $vectorStore->addDocuments([
+        SampleDocEntity::createDocument('catullo', 'basia', 'Vivamus mea Lesbia, atque amemus,', 0),
+        SampleDocEntity::createDocument('catullo', 'basia', 'rumoresque senum severiorum', 1),
+        SampleDocEntity::createDocument('catullo', 'basia', 'omnes unius aestimemus assis!', 2),
+        SampleDocEntity::createDocument('catullo', 'basia', 'soles occidere et redire possunt:', 3),
+        SampleDocEntity::createDocument('catullo', 'basia', 'nobis cum semel occidit brevis lux,', 4),
+        SampleDocEntity::createDocument('catullo', 'basia', 'nox est perpetua una dormienda.', 5),
+        SampleDocEntity::createDocument('catullo', 'odi', 'Odi et amo. Quare id faciam, fortasse requiris.', 0),
+        SampleDocEntity::createDocument('catullo', 'odi', 'Nescio, sed fieri sentio et excrucior', 1),
+    ]);
+
+    $retrievedDocuments = $vectorStore->fetchDocumentsByChunkRange('catullo', 'basia', 3, 5);
+    $retrievedTexts = \array_map(fn ($x) => $x->content, \iterator_to_array($retrievedDocuments));
+
+    expect($retrievedTexts)->toMatchArray(
+        [
+            'soles occidere et redire possunt:',
+            'nobis cum semel occidit brevis lux,',
+            'nox est perpetua una dormienda.',
+        ]
+    );
+});

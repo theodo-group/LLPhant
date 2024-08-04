@@ -10,9 +10,10 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Exception;
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\DocumentStore\DocumentStore;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 
-final class DoctrineVectorStore extends VectorStoreBase
+final class DoctrineVectorStore extends VectorStoreBase implements DocumentStore
 {
     /**
      * @template T of DoctrineEmbeddingEntityBase
@@ -106,5 +107,26 @@ final class DoctrineVectorStore extends VectorStoreBase
         }
 
         $this->entityManager->persist($document);
+    }
+
+    /**
+     * @return iterable<Document>
+     */
+    public function fetchDocumentsByChunkRange(string $sourceType, string $sourceName, int $leftIndex, int $rightIndex): iterable
+    {
+        $repository = $this->entityManager->getRepository($this->entityClassName);
+
+        $query = $repository->createQueryBuilder('d')
+            ->andWhere('d.sourceType = :sourceType')
+            ->andWhere('d.sourceName = :sourceName')
+            ->andWhere('d.chunkNumber >= :lower')
+            ->andWhere('d.chunkNumber <= :upper')
+            ->setParameter('sourceType', $sourceType)
+            ->setParameter('sourceName', $sourceName)
+            ->setParameter('lower', $leftIndex)
+            ->setParameter('upper', $rightIndex)
+            ->getQuery();
+
+        return $query->toIterable();
     }
 }
