@@ -27,7 +27,6 @@ final class DocumentSplitter
             return [$document];
         }
 
-        $chunks = [];
         $words = explode($separator, $text);
         if ($wordOverlap > 0) {
             $chunks = self::createChunksWithOverlap($words, $maxLength, $separator, $wordOverlap);
