@@ -6,9 +6,10 @@ use Exception;
 use LLPhant\Embeddings\Distances\Distance;
 use LLPhant\Embeddings\Distances\EuclideanDistanceL2;
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\DocumentStore\DocumentStore;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 
-class MemoryVectorStore extends VectorStoreBase
+class MemoryVectorStore extends VectorStoreBase implements DocumentStore
 {
     /** @var Document[] */
     private array $documentsPool = [];
@@ -52,5 +53,21 @@ class MemoryVectorStore extends VectorStoreBase
         }
 
         return $results;
+    }
+
+    public function fetchDocumentsByChunkRange(string $sourceType, string $sourceName, int $leftIndex, int $rightIndex): iterable
+    {
+        // This is a naive implementation, just to create an example of a DocumentStore
+        $result = [];
+
+        foreach ($this->documentsPool as $document) {
+            if ($document->sourceType === $sourceType && $document->sourceName === $sourceName && $document->chunkNumber >= $leftIndex && $document->chunkNumber <= $rightIndex) {
+                $result[$document->chunkNumber] = $document;
+            }
+        }
+
+        \ksort($result);
+
+        return $result;
     }
 }

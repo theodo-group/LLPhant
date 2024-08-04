@@ -101,6 +101,7 @@ final class FileDataReader implements DataReader
         $document->content = $content;
         $document->sourceType = $this->sourceType;
         $document->sourceName = $entry;
+        $document->hash = \hash('sha256', $content);
 
         return $document;
     }

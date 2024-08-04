@@ -84,6 +84,15 @@ CREATE TABLE IF NOT EXISTS test_place (
                                           sourcename text,
                                           embedding vector
 );
+CREATE TABLE IF NOT EXISTS test_doc (
+                                        id SERIAL PRIMARY KEY,
+                                        content text,
+                                        type text,
+                                        sourcetype text,
+                                        sourcename text,
+                                        embedding vector,
+                                        chunknumber int
+);
 ```
 
 Then run:

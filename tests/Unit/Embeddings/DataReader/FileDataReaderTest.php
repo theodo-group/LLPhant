@@ -21,6 +21,16 @@ it('can read various types of documents', function (string $docName, string $sta
     ['data-pdf.pdf', 'This data is from a pdf'],
 ]);
 
+it('computes the hash of the content', function (string $docName) {
+    $filePath = __DIR__.'/FilesTestDirectory/'.$docName;
+    $reader = new FileDataReader($filePath);
+    $documents = $reader->getDocuments();
+
+    expect($documents[0]->hash)->toBe(\hash('sha256', $documents[0]->content));
+})->with([
+    'hello.txt', 'hello2.txt',
+]);
+
 it('can read pdf and texts ', function () {
     $filePath = __DIR__.'/FilesTestDirectory/';
     $reader = new FileDataReader($filePath);

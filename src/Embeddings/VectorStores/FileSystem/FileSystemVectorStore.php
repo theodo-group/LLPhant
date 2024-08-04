@@ -6,9 +6,10 @@ use Exception;
 use LLPhant\Embeddings\Distances\Distance;
 use LLPhant\Embeddings\Distances\EuclideanDistanceL2;
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\DocumentStore\DocumentStore;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 
-class FileSystemVectorStore extends VectorStoreBase
+class FileSystemVectorStore extends VectorStoreBase implements DocumentStore
 {
     public string $filePath;
 
@@ -85,6 +86,7 @@ class FileSystemVectorStore extends VectorStoreBase
             'embedding' => $document->embedding,
             'sourceType' => $document->sourceType,
             'sourceName' => $document->sourceName,
+            'chunkNumber' => $document->chunkNumber,
             'hash' => $document->hash,
         ], $documents);
 
@@ -125,9 +127,37 @@ class FileSystemVectorStore extends VectorStoreBase
             $document->embedding = $entry['embedding'] ?? null;
             $document->sourceType = $entry['sourceType'] ?? null;
             $document->sourceName = $entry['sourceName'] ?? null;
+            $document->chunkNumber = $entry['chunkNumber'] ?? 0;
             $document->hash = $entry['hash'] ?? null;
 
             return $document;
         }, $data);
+    }
+
+    public function fetchDocumentsByChunkRange(string $sourceType, string $sourceName, int $leftIndex, int $rightIndex): iterable
+    {
+        // This is a naive implementation, just to create an example of a DocumentStore
+        $result = [];
+
+        $documentsPool = $this->readDocumentsFromFile();
+
+        foreach ($documentsPool as $document) {
+            if ($document->sourceType === $sourceType && $document->sourceName === $sourceName && $document->chunkNumber >= $leftIndex && $document->chunkNumber <= $rightIndex) {
+                $result[$document->chunkNumber] = $document;
+            }
+        }
+
+        \ksort($result);
+
+        return $result;
+    }
+
+    public function deleteStore(): bool
+    {
+        if (! is_readable($this->filePath)) {
+            return false;
+        }
+
+        return \unlink($this->filePath);
     }
 }

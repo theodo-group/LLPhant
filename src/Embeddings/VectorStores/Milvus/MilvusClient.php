@@ -117,6 +117,42 @@ class MilvusClient
 
     /**
      * @return array{code: int, data: mixed}
+     */
+    public function deleteCollection(string $collectionName): array
+    {
+        $path = 'vector/collections/drop';
+        $body = [
+            'collectionName' => $collectionName,
+        ];
+
+        return $this->sendRequest('POST', $path, $body);
+    }
+
+    /**
+     * @param  string[]|null  $outputFields
+     * @return array{code: int, data: mixed}
+     */
+    public function query(string $collectionName, ?array $outputFields = null, ?string $filter = null, int $limit = 100): array
+    {
+        $path = 'vector/query';
+        $body = [
+            'collectionName' => $collectionName,
+            'limit' => $limit,
+        ];
+
+        if ($outputFields !== null) {
+            $body['outputFields'] = $outputFields;
+        }
+
+        if ($filter !== null) {
+            $body['filter'] = $filter;
+        }
+
+        return $this->sendRequest('POST', $path, $body);
+    }
+
+    /**
+     * @return array{code: int, data: mixed}
      *
      * @phpstan-ignore-next-line
      */
