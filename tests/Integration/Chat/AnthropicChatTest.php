@@ -11,7 +11,8 @@ use LLPhant\Chat\FunctionInfo\Parameter;
 it('can generate some stuff', function () {
     $chat = new AnthropicChat();
     $response = $chat->generateText('what is one + one?');
-    expect($response)->toBeString()->and($response)->toContain('two');
+    expect($response)->toBeString()->and($response)->toContain('two')
+        ->and($chat->getTotalTokens())->tobeGreaterThan(0);
 });
 
 it('can generate some stuff with a system prompt', function () {
@@ -24,7 +25,8 @@ it('can generate some stuff with a system prompt', function () {
 it('can generate some stuff using a stream', function () {
     $chat = new AnthropicChat();
     $response = $chat->generateStreamOfText('Can you describe the recipe for making carbonara in 5 steps');
-    expect($response->__toString())->toContain('eggs');
+    expect($response->__toString())->toContain('eggs')
+        ->and($chat->getTotalTokens())->toBeGreaterThan(0);
 });
 
 it('can call a function', function () {
@@ -48,7 +50,8 @@ it('can call a function', function () {
     $chat->generateText('Who is Marie Curie in one line? My email is student@foo.com');
 
     expect($mockMailerExample->lastMessage)->toStartWith('The email has been sent to student@foo.com with the subject ')
-        ->and($chat->lastFunctionCalled)->toBe($function);
+        ->and($chat->lastFunctionCalled)->toBe($function)
+        ->and($chat->getTotalTokens())->toBeGreaterThan(0);
 });
 
 it('can use the result of a function', function () {
