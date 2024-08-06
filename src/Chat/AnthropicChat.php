@@ -7,6 +7,7 @@ use GuzzleHttp\Psr7\Utils;
 use LLPhant\AnthropicConfig;
 use LLPhant\Chat\Anthropic\AnthropicMessage;
 use LLPhant\Chat\Anthropic\AnthropicStreamResponse;
+use LLPhant\Chat\Anthropic\AnthropicTotalTokensTrait;
 use LLPhant\Chat\FunctionInfo\FunctionFormatter;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Exception\HttpException;
@@ -35,6 +36,10 @@ class AnthropicChat implements ChatInterface
     private array $tools = [];
 
     public ?FunctionInfo $lastFunctionCalled = null;
+
+    private ?AnthropicStreamResponse $streamResponse = null;
+
+    use AnthropicTotalTokensTrait;
 
     public function __construct(AnthropicConfig $config = new AnthropicConfig())
     {
@@ -93,6 +98,8 @@ class AnthropicChat implements ChatInterface
         if ($json['stop_reason'] === 'tool_use') {
             return $this->generateChat(\array_merge($messages, [AnthropicMessage::fromAssistantAnswer($responses), AnthropicMessage::toolResultMessage($toolsOutput)]));
         }
+
+        $this->addUsedTokens($json);
 
         return $result;
     }
@@ -238,9 +245,9 @@ class AnthropicChat implements ChatInterface
 
     private function decodeStreamOfChat(ResponseInterface $response): StreamInterface
     {
-        $streamResponse = new AnthropicStreamResponse($response);
+        $this->streamResponse = new AnthropicStreamResponse($response);
 
-        return Utils::streamFor($streamResponse->getIterator());
+        return Utils::streamFor($this->streamResponse->getIterator());
     }
 
     /**
@@ -277,5 +284,10 @@ class AnthropicChat implements ChatInterface
         }
 
         return $msg->content;
+    }
+
+    public function getTotalTokens(): int
+    {
+        return $this->totalTokens + $this->streamResponse?->getTotalTokens();
     }
 }

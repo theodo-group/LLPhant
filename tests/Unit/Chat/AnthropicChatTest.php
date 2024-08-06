@@ -72,8 +72,10 @@ function anthropicChatWithFakeHttpConnection(string $body): AnthropicChat
 }
 
 it('generates a text', function () {
-    $response = anthropicChatWithFakeHttpConnection(ANTHROPIC_FAKE_JSON_ANSWER)->generateText('this is the prompt question');
+    $anthropicChat = anthropicChatWithFakeHttpConnection(ANTHROPIC_FAKE_JSON_ANSWER);
+    $response = $anthropicChat->generateText('this is the prompt question');
     expect($response)->toBe('Hi! My name is Claude.');
+    expect($anthropicChat->getTotalTokens())->toBe(35);
 });
 
 it('generates a chat', function () {
@@ -82,8 +84,10 @@ it('generates a chat', function () {
 });
 
 it('returns a stream response using generateStreamOfText()', function () {
-    $response = anthropicChatWithFakeHttpConnection(ANTROPIC_FAKE_STREAM_ANSWER)->generateStreamOfText('this is the prompt question');
+    $anthropicChat = anthropicChatWithFakeHttpConnection(ANTROPIC_FAKE_STREAM_ANSWER);
+    $response = $anthropicChat->generateStreamOfText('this is the prompt question');
     expect($response)->toBeInstanceof(StreamInterface::class)->and($response->__toString())->toBe('Hello!');
+    expect($anthropicChat->getTotalTokens())->toBe(15);
 });
 
 it('returns a stream response using generateChatStream()', function () {
