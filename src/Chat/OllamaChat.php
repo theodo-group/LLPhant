@@ -194,6 +194,11 @@ class OllamaChat implements ChatInterface
         $this->modelOptions[$option] = $value;
     }
 
+    public function getTotalTokens(): int
+    {
+        return -1000; // TODO
+    }
+
     /**
      * Send the HTTP request to Ollama API endpoint
      *

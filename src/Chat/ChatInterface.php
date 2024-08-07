@@ -35,4 +35,6 @@ interface ChatInterface
     public function addFunction(FunctionInfo $functionInfo): void;
 
     public function setModelOption(string $option, mixed $value): void;
+
+    public function getTotalTokens(): int;
 }

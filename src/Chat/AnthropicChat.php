@@ -168,6 +168,11 @@ class AnthropicChat implements ChatInterface
         $this->modelOptions[$option] = $value;
     }
 
+    public function getTotalTokens(): int
+    {
+        return -1000; // TODO: Implement getTotalTokens() method.
+    }
+
     /**
      * @param  array<string, mixed>  $params
      * @return array<mixed>

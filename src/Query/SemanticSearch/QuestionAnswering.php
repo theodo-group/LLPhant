@@ -69,6 +69,11 @@ class QuestionAnswering
         return $this->retrievedDocs;
     }
 
+    public function getTotalTokens(): int
+    {
+        return $this->chat->getTotalTokens();
+    }
+
     /**
      * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
      */
