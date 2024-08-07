@@ -113,7 +113,7 @@ class AnthropicChat implements ChatInterface
     {
         $answer = $this->generateChat($messages);
 
-        if ($this->lastFunctionCalled instanceof \LLPhant\Chat\FunctionInfo\FunctionInfo) {
+        if ($this->lastFunctionCalled instanceof FunctionInfo) {
             return $this->lastFunctionCalled;
         }
 
