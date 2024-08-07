@@ -64,6 +64,10 @@ it('adds overlap when splitting documents', function () {
     expect($result[1]->content)->toBe('with one overlapping');
     expect($result[2]->content)->toBe('overlapping word');
 
+    expect($result[0]->chunkNumber)->toBe(0);
+    expect($result[1]->chunkNumber)->toBe(1);
+    expect($result[2]->chunkNumber)->toBe(2);
+
     $document = new Document();
     $document->content = 'This is a test with two overlapping words';
     $result = DocumentSplitter::splitDocument($document, 20, ' ', 2);

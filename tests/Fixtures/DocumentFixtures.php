@@ -20,4 +20,16 @@ class DocumentFixtures
 
         return $result;
     }
+
+    public static function documentChunk(int $i, string $sourceType, string $sourceName): Document
+    {
+        $document = new Document();
+        $document->sourceName = $sourceName;
+        $document->sourceType = $sourceType;
+        $document->chunkNumber = $i;
+        $document->content = 'Document '.$i;
+        $document->hash = \md5($document->content);
+
+        return $document;
+    }
 }
