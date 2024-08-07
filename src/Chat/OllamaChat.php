@@ -33,7 +33,6 @@ class OllamaChat implements ChatInterface
 
     public function __construct(protected OllamaConfig $config)
     {
-        $this->config = $config;
         if (! isset($config->model)) {
             throw new MissingParameterException('You need to specify a model for Ollama');
         }
