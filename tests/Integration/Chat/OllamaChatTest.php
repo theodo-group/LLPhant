@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Chat;
 
+use LLPhant\Chat\FunctionInfo\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\Parameter;
+use LLPhant\Chat\Message;
 use LLPhant\Chat\OllamaChat;
 use LLPhant\OllamaConfig;
 
 function ollamaChat(): OllamaChat
 {
     $config = new OllamaConfig();
-    $config->model = 'llama3';
+    // We need a model that can run tools. See https://ollama.com/blog/tool-support
+    $config->model = 'llama3.1';
     $config->url = getenv('OLLAMA_URL') ?: 'http://localhost:11434/api/';
 
     return new OllamaChat($config);
@@ -26,11 +30,40 @@ it('can generate some stuff with a system prompt', function () {
     $chat = ollamaChat();
     $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
     $response = $chat->generateText('what is one + one?');
-    expect(strtolower($response))->toStartWith('ok');
+    expect(strtolower($response))->toContain('ok');
 });
 
 it('can generate some stuff using a stream', function () {
     $chat = ollamaChat();
     $response = $chat->generateStreamOfText('Can you describe the recipe for making carbonara in 5 steps');
     expect($response->__toString())->toContain('eggs');
+});
+
+it('can call a function', function () {
+    $chat = ollamaChat();
+
+    $subject = new Parameter('subject', 'string', 'the subject of the mail');
+    $body = new Parameter('body', 'string', 'the body of the mail');
+    $email = new Parameter('email', 'string', 'the email address');
+
+    $mockMailerExample = new MailerExample();
+
+    $function = new FunctionInfo(
+        'sendMail',
+        $mockMailerExample,
+        'send a mail',
+        [$subject, $body, $email]
+    );
+
+    $chat->addFunction($function);
+
+    $messages = [
+        Message::system('You are an AI that deliver information using the email system. When you have enough information to answer the question of the user you send a mail. YOU MUST NOT USE TOOLS THAT ARE NOT PROVIDED IN THE TOOLS LIST!'),
+        Message::user('Who is Marie Curie in one line? My email is student@foo.com'),
+    ];
+
+    $chat->generateChat($messages);
+
+    expect($mockMailerExample->lastMessage)->toStartWith('The email has been sent to student@foo.com with the subject ')
+        ->and($chat->lastFunctionCalled)->toBe($function);
 });
