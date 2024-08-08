@@ -20,6 +20,29 @@ it('no error when construct with no model', function () {
     expect(isset($chat))->toBeTrue();
 });
 
+it('can process system, user, assistant and functionResult messages', function () {
+    $client = new MockOpenAIClient();
+
+    $config = new OpenAIConfig();
+    $config->client = $client;
+
+    $chat = new OpenAIChat($config);
+
+    $messages = [
+        Message::system('You are an AI that answers to questions about weather in certain locations by calling external services to get the information'),
+        Message::user('What is the weather in Venice?'),
+        Message::functionResult(
+            'Weather in Venice is sunny, temperature is 26 Celsius',
+            'currentWeatherForLocation'
+        ),
+        Message::assistant('The current weather in Venice is sunny with passing clouds. The temperature is around 26°C (78.8°F)'),
+        Message::user('Thank you'),
+    ];
+    $response = $chat->generateChatOrReturnFunctionCalled($messages);
+
+    expect($response)->toBeString();
+});
+
 it('returns a stream response using generateStreamOfText()', function () {
     $response = new Response(
         200,
