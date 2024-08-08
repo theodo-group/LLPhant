@@ -107,3 +107,40 @@ it('calls tool functions during a chat', function () {
 
     expect($notifier->nrOfCalls)->toBe(1);
 });
+
+it('can call a function provide the result to the assistant', function () {
+    $chat = new OpenAIChat();
+    $location = new Parameter('location', 'string', 'the name of the city, the state or province and the nation');
+    $weatherExample = new WeatherExample();
+
+    $function = new FunctionInfo(
+        'currentWeatherForLocation',
+        $weatherExample,
+        'returns the current weather in the given location. The result contains the description of the weather plus the current temperature in Celsius',
+        [$location]
+    );
+
+    $chat->addTool($function);
+    $chat->setSystemMessage('You are an AI that answers to questions about weather in certain locations by calling external services to get the information');
+
+    $messages = [
+        Message::user('What is the weather in Venice?'),
+    ];
+    $functionInfo = $chat->generateChatOrReturnFunctionCalled($messages);
+
+    expect($functionInfo->name)->toBe('currentWeatherForLocation');
+
+    $firstRequestTokenUsage = $chat->getTotalTokens();
+
+    $arguments = json_decode($functionInfo->jsonArgs, true, 512, JSON_THROW_ON_ERROR);
+    $functionResult = $functionInfo->instance->{$functionInfo->name}(...$arguments);
+
+    $messages[] = Message::functionResult(
+        $functionResult,
+        $functionInfo->name
+    );
+
+    $chat->generateChatOrReturnFunctionCalled($messages);
+
+    expect($chat->getTotalTokens())->toBeGreaterThan($firstRequestTokenUsage);
+});

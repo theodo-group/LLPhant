@@ -10,6 +10,8 @@ class Message
 
     public string $content;
 
+    public string $name;
+
     public static function system(string $content): self
     {
         $message = new self();
@@ -37,11 +39,12 @@ class Message
         return $message;
     }
 
-    public static function functionResult(string $content): self
+    public static function functionResult(string $content, string $name): self
     {
         $message = new self();
         $message->role = ChatRole::Function;
         $message->content = $content;
+        $message->name = $name;
 
         return $message;
     }
