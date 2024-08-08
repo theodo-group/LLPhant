@@ -178,7 +178,7 @@ $qa->systemMessageTemplate = $customSystemMessage;
 
 ## Tools
 
-This feature is amazing and is available for OpenAI and Anthropic.
+This feature is amazing, and it is available for OpenAI, Anthropic and Ollama ([just for a subset of its available models](https://ollama.com/blog/tool-support)).
 
 OpenAI has refined its model to determine whether tools should be invoked.
 To utilize this, simply send a description of the available tools to OpenAI,
