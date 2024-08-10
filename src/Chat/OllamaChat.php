@@ -143,14 +143,26 @@ class OllamaChat implements ChatInterface
             $params
         );
 
-        $json = Utility::decodeJson($response->getBody()->getContents());
+        $contents = $response->getBody()->getContents();
+        $json = Utility::decodeJson($contents);
 
         $message = $json['message'];
 
+        /** @var Message[] $toolsOutput */
+        $toolsOutput = [];
+
         if (\array_key_exists('tool_calls', $message)) {
             foreach ($message['tool_calls'] as $toolCall) {
-                $this->callFunction($toolCall['function']['name'], $toolCall['function']['arguments']);
+                $functionName = $toolCall['function']['name'];
+                $toolResult = $this->callFunction($functionName, $toolCall['function']['arguments']);
+                if (is_string($toolResult)) {
+                    $toolsOutput[] = Message::toolResult($toolResult);
+                }
             }
+        }
+
+        if ($toolsOutput !== []) {
+            return $this->generateChat(\array_merge($messages, $toolsOutput));
         }
 
         return $message['content'];

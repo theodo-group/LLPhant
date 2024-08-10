@@ -45,4 +45,13 @@ class Message
 
         return $message;
     }
+
+    public static function toolResult(string $content): self
+    {
+        $message = new self();
+        $message->role = ChatRole::Tool;
+        $message->content = $content;
+
+        return $message;
+    }
 }

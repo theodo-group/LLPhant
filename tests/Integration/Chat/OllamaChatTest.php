@@ -14,7 +14,8 @@ function ollamaChat(): OllamaChat
 {
     $config = new OllamaConfig();
     // We need a model that can run tools. See https://ollama.com/blog/tool-support
-    $config->model = 'llama3.1';
+    // Please note that at the moment (August 2024) llama3.1 model is terrible at using tools, crating a lot of hallucinations
+    $config->model = 'mistral-nemo';
     $config->url = getenv('OLLAMA_URL') ?: 'http://localhost:11434/api/';
 
     return new OllamaChat($config);
@@ -66,4 +67,33 @@ it('can call a function', function () {
 
     expect($mockMailerExample->lastMessage)->toStartWith('The email has been sent to student@foo.com with the subject ')
         ->and($chat->lastFunctionCalled)->toBe($function);
+});
+
+it('can use the result of a function', function () {
+    $chat = ollamaChat();
+
+    $location = new Parameter('location', 'string', 'the location i.e. the name of the city, the state or province and the nation');
+
+    $weatherExample = new WeatherExample();
+
+    $function = new FunctionInfo(
+        'currentWeatherForLocation',
+        $weatherExample,
+        'returns the current weather in the given location. The result contains the description of the weather plus the current temperature in Celsius',
+        [$location]
+    );
+
+    $chat->addFunction($function);
+
+    $messages = [
+        Message::system('You are an AI that answers to questions about best clothing in a certain area based on the current weather. You use the external system tool currentWeatherForLocation for getting information on the current weather.'),
+        Message::user('Should I wear a fur cap and a wool scarf for my trip to Venice?'),
+    ];
+
+    $answer = $chat->generateChat($messages);
+
+    expect($weatherExample->lastMessage)->toContain('Venice')
+        ->and($chat->lastFunctionCalled)->toBe($function)
+        ->and($answer)->toContain('wear');
+
 });
