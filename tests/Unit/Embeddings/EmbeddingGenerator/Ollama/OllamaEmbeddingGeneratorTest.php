@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Chat;
+namespace Tests\Unit\Embeddings\EmbeddingGenerator\Ollama;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
