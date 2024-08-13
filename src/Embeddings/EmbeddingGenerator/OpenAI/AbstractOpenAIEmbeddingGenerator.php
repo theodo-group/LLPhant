@@ -9,10 +9,11 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\OpenAIConfig;
 use OpenAI;
-use OpenAI\Client;
+use OpenAI\Contracts\ClientContract;
 use Psr\Http\Client\ClientExceptionInterface;
 
 use function getenv;
@@ -20,7 +21,7 @@ use function str_replace;
 
 abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInterface
 {
-    public Client $client;
+    public ClientContract $client;
 
     public int $batch_size_limit = 50;
 
@@ -33,7 +34,7 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
      */
     public function __construct(?OpenAIConfig $config = null)
     {
-        if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
+        if ($config instanceof OpenAIConfig && $config->client instanceof ClientContract) {
             $this->client = $config->client;
         } else {
             $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
@@ -53,7 +54,7 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
      */
     public function embedText(string $text): array
     {
-        $text = str_replace("\n", ' ', $text);
+        $text = str_replace("\n", ' ', DocumentUtils::toUtf8($text));
 
         $response = $this->client->embeddings()->create([
             'model' => $this->getModelName(),
@@ -83,7 +84,7 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
     {
         $clientForBatch = $this->createClientForBatch();
 
-        $texts = array_map(fn (Document $document): string => $document->formattedContent ?? $document->content, $documents);
+        $texts = array_map('LLPhant\Embeddings\DocumentUtils::getUtf8Data', $documents);
 
         // We create batches of 50 texts to avoid hitting the limit
         if ($this->batch_size_limit <= 0) {

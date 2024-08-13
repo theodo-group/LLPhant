@@ -32,7 +32,7 @@ class MockOpenAIClient implements ClientContract
 
     public function embeddings(): EmbeddingsContract
     {
-        // TODO: Implement embeddings() method.
+        return new MockOpenAIEmbeddings();
     }
 
     public function audio(): AudioContract
