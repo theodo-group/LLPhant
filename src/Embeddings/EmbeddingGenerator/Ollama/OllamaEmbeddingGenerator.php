@@ -7,6 +7,7 @@ namespace LLPhant\Embeddings\EmbeddingGenerator\Ollama;
 use Exception;
 use GuzzleHttp\Client;
 use LLPhant\Embeddings\Document;
+use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\OllamaConfig;
 
@@ -33,7 +34,7 @@ final class OllamaEmbeddingGenerator implements EmbeddingGeneratorInterface
      */
     public function embedText(string $text): array
     {
-        $text = str_replace("\n", ' ', $text);
+        $text = str_replace("\n", ' ', DocumentUtils::toUtf8($text));
 
         $response = $this->client->post('embeddings', [
             'body' => json_encode([
