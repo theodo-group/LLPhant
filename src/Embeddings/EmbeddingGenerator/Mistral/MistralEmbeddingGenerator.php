@@ -7,20 +7,18 @@ namespace LLPhant\Embeddings\EmbeddingGenerator\Mistral;
 use Exception;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\AbstractOpenAIEmbeddingGenerator;
 use LLPhant\OpenAIConfig;
-use OpenAI\Client;
+use OpenAI\Contracts\ClientContract;
 
 use function getenv;
 
 class MistralEmbeddingGenerator extends AbstractOpenAIEmbeddingGenerator
 {
-    public Client $client;
-
     /**
      * @throws Exception
      */
     public function __construct(?OpenAIConfig $config = null)
     {
-        if ($config instanceof OpenAIConfig && $config->client instanceof Client) {
+        if ($config instanceof OpenAIConfig && $config->client instanceof ClientContract) {
             $this->client = $config->client;
 
             return;
