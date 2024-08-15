@@ -91,13 +91,21 @@ Then run:
 composer test:int
 ```
 
-You can set host names for the various services involved in integration tests using these environment variables:
+You can set host names and keys for the various services involved in integration tests using these environment variables:
 ```
-PGVECTOR_HOST
+OPENAI_API_KEY
+MISTRAL_API_KEY
+ANTHROPIC_API_KEY
+ASTRADB_ENDPOINT
+ASTRADB_TOKEN
 ELASTIC_URL
-MILVUS_HOST
+PGVECTOR_HOST
 REDIS_HOST
+MILVUS_HOST
 QDRANT_HOST
 CHROMADB_HOST
+OLLAMA_URL
+LAKERA_ENDPOINT
+LAKERA_API_KEY
 ```
 
