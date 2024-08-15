@@ -6,9 +6,9 @@ namespace Tests\Integration\Query\SemanticSearch;
 
 use LLPhant\Chat\ChatInterface;
 use LLPhant\Chat\OpenAIChat;
+use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\OpenAIConfig;
 use LLPhant\Query\SemanticSearch\LLMReranker;
-use Tests\Fixtures\DocumentFixtures;
 
 function chat(): ChatInterface
 {
@@ -27,7 +27,7 @@ it('Returns an array whose first line is the best document', function () {
         'Who is the composer of "La traviata"?',
     ];
 
-    $documents = DocumentFixtures::documents(
+    $documents = DocumentUtils::documents(
         'Teatro alla Scala is located in Milan',
         '"La Traviata" is an opera in three acts',
         'Giuseppe Verdi wrote "La Traviata" in  1853',

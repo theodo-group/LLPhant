@@ -80,4 +80,19 @@ class DocumentUtils
     {
         return mb_convert_encoding($string, 'UTF-8');
     }
+
+    /**
+     * @return array<Document>
+     */
+    public static function documents(string ...$contents): array
+    {
+        $result = [];
+        foreach ($contents as $content) {
+            $newDocument = new Document();
+            $newDocument->content = $content;
+            $result[] = $newDocument;
+        }
+
+        return $result;
+    }
 }
