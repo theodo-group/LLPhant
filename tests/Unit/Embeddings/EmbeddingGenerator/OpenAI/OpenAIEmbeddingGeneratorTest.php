@@ -7,9 +7,9 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\AbstractOpenAIEmbeddingGenerator;
 use LLPhant\OpenAIConfig;
-use Tests\Fixtures\DocumentFixtures;
 use Tests\Unit\Chat\MockOpenAIClient;
 
 const FAKE_EMBEDDING_ANSWER = <<<'JSON'
@@ -74,7 +74,7 @@ function getEmbeddingGenerator(string $body): AbstractOpenAIEmbeddingGenerator
 it('can handle empty data gracefully', function () {
     $generator = getEmbeddingGenerator('{"object": "list", "model": "test", "usage": {"prompt_tokens": 0, "total_tokens": 0}}');
 
-    expect($generator->embedDocuments(DocumentFixtures::documents('Sample document')))->toBeArray();
+    expect($generator->embedDocuments(DocumentUtils::documents('Sample document')))->toBeArray();
 });
 
 it('can handle data in non UTF8 encodings', function () {
@@ -84,7 +84,7 @@ it('can handle data in non UTF8 encodings', function () {
     $greek = \mb_convert_encoding('Καλημέρα', 'ISO-8859-7', 'UTF-8');
     $ukrainian = \mb_convert_encoding('доброго ранку', 'ISO-8859-5', 'UTF-8');
 
-    expect($generator->embedDocuments(DocumentFixtures::documents($japanese, $greek, $ukrainian)))->toBeArray();
+    expect($generator->embedDocuments(DocumentUtils::documents($japanese, $greek, $ukrainian)))->toBeArray();
 });
 
 it('can embed a single document in non UTF8 encodings', function () {
@@ -92,7 +92,7 @@ it('can embed a single document in non UTF8 encodings', function () {
 
     $japanese = \mb_convert_encoding('おはよう', 'EUC-JP', 'UTF-8');
 
-    expect($generator->embedDocument(DocumentFixtures::documents($japanese)[0])->content)->tobe($japanese);
+    expect($generator->embedDocument(DocumentUtils::documents($japanese)[0])->content)->tobe($japanese);
 });
 
 it('can embed text in non UTF8 encodings', function () {
