@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\Query\SemanticSearch;
+namespace LLPhant\Query\SemanticSearch\Experimental;
 
 use LLPhant\Embeddings\Distances\CosineDistance;
 use LLPhant\Embeddings\Distances\Distance;
@@ -8,6 +8,7 @@ use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\EmbeddingGenerator\EmbeddingGeneratorInterface;
 use LLPhant\Exception\SecurityException;
+use LLPhant\Query\SemanticSearch\QueryTransformer;
 
 /**
  * This class uses material from Langkit https://github.com/whylabs/langkit
