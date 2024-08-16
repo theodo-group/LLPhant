@@ -6,7 +6,7 @@ namespace Tests\Integration\Query\SemanticSearch;
 
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3SmallEmbeddingGenerator;
 use LLPhant\Exception\SecurityException;
-use LLPhant\Query\SemanticSearch\LangkitPromptInjectionQueryTransformer;
+use LLPhant\Query\SemanticSearch\Experimental\LangkitPromptInjectionQueryTransformer;
 
 it('can detect malicious prompts', function () {
 
