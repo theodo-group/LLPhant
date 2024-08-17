@@ -1,7 +1,3 @@
----
-sidebar_position: 5
----
-
 # FAQ
 *Why use LLPhant and not directly the OpenAI PHP SDK ?*
 

@@ -68,7 +68,7 @@ You can also see other use cases on [Qdrant's website](https://qdrant.tech/use-c
 
 ## Usage
 
-You can use OpenAI, Mistral, Ollama or Anthropic as LLM engines.
+You can use OpenAI, Mistral, Ollama or Anthropic as LLM engines. Here you can find a list of [supported features for each AI engine](/docusaurus/docs/features.md).
 
 ### OpenAI
 

@@ -9,3 +9,7 @@
 playground/*
 .idea
 script.php
+/docusaurus/.yarn
+/docusaurus/yarn.lock
+/docusaurus/.pnp.cjs
+/docusaurus/.pnp.loader.mjs

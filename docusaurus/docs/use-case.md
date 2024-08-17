@@ -1,7 +1,3 @@
----
-sidebar_position: 2
----
-
 # Use Case
 There are plenty use cases for Generative AI and new ones are creating every day. Let's see the most common ones.
 Based on a [survey from the MLOPS community](https://mlops.community/surveys/llm/) and [this survey from Mckinsey](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-in-2023-generative-ais-breakout-year) 
