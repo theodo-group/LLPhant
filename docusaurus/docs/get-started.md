@@ -1,7 +1,3 @@
----
-sidebar_position: 1
----
-
 # Get Started
 
 > **Requires [PHP 8.1+](https://php.net/releases/)**

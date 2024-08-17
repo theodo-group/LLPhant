@@ -1,7 +1,3 @@
----
-sidebar_position: 4
----
-
 # AutoPHP
 You can now make your [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT) clone in PHP using LLPhant.
 

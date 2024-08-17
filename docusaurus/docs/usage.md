@@ -1,7 +1,3 @@
----
-sidebar_position: 3
----
-
 # Usage
 You can use OpenAI, Mistral, Ollama or Anthropic as LLM engines.
 
