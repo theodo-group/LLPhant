@@ -36,6 +36,8 @@ class OllamaChat implements ChatInterface
 
     public ?FunctionInfo $lastFunctionCalled = null;
 
+    public mixed $lastToolsOutput = null;
+
     public function __construct(protected OllamaConfig $config)
     {
         if (! isset($config->model)) {
@@ -155,6 +157,7 @@ class OllamaChat implements ChatInterface
             foreach ($message['tool_calls'] as $toolCall) {
                 $functionName = $toolCall['function']['name'];
                 $toolResult = $this->callFunction($functionName, $toolCall['function']['arguments']);
+                $this->lastToolsOutput = $toolResult;
                 if (is_string($toolResult)) {
                     $toolsOutput[] = Message::toolResult($toolResult);
                 }
