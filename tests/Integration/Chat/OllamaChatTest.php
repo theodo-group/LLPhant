@@ -66,7 +66,8 @@ it('can call a function', function () {
     $chat->generateChat($messages);
 
     expect($mockMailerExample->lastMessage)->toStartWith('The email has been sent to student@foo.com with the subject ')
-        ->and($chat->lastFunctionCalled)->toBe($function);
+        ->and($chat->lastFunctionCalled)->toBe($function)
+        ->and($chat->lastToolsOutput)->toStartWith('The email has been sent to');
 });
 
 it('can use the result of a function', function () {
@@ -94,6 +95,7 @@ it('can use the result of a function', function () {
 
     expect($weatherExample->lastMessage)->toContain('Venice')
         ->and($chat->lastFunctionCalled)->toBe($function)
+        ->and($chat->lastToolsOutput)->toStartWith('Weather in')
         ->and($answer)->toContain('wear');
 
 });
