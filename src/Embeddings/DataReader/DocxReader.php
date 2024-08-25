@@ -3,6 +3,7 @@
 namespace LLPhant\Embeddings\DataReader;
 
 use PhpOffice\PhpWord\Element\AbstractElement;
+use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\IOFactory;
 
 class DocxReader
@@ -50,9 +51,9 @@ class DocxReader
     }
 
     /**
-     * @param  array<string>|string|null  $text
+     * @param  array<string>|string|null|TextRun  $text
      */
-    private function toString(array|null|string $text): string
+    private function toString(array|null|string|TextRun $text): string
     {
         if ($text === null) {
             return '';
@@ -60,6 +61,10 @@ class DocxReader
 
         if (is_array($text)) {
             return implode(' ', $text);
+        }
+
+        if ($text instanceof TextRun) {
+            return $text->getText();
         }
 
         return $text;
