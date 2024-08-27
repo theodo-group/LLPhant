@@ -34,7 +34,7 @@ class OllamaChat implements ChatInterface
     /** @var FunctionInfo[] */
     private array $tools = [];
 
-    /** @var array<array>  */
+    /** @var array<array> */
     public array $functionsCalled = [];
 
     public function __construct(protected OllamaConfig $config)
