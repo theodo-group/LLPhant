@@ -6,6 +6,7 @@ namespace LLPhant\Chat;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Utils;
+use LLPhant\Chat\CalledFunction\CalledFunction;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\ToolFormatter;
 use LLPhant\Exception\HttpException;
@@ -34,7 +35,7 @@ class OllamaChat implements ChatInterface
     /** @var FunctionInfo[] */
     private array $tools = [];
 
-    /** @var array<array> */
+    /** @var CalledFunction[] */
     public array $functionsCalled = [];
 
     public function __construct(protected OllamaConfig $config)
@@ -88,7 +89,7 @@ class OllamaChat implements ChatInterface
 
         if ($this->functionsCalled) {
             $lastKey = array_key_last($this->functionsCalled);
-            $lastFunctionCalled = $this->functionsCalled[$lastKey]['definition'];
+            $lastFunctionCalled = $this->functionsCalled[$lastKey]->definition;
             if ($lastFunctionCalled instanceof FunctionInfo) {
                 return $lastFunctionCalled;
             }
@@ -103,7 +104,7 @@ class OllamaChat implements ChatInterface
 
         if ($this->functionsCalled) {
             $lastKey = array_key_last($this->functionsCalled);
-            $lastFunctionCalled = $this->functionsCalled[$lastKey]['definition'];
+            $lastFunctionCalled = $this->functionsCalled[$lastKey]->definition;
             if ($lastFunctionCalled instanceof FunctionInfo) {
                 return $lastFunctionCalled;
             }
@@ -342,11 +343,7 @@ class OllamaChat implements ChatInterface
         $functionToCall = $this->getFunctionInfoFromName($functionName);
         $return = $functionToCall->callWithArguments($arguments);
 
-        $this->functionsCalled[] = [
-            'definition' => $functionToCall,
-            'arguments' => $arguments,
-            'return' => $return,
-        ];
+        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $return);
 
         return $return;
     }
