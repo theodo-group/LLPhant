@@ -89,10 +89,7 @@ class OllamaChat implements ChatInterface
 
         if ($this->functionsCalled) {
             $lastKey = array_key_last($this->functionsCalled);
-            $lastFunctionCalled = $this->functionsCalled[$lastKey]->definition;
-            if ($lastFunctionCalled instanceof FunctionInfo) {
-                return $lastFunctionCalled;
-            }
+            return $this->functionsCalled[$lastKey]->definition;
         }
 
         return $answer;
@@ -104,10 +101,7 @@ class OllamaChat implements ChatInterface
 
         if ($this->functionsCalled) {
             $lastKey = array_key_last($this->functionsCalled);
-            $lastFunctionCalled = $this->functionsCalled[$lastKey]->definition;
-            if ($lastFunctionCalled instanceof FunctionInfo) {
-                return $lastFunctionCalled;
-            }
+            return $this->functionsCalled[$lastKey]->definition;
         }
 
         return $answer;
