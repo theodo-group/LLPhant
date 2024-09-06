@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration\Query\SemanticSearch;
 
 use LLPhant\Chat\ChatInterface;
+use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\OpenAIConfig;
@@ -13,7 +14,7 @@ use LLPhant\Query\SemanticSearch\LLMReranker;
 function chat(): ChatInterface
 {
     $config = new OpenAIConfig();
-    $config->model = 'gpt-4o-mini';
+    $config->model = OpenAIChatModel::Gpt4Omini->value;
 
     return new OpenAIChat($config);
 }
