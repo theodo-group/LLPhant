@@ -176,6 +176,25 @@ The value of the last `printf` is the total usage of the last response
 `$chat->getTotalTokens()` function that is the sum of the previous totalTokens calls,
 including the last one `what is the capital of Italy ?`.
 
+### Image
+
+You can use the `OpenAIImage` to generate image.
+
+We can use it to simply generate image from a prompt.
+
+```php
+$response = $image->generateImage('A cat in the snow', OpenAIImageStyle::Vivid); // will return a LLPhant\Image\Image object
+```
+
+### Speech to text
+
+You can use `OpenAIAudio` to transcript audio files.
+
+```php
+$audio = new OpenAIAudio();
+$transcription = $audio->transcribe('/path/to/audio.mp3');  //$transcription->text contains transcription
+```
+
 ## Tools
 
 This feature is amazing, and it is available for OpenAI, Anthropic and Ollama ([just for a subset of its available models](https://ollama.com/blog/tool-support)).

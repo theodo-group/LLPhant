@@ -25,6 +25,7 @@ We can find great external resource on LLPhant (ping us to add yours):
 - [Usage](#usage)
   - [Chat](#chat)
   - [Image](#image)
+  - [Speech to text](#speech-to-text)
   - [Tools](#tools)
   - [Embeddings](#embeddings)
   - [VectorStore and Search](#vectorstores)
@@ -158,6 +159,15 @@ We can use it to simply generate image from a prompt.
 
 ```php
 $response = $image->generateImage('A cat in the snow', OpenAIImageStyle::Vivid); // will return a LLPhant\Image\Image object
+```
+
+### Speech to text
+
+You can use `OpenAIAudio` to transcript audio files.
+
+```php
+$audio = new OpenAIAudio();
+$transcription = $audio->transcribe('/path/to/audio.mp3');  //$transcription->text contains transcription
 ```
 
 ### Customizing System Messages in Question Answering
