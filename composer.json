@@ -18,6 +18,7 @@
         "smalot/pdfparser": "^2.7"
     },
     "suggest": {
+        "openai-php/client": "This is required for the OpenAI chats (GPT/OpenAI, MistralAI). This should be working with any version ^v0.7.7, ^v0.8.4 or ^v0.9.2",
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
         "symfony/cache": "This is one of the possible types of psr/cache needed by doctrine/orm",
         "hkulekci/qdrant": "This is required for the QdrantVectoreStore.",
@@ -32,6 +33,7 @@
         "hkulekci/qdrant": "^v0.5.3",
         "laravel/pint": "v1.15.3",
         "mockery/mockery": "^1.6",
+        "openai-php/client": "^v0.7.7 || ^v0.8.4 || ^v0.9.2",
         "pestphp/pest": "2.32.0",
         "pestphp/pest-plugin-arch": "^2.5.0",
         "pestphp/pest-plugin-type-coverage": "2.8.0",
