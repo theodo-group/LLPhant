@@ -5,9 +5,9 @@ namespace LLPhant\Chat;
 use Exception;
 use GuzzleHttp\Psr7\Utils;
 use LLPhant\Chat\Enums\ChatRole;
-use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\ToolFormatter;
+use LLPhant\Exception\MissingParameterException;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Contracts\ClientContract;
@@ -17,8 +17,9 @@ use OpenAI\Responses\Chat\CreateStreamedResponseToolCall;
 use OpenAI\Responses\StreamResponse;
 use Psr\Http\Message\StreamInterface;
 
-use function getenv;
-
+/**
+ * @phpstan-import-type ModelOptions from OpenAIConfig
+ */
 class OpenAIChat implements ChatInterface
 {
     private readonly ClientContract $client;
@@ -41,23 +42,25 @@ class OpenAIChat implements ChatInterface
 
     public ?FunctionInfo $requiredFunction = null;
 
-    public function __construct(?OpenAIConfig $config = null)
+    /**
+     * @throws MissingParameterException
+     */
+    public function __construct(protected OpenAIConfig $config = new OpenAIConfig())
     {
-        if ($config instanceof OpenAIConfig && $config->client instanceof ClientContract) {
+        if ($config->client instanceof \OpenAI\Contracts\ClientContract) {
             $this->client = $config->client;
         } else {
-            $apiKey = $config->apiKey ?? getenv('OPENAI_API_KEY');
-            if (! $apiKey) {
-                throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
+            if (! $config->apiKey) {
+                throw new MissingParameterException('You have to provide a OPENAI_API_KEY env var to request OpenAI.');
             }
 
             $this->client = OpenAI::factory()
-                ->withApiKey($apiKey)
+                ->withApiKey($this->config->apiKey)
                 ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
                 ->withBaseUri($config->url ?? (getenv('OPENAI_BASE_URL') ?: 'api.openai.com/v1'))
                 ->make();
         }
-        $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->value;
+        $this->model = $config->model;
         $this->modelOptions = $config->modelOptions ?? [];
     }
 

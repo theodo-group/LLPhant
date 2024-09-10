@@ -11,16 +11,16 @@ use LLPhant\Chat\Anthropic\AnthropicTotalTokensTrait;
 use LLPhant\Chat\FunctionInfo\FunctionFormatter;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Exception\HttpException;
+use LLPhant\Exception\MissingParameterException;
 use LLPhant\Utility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
+/**
+ * @phpstan-type ModelOptions array<string, mixed>
+ */
 class AnthropicChat implements ChatInterface
 {
-    private const DEFAULT_URL = 'https://api.anthropic.com';
-
-    private const CURRENT_VERSION = '2023-06-01';
-
     private ?Message $systemMessage = null;
 
     /** @var array<string, mixed> */
@@ -41,24 +41,30 @@ class AnthropicChat implements ChatInterface
 
     use AnthropicTotalTokensTrait;
 
+    /**
+     * @throws MissingParameterException
+     */
     public function __construct(AnthropicConfig $config = new AnthropicConfig())
     {
-        $this->modelOptions = $config->modelOptions;
-        $this->model = $config->model;
-        $this->maxTokens = $config->maxTokens;
-
-        if ($config->client instanceof Client) {
+        if ($config->client instanceof \GuzzleHttp\Client) {
             $this->client = $config->client;
         } else {
+            if (! $config->apiKey) {
+                throw new MissingParameterException('You have to provide a MISTRAL_API_KEY env var to request MistralAI.');
+            }
             $this->client = new Client([
-                'base_uri' => self::DEFAULT_URL,
+                'base_uri' => $config->url,
                 'headers' => [
-                    'x-api-key' => $config->apiKey ?? getenv('ANTHROPIC_API_KEY'),
+                    'x-api-key' => $config->apiKey,
                     'Content-Type' => 'application/json',
-                    'anthropic-version' => self::CURRENT_VERSION,
+                    'anthropic-version' => $config->version,
                 ],
             ]);
         }
+
+        $this->modelOptions = $config->modelOptions;
+        $this->model = $config->model;
+        $this->maxTokens = $config->maxTokens;
     }
 
     public function generateText(string $prompt): string
