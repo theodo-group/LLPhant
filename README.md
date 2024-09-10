@@ -43,12 +43,16 @@ First, install LLPhant via the [Composer](https://getcomposer.org/) package mana
 ```bash
 composer require theodo-group/llphant
 ```
+
+If you want to use Ollama or Anthropic you are all set. To use OpenAI (ChatGPT, Mistral), you will need to install the [OpenAI PHP SDK](https://github.com/openai-php/client) as well:
+```bash
+composer require openai-php/client:^v0.9.2
+```
+
 If you want to try the latest features of this library, you can use:
 ```bash
 composer require theodo-group/llphant:dev-main
 ```
-
-You may also want to check the requirements for [OpenAI PHP SDK](https://github.com/openai-php/client) as it is the main client.
 
 ## Use Case
 There are plenty use cases for Generative AI and new ones are creating every day. Let's see the most common ones.
