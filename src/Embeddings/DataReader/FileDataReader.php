@@ -92,6 +92,12 @@ final class FileDataReader implements DataReader
             return $docxReader->getText($path);
         }
 
+        if ($fileExtension === 'pptx') {
+            $pptxReader = new PptxReader();
+
+            return $pptxReader->getText($path);
+        }
+
         return file_get_contents($path);
     }
 
