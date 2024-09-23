@@ -58,3 +58,11 @@ it('can read sub-directories', function () {
 
     expect($contents)->toContain("hello test!\n", "hello test2!\n", "hello test3!\n");
 });
+
+it('can read docx in French', function () {
+    $filePath = __DIR__.'/Candide.docx';
+    $reader = new FileDataReader($filePath, Document::class, ['docx']);
+    $documents = $reader->getDocuments();
+    expect($documents)->toHaveCount(1)
+        ->and($documents[0]->content)->toEqual("Candide ou l'Optimisme est un conte philosophique de Voltaire paru à Genève en janvier 1759.");
+});

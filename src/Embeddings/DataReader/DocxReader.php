@@ -16,7 +16,7 @@ class DocxReader
             $fullText .= $this->extractTextFromDocxNode($section);
         }
 
-        return $fullText;
+        return \htmlspecialchars_decode($fullText);
     }
 
     private function extractTextFromDocxNode(AbstractElement $section): string
@@ -36,14 +36,16 @@ class DocxReader
     private function concatenate(string $text1, string $text2): string
     {
         if ($text1 === '') {
-            return $text1.$text2;
+            return $text2;
         }
 
         if (str_ends_with($text1, ' ')) {
             return $text1.$text2;
         }
-
         if (str_starts_with($text2, ' ')) {
+            return $text1.$text2;
+        }
+        if (str_starts_with($text2, '.')) {
             return $text1.$text2;
         }
 
