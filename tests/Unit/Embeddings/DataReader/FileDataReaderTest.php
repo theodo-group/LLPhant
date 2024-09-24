@@ -19,6 +19,7 @@ it('can read various types of documents', function (string $docName, string $sta
     ['document-with-text-breaks.docx', 'Sample document with text breaks'],
     ['simple_document_with_links.docx', 'This is a doc with links'],
     ['data-pdf.pdf', 'This data is from a pdf'],
+    ['powerpoint.pptx', 'Slide 1'],
 ]);
 
 it('can read pdf and texts ', function () {
