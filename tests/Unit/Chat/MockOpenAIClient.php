@@ -17,6 +17,7 @@ use OpenAI\Contracts\Resources\ImagesContract;
 use OpenAI\Contracts\Resources\ModelsContract;
 use OpenAI\Contracts\Resources\ModerationsContract;
 use OpenAI\Contracts\Resources\ThreadsContract;
+use OpenAI\Contracts\Resources\VectorStoresContract;
 
 class MockOpenAIClient implements ClientContract
 {
@@ -88,5 +89,10 @@ class MockOpenAIClient implements ClientContract
     public function batches(): BatchesContract
     {
         // TODO: Implement batches() method.
+    }
+
+    public function vectorStores(): VectorStoresContract
+    {
+        // TODO: Implement vectorStores() method.
     }
 }
