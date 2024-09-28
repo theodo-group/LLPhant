@@ -66,3 +66,21 @@ it('can read docx in French', function () {
     expect($documents)->toHaveCount(1)
         ->and($documents[0]->content)->toEqual("Candide ou l'Optimisme est un conte philosophique de Voltaire paru à Genève en janvier 1759.");
 });
+
+it('can read docx preserving new lines', function () {
+    $filePath = __DIR__.'/Divina_Commedia.docx';
+    $reader = new FileDataReader($filePath, Document::class, ['docx']);
+    $documents = $reader->getDocuments();
+    $text = <<<'TXT'
+    Inferno, I canto, vv.1-3
+    Nel mezzo del cammin di nostra vita
+    mi ritrovai per una selva oscura,
+    ché la diritta via era smarrita.
+    Inferno, XXVI canto, vv.118-120
+    Considerate la vostra semenza:
+    fatti non foste a viver come bruti,
+    ma per seguir virtute e canoscenza.
+    TXT;
+    expect($documents)->toHaveCount(1)
+        ->and($documents[0]->content)->toEqual($text);
+});
