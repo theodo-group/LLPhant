@@ -35,7 +35,7 @@ class OpenAIImage implements ImageInterface
             $this->client = OpenAI::factory()
                 ->withApiKey($apiKey)
                 ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-                ->withBaseUri($config->url ?? 'api.openai.com/v1')
+                ->withBaseUri($config->url ?? (getenv('OPENAI_BASE_URL') ?: 'api.openai.com/v1'))
                 ->make();
         }
         $this->model = $config->model ?? OpenAIImageModel::DallE3->value;
