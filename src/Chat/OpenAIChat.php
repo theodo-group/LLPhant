@@ -51,7 +51,11 @@ class OpenAIChat implements ChatInterface
                 throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
             }
 
-            $this->client = OpenAI::client($apiKey);
+            $this->client = OpenAI::factory()
+                ->withApiKey($apiKey)
+                ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
+                ->withBaseUri($config->url ?? 'api.openai.com/v1')
+                ->make();
         }
         $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->value;
         $this->modelOptions = $config->modelOptions ?? [];
