@@ -2,6 +2,7 @@
 
 namespace LLPhant\Audio;
 
+use Exception;
 use LLPhant\OpenAIConfig;
 use OpenAI;
 use OpenAI\Contracts\ClientContract;
