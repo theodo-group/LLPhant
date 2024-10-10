@@ -41,7 +41,7 @@ abstract class AbstractOpenAIEmbeddingGenerator implements EmbeddingGeneratorInt
             if (! $apiKey) {
                 throw new Exception('You have to provide a OPENAI_API_KEY env var to request OpenAI .');
             }
-            $url = $config->url ?? 'api.openai.com/v1';
+            $url = $config->url ?? (getenv('OPENAI_BASE_URL') ?: 'api.openai.com/v1');
 
             $this->client = OpenAI::factory()
                 ->withApiKey($apiKey)
