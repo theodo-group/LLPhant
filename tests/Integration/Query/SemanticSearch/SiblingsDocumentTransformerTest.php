@@ -7,7 +7,6 @@ namespace Tests\Integration\Query\SemanticSearch;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
-use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3SmallEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Memory\MemoryVectorStore;
 use LLPhant\Query\SemanticSearch\QuestionAnswering;
@@ -17,7 +16,7 @@ it('can be used to get bigger chunks from small ones', function () {
     $filePath = __DIR__.'/SampleDocuments';
     $reader = new FileDataReader($filePath);
     $documents = $reader->getDocuments();
-    $splittedDocuments = DocumentSplitter::splitDocuments($documents, 100, "\n");
+    $splittedDocuments = DocumentSplitter::splitDocuments($documents, 5, "\n");
 
     $embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
     $embeddedDocuments = $embeddingGenerator->embedDocuments($splittedDocuments);
