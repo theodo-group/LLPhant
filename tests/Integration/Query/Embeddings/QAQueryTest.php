@@ -43,7 +43,8 @@ it('generates an answer based on private knowledge', function (VectorStoreBase $
 
     $answer = $qa->answerQuestion('what is the secret of Alice?');
 
-    expect($answer)->toContain('cheese');
+    expect($answer)->toContain('cheese')
+        ->and($qa->getTotalTokens() > 0)->toBeTrue();
 })->with([
     new MemoryVectorStore(),
     new FileSystemVectorStore(\sys_get_temp_dir().'/QAQueryTest.json'),
