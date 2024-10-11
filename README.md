@@ -423,6 +423,20 @@ $result = $vectorStore->similaritySearch($embedding, 2);
 
 To get full example you can have a look at [Doctrine integration tests files](https://github.com/theodo-group/LLPhant/blob/main/tests/Integration/Embeddings/VectorStores/Doctrine/DoctrineVectorStoreTest.php).
 
+##### VectorStores vs DocumentStores
+As we have seen, a `VectorStore` is an engine that can be used to perform similarity searches on documents.
+A `DocumentStore` is an abstraction around a storage for documents that can be queried with more classical methods.
+In many cases can be vector stores can be also document stores and vice versa, but this is not mandatory.
+There are currently these DocumentStore classes:
+- MemoryVectorStore
+- FileSystemVectorStore
+- DoctrineVectorStore
+- MilvusVectorStore
+
+Those implementations are both vector stores and document stores.
+
+Let's see the current implementations of vector stores in LLPhant.
+
 ##### Doctrine VectorStore
 
 One simple solution for web developers is to use a postgresql database as a vectorStore **with the pgvector extension**.
@@ -541,7 +555,7 @@ $vectorStore = new ChromaDBVectorStore(host: 'my_host', authToken: 'my_optional_
 
 You can now use this vector store as any other VectorStore.
 
-### AstraDB VectorStore
+##### AstraDB VectorStore
 
 Prerequisites : an [AstraDB account](https://accounts.datastax.com/session-service/v1/login) where you can create and delete databases (see [AstraDB docs](https://docs.datastax.com/en/astra-db-serverless/index.html)).
 At the moment you can not run this DB it locally. You have to set `ASTRADB_ENDPOINT` and `ASTRADB_TOKEN` environment variables with data needed to connect to your instance.
@@ -654,12 +668,43 @@ $qa = new QuestionAnswering(
 
 $answer = $qa->answerQuestion('Who is the composer of "La traviata"?', 10);
 ```
-
 ### Token Usage
 
 You can get the token usage of the OpenAI API by calling the `getTotalTokens` method of the QA object.
 It will get the number used by the Chat class since its creation.
 
+### Small to Big Retrieval
+[Small to Big Retrieval](https://towardsdatascience.com/advanced-rag-01-small-to-big-retrieval-172181b396d4) technique involves retrieving small, 
+relevant chunks of text from a large corpus based on a query, and then expanding those chunks to provide a broader context for language model generation.
+Looking for small chunks of text first and then getting a bigger context is important for [several reasons](https://aman.ai/primers/ai/RAG/#sentence-window-retrieval--small-to-large-retrieval):
+- Precision: By starting with small, focused chunks, the system can retrieve highly relevant information that is directly related to the query.
+- Efficiency: Retrieving smaller units initially allows for faster processing and reduces the computational overhead associated with handling large amounts of text.
+- Contextual richness: Expanding the retrieved chunks provides the language model with a broader understanding of the topic, enabling it to generate more comprehensive and accurate responses.
+  Here is an example:
+```php
+$reader = new FileDataReader($filePath);
+$documents = $reader->getDocuments();
+// Get documents in small chunks
+$splittedDocuments = DocumentSplitter::splitDocuments($documents, 20);
+
+$embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
+$embeddedDocuments = $embeddingGenerator->embedDocuments($splittedDocuments);
+
+$vectorStore = new MemoryVectorStore();
+$vectorStore->addDocuments($embeddedDocuments);
+
+// Get a context of 3 documents around the retrieved chunk
+$siblingsTransformer = new SiblingsDocumentTransformer($vectorStore, 3);
+
+$embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
+$qa = new QuestionAnswering(
+    $vectorStore,
+    $embeddingGenerator,
+    new OpenAIChat(),
+    retrievedDocumentsTransformer: $siblingsTransformer
+);
+$answer = $qa->answerQuestion('Can I win at cukoo if I have a coral card?');
+```
 
 ## AutoPHP
 You can now make your [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT) clone in PHP using LLPhant.
