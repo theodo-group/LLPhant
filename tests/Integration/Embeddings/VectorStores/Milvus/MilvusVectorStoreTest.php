@@ -12,6 +12,7 @@ describe('MilvusVectorStore', function () {
         $client = new MilvusClient(getenv('MILVUS_HOST') ?? 'localhost', '19530', 'root', 'milvus');
         /** @var TestCase $this */
         $this->vectorStore = new MilvusVectorStore($client);
+        $this->vectorStore->deleteCollection();
     });
 
     afterEach(function (): void {

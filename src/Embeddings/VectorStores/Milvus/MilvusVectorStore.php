@@ -6,6 +6,7 @@ use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentStore\DocumentStore;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
+use LLPhant\Exception\SecurityException;
 
 class MilvusVectorStore extends VectorStoreBase implements DocumentStore
 {
@@ -88,8 +89,21 @@ class MilvusVectorStore extends VectorStoreBase implements DocumentStore
         $this->collectionExists = true;
     }
 
+    /**
+     * @throws SecurityException
+     */
     public function fetchDocumentsByChunkRange(string $sourceType, string $sourceName, int $leftIndex, int $rightIndex): iterable
     {
+        $filters = \FILTER_SANITIZE_ENCODED;
+
+        if ($sourceType !== \filter_var($sourceType, $filters)) {
+            throw new SecurityException('Invalid source type');
+        }
+
+        if ($sourceName !== \filter_var($sourceName, $filters)) {
+            throw new SecurityException('Invalid source name');
+        }
+
         $response = $this->client->query(
             $this->collectionName,
             self::OUTPUTFIELDS,
