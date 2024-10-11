@@ -39,12 +39,13 @@ class OpenAIConfig
      * @param  ModelOptions  $modelOptions
      */
     public function __construct(
-        public string $url = 'https://api.openai.com/v1',
+        public ?string $url = null,
         ?string $model = null,
         public ?string $apiKey = null,
         public ?ClientContract $client = null,
         public array $modelOptions = [],
     ) {
+        $this->url ??= (getenv('OPENAI_BASE_URL') ?: 'https://api.openai.com/v1');
         $this->model = $model ?? OpenAIChatModel::Gpt4Turbo->value;
         $this->apiKey ??= (getenv('OPENAI_API_KEY') ?: null);
     }

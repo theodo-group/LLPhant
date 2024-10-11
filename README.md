@@ -7,7 +7,7 @@
 We designed this framework to be as simple as possible, while still providing you with the tools you need to build powerful apps.
 It is compatible with Symfony and Laravel.
 
-We are working to expand the support of different LLMs. Right now, we are supporting [OpenAI](https://openai.com/blog/openai-api), [Anthropic](https://www.anthropic.com/), [Mistral](https://mistral.ai/) and [Ollama](https://ollama.ai/) 
+We are working to expand the support of different LLMs. Right now, we are supporting [OpenAI](https://openai.com/blog/openai-api), [Anthropic](https://www.anthropic.com/), [Mistral](https://mistral.ai/), [Ollama](https://ollama.ai/), and services compatible with the OpenAI API such as [LocalAI](https://localai.io/).
 Ollama that can be used to run LLM locally such as [Llama 2](https://llama.meta.com/).
 
 We want to thank few amazing projects that we use here or inspired us:
@@ -17,6 +17,7 @@ We want to thank few amazing projects that we use here or inspired us:
 We can find great external resource on LLPhant (ping us to add yours):
 - 🇫🇷 [Construire un RAG en PHP avec la doc de Symfony, LLPhant et OpenAI : Tutoriel Complet](https://www.youtube.com/watch?v=zFJgRd05Noo)
 - 🇫🇷 [Retour d'expérience sur la création d'un agent autonome](https://www.youtube.com/watch?v=ZnYUxTtS6IU)
+- 🇬🇧 [Exploring AI riding an LLPhant](https://www.slideshare.net/slideshow/exploring-ai-riding-an-llphant-an-open-source-library-to-use-llms-and-vector-dbs-in-php/272059145)
 
 ## Table of Contents
 - [Get Started](#get-started)
@@ -129,6 +130,24 @@ Creating a chat with no configuration will use a CLAUDE_3_HAIKU model.
 
 ```php
 $chat = new AnthropicChat();
+```
+
+### OpenAI compatible APIs like LocalAI
+
+The most simple way to allow the call to OpenAI is to set the OPENAI_API_KEY and OPENAI_BASE_URL environment variable.
+
+```bash
+export OPENAI_API_KEY=-
+export OPENAI_BASE_URL=http://local.ai:8080/v1
+```
+
+You can also create an OpenAIConfig object and pass it to the constructor of the OpenAIChat or OpenAIEmbeddings.
+
+```php
+$config = new OpenAIConfig();
+$config->apiKey = '-';
+$config->url = 'http://local.ai:8080/v1';
+$chat = new OpenAIChat($config);
 ```
 
 ### Chat
@@ -639,6 +658,12 @@ $qa = new QuestionAnswering(
 
 $answer = $qa->answerQuestion('Who is the composer of "La traviata"?', 10);
 ```
+
+### Token Usage
+
+You can get the token usage of the OpenAI API by calling the `getTotalTokens` method of the QA object.
+It will get the number used by the Chat class since its creation.
+
 
 ## AutoPHP
 You can now make your [AutoGPT](https://github.com/Significant-Gravitas/Auto-GPT) clone in PHP using LLPhant.

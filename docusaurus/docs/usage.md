@@ -611,3 +611,7 @@ $qa = new QuestionAnswering(
 
 $answer = $qa->answerQuestion('Who is the composer of "La traviata"?', 10);
 ```
+
+### Token Usage
+You can get the token usage of the OpenAI API by calling the `getTotalTokens` method of the QA object.
+It will get the number used by the Chat class since its creation.

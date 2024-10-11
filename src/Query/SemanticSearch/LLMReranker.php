@@ -22,7 +22,7 @@ class LLMReranker implements RetrievedDocumentsTransformer
         Document 2: <text of second document>
         Document 3: <text of third document>
 
-        Example output format (YOU MUST RETURN THE ANSWER IN THE FORM PROXVIDED BY THE FOLLOWING EXAMPLE WIHTOUT CHANGING ANYTHING BESIDES THE NUMBERS!)
+        Example output format (YOU MUST RETURN THE ANSWER IN THE FORM PROVIDED BY THE FOLLOWING EXAMPLE WITHOUT CHANGING ANYTHING BESIDES THE NUMBERS!)
 
         Relevance order: 3, 1, 2
         TEXT;

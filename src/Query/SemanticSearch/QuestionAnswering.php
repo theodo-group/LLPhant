@@ -69,6 +69,16 @@ class QuestionAnswering
         return $this->retrievedDocs;
     }
 
+    public function getTotalTokens(): int
+    {
+        if (! method_exists($this->chat, 'getTotalTokens')) {
+            $chatClass = $this->chat::class;
+            throw new \BadMethodCallException("Method getTotalTokens does not exist on the chat object of class {$chatClass}");
+        }
+
+        return $this->chat->getTotalTokens();
+    }
+
     /**
      * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
      */
