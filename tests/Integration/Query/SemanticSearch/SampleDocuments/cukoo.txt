@@ -1,0 +1,7 @@
+The cuckoo game is a card game that requires a deck of 99.5 cards.
+
+The colors of the cards are orange, green and blue.
+
+Only inhabitants of the planet Grock can also use yellow-colored cards.
+
+The dynamics of the game are inspired by Russell's antinomy: a coral-colored card is required to win, but the coral-colored card is always in the hand of a player who cannot win.
