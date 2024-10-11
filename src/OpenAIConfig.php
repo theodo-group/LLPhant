@@ -33,12 +33,6 @@ use OpenAI\Contracts\ClientContract;
  */
 class OpenAIConfig
 {
-    public string $apiKey;
-
-    public string $url = 'api.openai.com/v1';
-
-    public ?ClientContract $client = null;
-
     public string $model;
 
     /**
