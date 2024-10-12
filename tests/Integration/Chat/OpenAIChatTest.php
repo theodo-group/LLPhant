@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Chat;
 
+use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\Parameter;
@@ -108,8 +109,11 @@ it('calls tool functions during a chat', function () {
     expect($notifier->nrOfCalls)->toBe(1);
 });
 
-it('can call a function provide the result to the assistant', function () {
-    $chat = new OpenAIChat();
+it('can call a function and provide the result to the assistant', function () {
+    $config = new OpenAIConfig();
+    //Functions work only with older models. Tools are needed with newer models
+    $config->model = OpenAIChatModel::Gpt35Turbo->value;
+    $chat = new OpenAIChat($config);
     $location = new Parameter('location', 'string', 'the name of the city, the state or province and the nation');
     $weatherExample = new WeatherExample();
 
@@ -140,7 +144,9 @@ it('can call a function provide the result to the assistant', function () {
         $functionInfo->name
     );
 
-    $chat->generateChatOrReturnFunctionCalled($messages);
+    $response = $chat->generateChatOrReturnFunctionCalled($messages);
 
-    expect($chat->getTotalTokens())->toBeGreaterThan($firstRequestTokenUsage);
+    expect($response)->toBeString()
+        ->and($response)->toContain('sunny')
+        ->and($chat->getTotalTokens())->toBeGreaterThan($firstRequestTokenUsage);
 });
