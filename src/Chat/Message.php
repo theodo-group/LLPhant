@@ -3,6 +3,7 @@
 namespace LLPhant\Chat;
 
 use LLPhant\Chat\Enums\ChatRole;
+use LLPhant\Chat\FunctionInfo\ToolCall;
 
 class Message
 {
@@ -10,7 +11,14 @@ class Message
 
     public string $content;
 
+    public string $tool_call_id;
+
     public string $name;
+
+    /**
+     * @var ToolCall[]
+     */
+    public array $tool_calls;
 
     public static function system(string $content): self
     {
@@ -26,6 +34,18 @@ class Message
         $message = new self();
         $message->role = ChatRole::User;
         $message->content = $content;
+
+        return $message;
+    }
+
+    /**
+     * @param  ToolCall[]  $toolCalls
+     */
+    public static function assistantAskingTools(array $toolCalls): self
+    {
+        $message = new self();
+        $message->role = ChatRole::Assistant;
+        $message->tool_calls = $toolCalls;
 
         return $message;
     }
@@ -49,11 +69,15 @@ class Message
         return $message;
     }
 
-    public static function toolResult(string $content): self
+    public static function toolResult(string $content, ?string $toolCallId = null): self
     {
         $message = new self();
         $message->role = ChatRole::Tool;
         $message->content = $content;
+
+        if ($toolCallId !== null) {
+            $message->tool_call_id = $toolCallId;
+        }
 
         return $message;
     }
