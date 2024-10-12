@@ -35,8 +35,6 @@ it('can process system, user, assistant and functionResult messages', function (
             'Weather in Venice is sunny, temperature is 26 Celsius',
             'currentWeatherForLocation'
         ),
-        Message::assistant('The current weather in Venice is sunny with passing clouds. The temperature is around 26°C (78.8°F)'),
-        Message::user('Thank you'),
     ];
     $response = $chat->generateChatOrReturnFunctionCalled($messages);
 
