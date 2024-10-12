@@ -225,14 +225,15 @@ class OpenAIChat implements ChatInterface
                     $toolsCalled[] = [
                         'function' => $toolCall->function->name,
                         'arguments' => $toolCall->function->arguments,
+                        'id' => $toolCall->id,
                     ];
                 }
 
                 // $functionName should be always set if finishReason is function_call
                 if ($partialResponse->choices[0]->finishReason === 'function_call' && $toolsCalled !== []) {
                     foreach ($toolsCalled as $toolCalled) {
-                        if (is_string($toolCalled['function']) && is_string($toolCalled['arguments'])) {
-                            $this->callFunction($toolCalled['function'], $toolCalled['arguments']);
+                        if (is_string($toolCalled['function']) && is_string($toolCalled['arguments']) && is_string($toolCalled['id'])) {
+                            $this->callFunction($toolCalled['function'], $toolCalled['arguments'], $toolCalled['id']);
                         }
                     }
                 }
@@ -295,7 +296,7 @@ class OpenAIChat implements ChatInterface
             $functionName = $toolCall->function->name;
             $arguments = $toolCall->function->arguments;
 
-            $this->callFunction($functionName, $arguments);
+            $this->callFunction($functionName, $arguments, $toolCall->id);
         }
     }
 
@@ -311,7 +312,7 @@ class OpenAIChat implements ChatInterface
         foreach ($answer->choices[0]->message->toolCalls as $toolCall) {
             $functionName = $toolCall->function->name;
             $arguments = $toolCall->function->arguments;
-            $functionInfo = $this->getFunctionInfoFromName($functionName);
+            $functionInfo = $this->getFunctionInfoFromName($functionName, $toolCall->id);
             $functionInfo->jsonArgs = $arguments;
 
             $functionInfos[] = $functionInfo;
@@ -323,21 +324,21 @@ class OpenAIChat implements ChatInterface
     /**
      * @throws Exception
      */
-    private function getFunctionInfoFromName(string $functionName): FunctionInfo
+    private function getFunctionInfoFromName(string $functionName, string $toolCallId): FunctionInfo
     {
         foreach ($this->tools as $function) {
             if ($function->name === $functionName) {
-                return $function;
+                return $function->cloneWithId($toolCallId);
             }
         }
 
         throw new Exception("OpenAI tried to call $functionName which doesn't exist");
     }
 
-    private function callFunction(string $functionName, string $arguments): void
+    private function callFunction(string $functionName, string $arguments, string $toolCallId): void
     {
         $arguments = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
-        $functionToCall = $this->getFunctionInfoFromName($functionName);
+        $functionToCall = $this->getFunctionInfoFromName($functionName, $toolCallId);
         $functionToCall->instance->{$functionToCall->name}(...$arguments);
         $this->lastFunctionCalled = $functionToCall;
     }

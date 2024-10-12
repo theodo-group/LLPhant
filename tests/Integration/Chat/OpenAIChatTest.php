@@ -150,3 +150,42 @@ it('can call a function and provide the result to the assistant', function () {
         ->and($response)->toContain('sunny')
         ->and($chat->getTotalTokens())->toBeGreaterThan($firstRequestTokenUsage);
 });
+
+it('can call a tool and provide the result to the assistant', function () {
+    $config = new OpenAIConfig();
+    //Tools are needed with newer models
+    $config->model = OpenAIChatModel::Gpt4Turbo->value;
+    $chat = new OpenAIChat($config);
+    $location = new Parameter('location', 'string', 'the name of the city, the state or province and the nation');
+    $weatherExample = new WeatherExample();
+
+    $function = new FunctionInfo(
+        'currentWeatherForLocation',
+        $weatherExample,
+        'returns the current weather in the given location. The result contains the description of the weather plus the current temperature in Celsius',
+        [$location]
+    );
+
+    $chat->addTool($function);
+    $chat->setSystemMessage('You are an AI that answers to questions about weather in certain locations by calling external services to get the information');
+
+    $messages = [
+        Message::user('What is the weather in Venice?'),
+    ];
+    $functionInfo = $chat->generateChatOrReturnFunctionCalled($messages);
+
+    expect($functionInfo->name)->toBe('currentWeatherForLocation');
+
+    $firstRequestTokenUsage = $chat->getTotalTokens();
+
+    $toolCallId = $functionInfo->getToolCallId();
+    expect($toolCallId)->toBeString();
+
+    $messages = array_merge($messages, $functionInfo->callAndReturnAsOpenAIMessages());
+
+    $response = $chat->generateChatOrReturnFunctionCalled($messages);
+
+    expect($response)->toBeString()
+        ->and($response)->toContain('sunny')
+        ->and($chat->getTotalTokens())->toBeGreaterThan($firstRequestTokenUsage);
+});
