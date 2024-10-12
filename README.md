@@ -134,7 +134,7 @@ The most simple way to allow the call to OpenAI is to set the OPENAI_API_KEY and
 
 ```bash
 export OPENAI_API_KEY=-
-export OPENAI_BASE_URL=http://local.ai:8080/v1
+export OPENAI_BASE_URL=http://localhost:8080/v1
 ```
 
 You can also create an OpenAIConfig object and pass it to the constructor of the OpenAIChat or OpenAIEmbeddings.
@@ -142,9 +142,11 @@ You can also create an OpenAIConfig object and pass it to the constructor of the
 ```php
 $config = new OpenAIConfig();
 $config->apiKey = '-';
-$config->url = 'http://local.ai:8080/v1';
+$config->url = 'http://localhost:8080/v1';
 $chat = new OpenAIChat($config);
 ```
+
+Here you can find a [docker compose file for running LocalAI](devx/docker-compose-localai.yml) on your machine for development purposes.
 
 ### Chat
 
