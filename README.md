@@ -19,6 +19,19 @@ We can find great external resource on LLPhant (ping us to add yours):
 - 🇫🇷 [Retour d'expérience sur la création d'un agent autonome](https://www.youtube.com/watch?v=ZnYUxTtS6IU)
 - 🇬🇧 [Exploring AI riding an LLPhant](https://www.slideshare.net/slideshow/exploring-ai-riding-an-llphant-an-open-source-library-to-use-llms-and-vector-dbs-in-php/272059145)
 
+
+## Sponsor
+
+LLPhant is sponsored by :
+- [AGO](https://useago.com). Generative AI customer support solutions. 
+- [Theodo](https://www.theodo.fr/) a leading digital agency building web application with Generative AI.
+
+<div align="center">
+  <a href="https://www.theodo.fr/" />
+    <img alt="Theodo logo" src="https://cdn2.hubspot.net/hub/2383597/hubfs/Website/Logos/Logo_Theodo_cropped.svg" width="200"/>
+  </a>
+</div>
+
 ## Table of Contents
 - [Get Started](#get-started)
   - [Database](#database)
@@ -749,13 +762,3 @@ Thanks to our contributors:
 <a href="https://github.com/theodo-group/llphant/graphs/contributors">
 <img src="https://contrib.rocks/image?repo=theodo-group/llphant" />
 </a>
-
-## Sponsor
-
-LLPhant is sponsored by [Theodo](https://www.theodo.fr/) a leading digital agency building web application with Generative AI.
-
-<div align="center">
-  <a href="https://www.theodo.fr/" />
-    <img alt="Theodo logo" src="https://cdn2.hubspot.net/hub/2383597/hubfs/Website/Logos/Logo_Theodo_cropped.svg" width="200"/>
-  </a>
-</div>
