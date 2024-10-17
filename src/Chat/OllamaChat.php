@@ -10,7 +10,6 @@ use LLPhant\Chat\CalledFunction\CalledFunction;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\ToolFormatter;
 use LLPhant\Exception\HttpException;
-use LLPhant\Exception\MissingParameterException;
 use LLPhant\OllamaConfig;
 use LLPhant\Utility;
 use Psr\Http\Message\ResponseInterface;
@@ -20,12 +19,12 @@ use Psr\Http\Message\StreamInterface;
  * Ollama chat
  *
  * @see https://ollama.ai/
+ *
+ * @phpstan-import-type ModelOptions from OllamaConfig
  */
 class OllamaChat implements ChatInterface
 {
     private ?Message $systemMessage = null;
-
-    private readonly bool $formatJson;
 
     /** @var array<string, mixed> */
     private array $modelOptions = [];
@@ -38,16 +37,12 @@ class OllamaChat implements ChatInterface
     /** @var CalledFunction[] */
     public array $functionsCalled = [];
 
-    public function __construct(protected OllamaConfig $config)
+    public function __construct(protected OllamaConfig $config = new OllamaConfig())
     {
-        if (! isset($config->model)) {
-            throw new MissingParameterException('You need to specify a model for Ollama');
-        }
         $this->client = new Client([
             'base_uri' => $config->url,
         ]);
 
-        $this->formatJson = $config->formatJson;
         $this->modelOptions = $config->modelOptions;
     }
 
@@ -64,10 +59,6 @@ class OllamaChat implements ChatInterface
             'prompt' => $prompt,
             'stream' => false,
         ];
-
-        if ($this->formatJson) { // force output to be in a json format (in opposition to a text)
-            $params['format'] = 'json';
-        }
 
         if ($this->systemMessage instanceof Message) {
             $params['system'] = $this->systemMessage->content;
