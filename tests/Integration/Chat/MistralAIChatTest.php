@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Tests\Integration\Chat;
 
 use LLPhant\Chat\MistralAIChat;
-use LLPhant\OpenAIConfig;
+use LLPhant\MistralAIConfig;
 use OpenAI\Client;
 
 it('can be supplied with a custom client', function () {
     $client = \Mockery::mock(Client::class);
     $client->shouldReceive('chat')->once();
 
-    $config = new OpenAIConfig();
+    $config = new MistralAIConfig();
     $config->client = $client;
 
     $chat = new MistralAIChat($config);
@@ -35,7 +35,7 @@ it('can generate some stuff with a system prompt', function () {
 });
 
 it('can load any existing model', function () {
-    $config = new OpenAIConfig();
+    $config = new MistralAIConfig();
     $config->model = 'mistral-tiny';
     $chat = new MistralAIChat($config);
     $response = $chat->generateText('one + one ?');
