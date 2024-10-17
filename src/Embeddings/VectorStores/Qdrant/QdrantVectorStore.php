@@ -8,6 +8,7 @@ use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
 use Qdrant\Config;
+use Qdrant\Exception\InvalidArgumentException;
 use Qdrant\Http\Transport;
 use Qdrant\Models\Filter\Condition\ConditionInterface;
 use Qdrant\Models\Filter\Filter;
@@ -26,9 +27,36 @@ class QdrantVectorStore extends VectorStoreBase
 
     public Qdrant $client;
 
-    public function __construct(Config $config, private string $collectionName)
-    {
+    public function __construct(
+        Config $config,
+        private string $collectionName,
+        private ?string $vectorName = self::QDRANT_OPENAI_VECTOR_NAME,
+        private string $distance = VectorParams::DISTANCE_COSINE,
+    ) {
         $this->client = new Qdrant(new Transport(new Client(), $config));
+    }
+
+    public function setClient(Qdrant $client): void
+    {
+        $this->client = $client;
+    }
+
+    public function setVectorName(?string $vectorName): void
+    {
+        $this->vectorName = $vectorName;
+    }
+
+    /**
+     * @param  $distance  string [Cosine, Euclid, Dot]
+     *
+     * @throws InvalidArgumentException
+     */
+    public function setDistance(string $distance): void
+    {
+        if (! in_array($distance, [VectorParams::DISTANCE_COSINE, VectorParams::DISTANCE_DOT, VectorParams::DISTANCE_EUCLID])) {
+            throw new InvalidArgumentException('Invalid distance');
+        }
+        $this->distance = $distance;
     }
 
     /**
@@ -53,11 +81,8 @@ class QdrantVectorStore extends VectorStoreBase
     public function createCollection(string $name, int $embeddingLength): Response
     {
         $createCollection = new CreateCollection();
-
-        $createCollection->addVector(
-            new VectorParams(
-                $embeddingLength,
-                VectorParams::DISTANCE_COSINE), QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME);
+        $vectorParams = new VectorParams($embeddingLength, $this->distance);
+        $createCollection->addVector($vectorParams, $this->vectorName);
         $response = $this->client->collections($name)->create($createCollection);
         $this->collectionName = $name;
 
@@ -93,7 +118,7 @@ class QdrantVectorStore extends VectorStoreBase
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
-        $vectorStruct = new VectorStruct($embedding, QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME);
+        $vectorStruct = new VectorStruct($embedding, $this->vectorName);
         $filter = new Filter();
 
         if (isset($additionalArguments['must'])) {
@@ -157,7 +182,7 @@ class QdrantVectorStore extends VectorStoreBase
         $points->addPoint(
             new PointStruct(
                 $id,
-                new VectorStruct($document->embedding, QdrantVectorStore::QDRANT_OPENAI_VECTOR_NAME),
+                new VectorStruct($document->embedding, $this->vectorName),
                 [
                     'id' => $id,
                     'content' => $document->content,
