@@ -121,9 +121,7 @@ class OpenSearchVectorStore extends VectorStoreBase
     /**
      * {@inheritDoc}
      *
-     * @param  array{filter?: string|array<string, mixed>, num_candidates?: int}  $additionalArguments
-     *
-     * num_candidates is used to tune approximate k-NN for speed or accuracy
+     * @param  array{filter?: string|array<string, mixed>}  $additionalArguments
      */
     public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array
     {
