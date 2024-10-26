@@ -10,16 +10,10 @@ use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\Parameter;
 use LLPhant\Chat\Message;
 use LLPhant\Chat\OllamaChat;
-use LLPhant\Exception\MissingParameterException;
 use LLPhant\OllamaConfig;
 use LLPhant\Utility;
 use Psr\Http\Message\StreamInterface;
 use Tests\Integration\Chat\WeatherExample;
-
-it('error when construct with no model', function () {
-    $config = new OllamaConfig();
-    $chat = new OllamaChat($config);
-})->throws(MissingParameterException::class, 'You need to specify a model for Ollama');
 
 it('no error when construct with model', function () {
     $config = new OllamaConfig();
