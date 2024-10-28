@@ -1,0 +1,37 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    container_name: opensearch
+    environment:
+      discovery.type: single-node
+      node.name: opensearch
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.17.1
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]'
+    networks:
+      - opensearch-net
+    depends_on:
+      - opensearch
+
+volumes:
+  opensearch-data:
+    driver: local
+
+networks:
+  opensearch-net:
+    driver: bridge
