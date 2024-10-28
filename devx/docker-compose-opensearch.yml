@@ -6,6 +6,7 @@ services:
       discovery.type: single-node
       node.name: opensearch
       OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "OpenSearch2.17"
     volumes:
       - opensearch-data:/usr/share/opensearch/data
     ports:
