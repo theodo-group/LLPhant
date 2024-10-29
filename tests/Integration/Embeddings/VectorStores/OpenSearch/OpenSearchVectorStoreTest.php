@@ -7,27 +7,35 @@ use LLPhant\Embeddings\VectorStores\OpenSearch\OpenSearchVectorStore;
 use OpenSearch\ClientBuilder;
 
 it('tests a full embedding flow with OpenSearch', function () {
-    // Get the already embeded france.txt and paris.txt documents
+    // Get the already embedded france.txt and paris.txt documents
     $path = __DIR__.'/../EmbeddedMock/francetxt_paristxt.json';
-    $rawFileContent = file_get_contents($path);
+    $rawFileContent = \file_get_contents($path);
+
     if (! $rawFileContent) {
         throw new RuntimeException('File not found');
     }
 
-    $rawDocuments = json_decode($rawFileContent, true);
+    $rawDocuments = \json_decode($rawFileContent, true);
     $embeddedDocuments = DocumentUtils::createDocumentsFromArray($rawDocuments);
 
     // Get the embedding of "France the country"
     $path = __DIR__.'/../EmbeddedMock/france_the_country_embedding.json';
-    $rawFileContent = file_get_contents($path);
+    $rawFileContent = \file_get_contents($path);
+
     if (! $rawFileContent) {
         throw new RuntimeException('File not found');
     }
+
     /** @var float[] $embeddingQuery */
-    $embeddingQuery = json_decode($rawFileContent, true);
+    $embeddingQuery = \json_decode($rawFileContent, true);
+    $hosts = \explode(',', \getenv('OPENSEARCH_HOSTS') ?: '');
+
+    if (empty(\array_filter($hosts))) {
+        $hosts = ['https://localhost:9200'];
+    }
 
     $client = (new ClientBuilder())::create()
-        ->setHosts([getenv('OPEN_SEARCH_URL') ?? 'https://localhost:9200'])
+        ->setHosts($hosts)
         ->setBasicAuthentication('admin', 'OpenSearch2.17')
         ->build();
     $vectorStore = new OpenSearchVectorStore($client, 'llphant_test');
@@ -39,8 +47,14 @@ it('tests a full embedding flow with OpenSearch', function () {
 
     $requestParam = [
         'filter' => [
-            'term' => [
-                'sourceName' => 'paris.txt',
+            'bool' => [
+                'must' => [
+                    [
+                        'term' => [
+                            'sourceName' => 'paris.txt',
+                        ],
+                    ],
+                ],
             ],
         ],
     ];

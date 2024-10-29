@@ -199,6 +199,10 @@ class OpenSearchVectorStore extends VectorStoreBase
                         'dimension' => $vectorDim,
                         'index' => true,
                         'similarity' => 'cosine',
+                        'method' => [
+                            'name' => 'hnsw',
+                            'engine' => 'lucene',
+                        ],
                     ],
                 ],
             ],
