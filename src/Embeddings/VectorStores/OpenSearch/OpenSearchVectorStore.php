@@ -176,7 +176,7 @@ class OpenSearchVectorStore extends VectorStoreBase
             return;
         }
 
-        /** @var array{string: array{mappings: array{embedding: array{mapping: array{embedding: array{dims: int}}}}}} $response */
+        /** @var array{string: array{mappings: array{embedding: array{mapping: array{embedding: array{dimension: int}}}}}} $response */
         $response = $this->client->indices()->getFieldMapping([
             'index' => $this->indexName,
             'fields' => 'embedding',
@@ -185,7 +185,7 @@ class OpenSearchVectorStore extends VectorStoreBase
 
         if (
             array_key_exists('embedding', $mappings)
-            && $mappings['embedding']['mapping']['embedding']['dims'] === $vectorDim
+            && $mappings['embedding']['mapping']['embedding']['dimension'] === $vectorDim
         ) {
             return;
         }

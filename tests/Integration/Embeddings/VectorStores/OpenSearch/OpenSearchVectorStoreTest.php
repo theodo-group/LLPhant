@@ -37,9 +37,10 @@ it('tests a full embedding flow with OpenSearch', function () {
     $client = (new ClientBuilder())::create()
         ->setHosts($hosts)
         ->setBasicAuthentication('admin', 'OpenSearch2.17')
+        ->setSSLVerification(false)
         ->build();
-    $vectorStore = new OpenSearchVectorStore($client, 'llphant_test');
 
+    $vectorStore = new OpenSearchVectorStore($client, 'llphant_test');
     $vectorStore->addDocuments($embeddedDocuments);
 
     $searchResult1 = $vectorStore->similaritySearch($embeddingQuery, 2);
