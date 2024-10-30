@@ -10,7 +10,7 @@ class OpenAIConfig
 {
     public string $apiKey;
 
-    public string $url = 'api.openai.com/v1';
+    public string $url = 'https://api.openai.com/v1';
 
     public ?ClientContract $client = null;
 
