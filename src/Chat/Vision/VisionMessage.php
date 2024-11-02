@@ -14,7 +14,7 @@ class VisionMessage extends Message implements JsonSerializable
     /**
      * @param  ImageSource[]  $images
      */
-    public static function describe(array $images, ?string $message = null): self
+    public static function fromImages(array $images, ?string $message = null): self
     {
         $instance = new self;
         $instance->role = ChatRole::User;

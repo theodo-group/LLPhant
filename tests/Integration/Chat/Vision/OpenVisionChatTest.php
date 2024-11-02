@@ -14,7 +14,7 @@ it('can describe images with urls', function () {
     $config->model = 'gpt-4o-mini';
     $chat = new OpenAIChat($config);
     $messages = [
-        VisionMessage::describe([
+        VisionMessage::fromImages([
             new ImageSource('https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Lecco_riflesso.jpg/800px-Lecco_riflesso.jpg'),
             new ImageSource('https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Lecco_con_riflessi_all%27alba.jpg/640px-Lecco_con_riflessi_all%27alba.jpg'),
         ], 'What is represented in these images?'),
@@ -30,7 +30,7 @@ it('can describe images in base64', function () {
     $fileContents = \file_get_contents(__DIR__.'/test.jpg');
     $base64 = \base64_encode($fileContents);
     $messages = [
-        VisionMessage::describe([
+        VisionMessage::fromImages([
             new ImageSource($base64),
         ]),
     ];
