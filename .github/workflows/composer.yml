@@ -1,0 +1,41 @@
+name: composer
+
+on:
+  push:
+    paths:
+      - composer.json
+      - .github/workflows/composer.yml
+
+jobs:
+  build:
+    name: "PHP 8.3 on ubuntu-latest"
+    if: ${{ !contains(github.event.head_commit.message, 'release v') }}
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: composer,composer-unused
+          coverage: none
+
+      - run: git config user.email "53265646+charescape@users.noreply.github.com"
+      - run: git config user.name  "charescape"
+
+      - run: rm -f composer.lock
+      - run: composer install
+
+      - run: composer-unused
+        continue-on-error: true
+
+      - run: git status
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "composer.lock"
