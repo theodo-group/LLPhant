@@ -13,7 +13,7 @@ jobs:
         os: [ubuntu-latest]
         php: [8.3]
 
-    name: Tests P${{ matrix.php }} - ${{ matrix.os }}
+    name: Tests PHP ${{ matrix.php }} on ${{ matrix.os }}
 
     steps:
 
