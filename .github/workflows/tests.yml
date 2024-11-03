@@ -12,9 +12,8 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php: [8.3]
-        dependency-version: [prefer-lowest, prefer-stable]
 
-    name: Tests P${{ matrix.php }} - ${{ matrix.os }} - ${{ matrix.dependency-version }}
+    name: Tests P${{ matrix.php }} - ${{ matrix.os }}
 
     steps:
 
@@ -29,7 +28,7 @@ jobs:
         coverage: none
 
     - name: Install Composer dependencies
-      run: rm -f composer.lock && composer install --${{ matrix.dependency-version }} --no-interaction --prefer-dist
+      run: rm -f composer.lock && composer install --no-interaction --prefer-dist
 
     - name: Unit Tests
       run: composer test:unit
