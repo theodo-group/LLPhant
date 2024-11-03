@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": "^8.1.0",
+        "php": "^8.3",
         "guzzlehttp/guzzle": "^7.4.5",
         "guzzlehttp/psr7": "^2.7",
         "openai-php/client": "^v0.10.1",
