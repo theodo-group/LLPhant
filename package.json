@@ -1,0 +1,13 @@
+{
+    "private": true,
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "patch": "np patch --yolo --no-publish --message=\"release v%s\"",
+        "minor": "np minor --yolo --no-publish --message=\"release v%s\"",
+        "major": "np major --yolo --no-publish --message=\"release v%s\""
+    },
+    "devDependencies": {
+        "np": "^10.0"
+    }
+}
