@@ -2,7 +2,7 @@
 
 namespace LLPhant\Query\SemanticSearch;
 
-class ChainTransformer implements QueryTransformer
+class PipeTransformer implements QueryTransformer
 {
     /** @var QueryTransformer[] */
     private array $transformers = [];
