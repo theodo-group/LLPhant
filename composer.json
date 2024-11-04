@@ -23,7 +23,8 @@
         "hkulekci/qdrant": "This is required for the QdrantVectoreStore.",
         "predis/predis": "This is required for the RedisVectoreStore.",
         "elasticsearch/elasticsearch": "This is required for the ElasticsearchVectoreStore.",
-        "codewithkyrian/chromadb-php": "This is required for the ChromaDBVectorStore."
+        "codewithkyrian/chromadb-php": "This is required for the ChromaDBVectorStore.",
+        "opensearch-project/opensearch-php": "This is required for the OpenSearchVectorStore."
     },
     "require-dev": {
         "codewithkyrian/chromadb-php": "^0.3.0",
@@ -32,6 +33,7 @@
         "hkulekci/qdrant": "^v0.5.3",
         "laravel/pint": "v1.15.3",
         "mockery/mockery": "^1.6",
+        "opensearch-project/opensearch-php": "^2.3",
         "pestphp/pest": "2.32.0",
         "pestphp/pest-plugin-arch": "^2.5.0",
         "pestphp/pest-plugin-type-coverage": "2.8.0",
