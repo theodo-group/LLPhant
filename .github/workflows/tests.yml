@@ -27,6 +27,9 @@ jobs:
         extensions: dom, mbstring, zip
         coverage: none
 
+    - name: Install os dependencies
+      run: sudo apt-get install -y poppler-utils
+
     - name: Install Composer dependencies
       run: rm -f composer.lock && composer install --no-interaction --prefer-dist
 

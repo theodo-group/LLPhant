@@ -3,7 +3,7 @@
 namespace LLPhant\Embeddings\DataReader;
 
 use LLPhant\Embeddings\Document;
-use Smalot\PdfParser\Parser;
+use Spatie\PdfToText\Pdf;
 
 final class FileDataReader implements DataReader
 {
@@ -80,10 +80,7 @@ final class FileDataReader implements DataReader
         }
 
         if ($fileExtension === 'pdf') {
-            $parser = new Parser();
-            $pdf = $parser->parseFile($path);
-
-            return $pdf->getText();
+            return Pdf::getText($path);
         }
 
         if ($fileExtension === 'docx') {

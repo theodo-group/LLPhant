@@ -15,7 +15,7 @@
         "openai-php/client": "^v0.10.1",
         "phpoffice/phpword": "^1.3.0",
         "psr/http-message": "^2.0",
-        "smalot/pdfparser": "^2.7",
+        "spatie/pdf-to-text": "^1.54",
         "thiagoalessio/tesseract_ocr": "^2.13"
     },
     "suggest": {
