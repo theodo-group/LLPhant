@@ -4,8 +4,15 @@ namespace LLPhant\Query\SemanticSearch;
 
 class PipeTransformer implements QueryTransformer
 {
-    /** @var QueryTransformer[] */
-    private array $transformers = [];
+    /**
+     * @var QueryTransformer[]
+     */
+    private array $transformers;
+
+    public function __construct(QueryTransformer ...$transformers)
+    {
+        $this->transformers = $transformers;
+    }
 
     public function addTransformer(QueryTransformer $queryTransformer = new IdentityTransformer()): void
     {

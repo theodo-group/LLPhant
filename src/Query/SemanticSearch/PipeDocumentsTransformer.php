@@ -7,7 +7,7 @@ class PipeDocumentsTransformer implements RetrievedDocumentsTransformer
     /**
      * @var RetrievedDocumentsTransformer[]
      */
-    private readonly array $transformers;
+    private array $transformers;
 
     public function __construct(RetrievedDocumentsTransformer ...$transformers)
     {
