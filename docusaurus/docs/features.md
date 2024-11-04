@@ -5,7 +5,7 @@
 | Anthropic |   ✅    |   ✅   |      ✅      |              |               |                 |
 | Mistral   |   ✅    |   ✅   |            |              |               |                 |
 | Ollama    |   ✅    |   ✅   | Some models |              |               |                 |
-| OpenAI    |   ✅    |   ✅   |      ✅      |              |       ✅       |        ✅      |
+| OpenAI    |   ✅    |   ✅   |      ✅      |      ✅       |       ✅       |        ✅      |
 
 # Supported Vector Stores
 

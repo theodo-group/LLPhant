@@ -54,7 +54,7 @@ class OpenAIChat implements ChatInterface
             $this->client = OpenAI::factory()
                 ->withApiKey($apiKey)
                 ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
-                ->withBaseUri($config->url ?? (getenv('OPENAI_BASE_URL') ?: 'api.openai.com/v1'))
+                ->withBaseUri($config->url ?? (getenv('OPENAI_BASE_URL') ?: 'https://api.openai.com/v1'))
                 ->make();
         }
         $this->model = $config->model ?? OpenAIChatModel::Gpt4Turbo->value;
