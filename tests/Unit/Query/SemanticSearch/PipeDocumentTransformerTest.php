@@ -27,10 +27,19 @@ function transformer(string $color): RetrievedDocumentsTransformer
     };
 }
 
-it('can pipe transformations', function () {
+it('can pipe document transformations', function () {
     $transformer = new PipeDocumentsTransformer(transformer('green'), transformer('white'), transformer('red'));
     $transformed = $transformer->transformDocuments(['sample'], DocumentUtils::documents('one', 'two', 'three'));
     expect($transformed[0]->content)->toBe('one green white red')
         ->and($transformed[1]->content)->toBe('two green white red')
         ->and($transformed[2]->content)->toBe('three green white red');
+});
+
+it('can add transformers to pipe document transformations', function () {
+    $transformer = new PipeDocumentsTransformer(transformer('green'), transformer('white'), transformer('red'));
+    $transformer->addTransformer(transformer('blue'));
+    $transformed = $transformer->transformDocuments(['sample'], DocumentUtils::documents('one', 'two', 'three'));
+    expect($transformed[0]->content)->toBe('one green white red blue')
+        ->and($transformed[1]->content)->toBe('two green white red blue')
+        ->and($transformed[2]->content)->toBe('three green white red blue');
 });
