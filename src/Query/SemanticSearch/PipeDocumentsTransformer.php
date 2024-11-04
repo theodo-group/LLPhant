@@ -14,6 +14,11 @@ class PipeDocumentsTransformer implements RetrievedDocumentsTransformer
         $this->transformers = $transformers;
     }
 
+    public function addTransformer(RetrievedDocumentsTransformer $retrievedDocumentsTransformer = new IdentityDocumentsTransformer()): void
+    {
+        $this->transformers[] = $retrievedDocumentsTransformer;
+    }
+
     /**
      * {@inheritDoc}
      */
