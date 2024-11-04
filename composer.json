@@ -15,7 +15,8 @@
         "openai-php/client": "^v0.10.1",
         "phpoffice/phpword": "^1.3.0",
         "psr/http-message": "^2.0",
-        "smalot/pdfparser": "^2.7"
+        "smalot/pdfparser": "^2.7",
+        "thiagoalessio/tesseract_ocr": "^2.13"
     },
     "suggest": {
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
