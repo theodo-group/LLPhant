@@ -164,6 +164,10 @@ class FunctionFormatter
                 'type' => $parameter->type,
                 'description' => $parameter->description,
             ];
+
+            if ($parameter->enum) {
+                $result[$parameter->name]['enum'] = $parameter->enum;
+            }
         }
 
         $requiredParametersNames = [];

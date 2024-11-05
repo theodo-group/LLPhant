@@ -166,13 +166,14 @@ it('can format function info for Anthropic', function () {
     $subject = new Parameter('subject', 'string', 'the subject of the mail');
     $body = new Parameter('body', 'string', 'the body of the mail');
     $email = new Parameter('email', 'string', 'the email address');
+    $label = new Parameter('label', 'string', 'the label of the email', ['normal', 'urgent']);
 
     $function = new FunctionInfo(
         'sendMail',
         new MailerExample(),
         'send a mail',
-        [$subject, $body, $email],
-        [$subject, $body, $email]
+        [$subject, $body, $email, $label],
+        [$subject, $body, $email, $label]
     );
 
     $formattedFunction = FunctionFormatter::formatFunctionsToAnthropic([$function]);
@@ -195,12 +196,21 @@ it('can format function info for Anthropic', function () {
                 "email": {
                     "type": "string",
                     "description": "the email address"
+                },
+                "label": {
+                    "type": "string",
+                    "description": "the label of the email",
+                    "enum": [
+                        "normal",
+                        "urgent"
+                    ]
                 }
             },
             "required": [
                 "subject",
                 "body",
-                "email"
+                "email",
+                "label"
             ]
         }
     }
