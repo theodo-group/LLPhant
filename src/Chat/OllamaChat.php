@@ -44,19 +44,12 @@ class OllamaChat implements ChatInterface
             throw new MissingParameterException('You need to specify a model for Ollama');
         }
 
-        $clientConfig = [
+        $this->client = new Client([
             'base_uri' => $config->url,
-        ];
-        if (property_exists($config, 'timeout') && $config->timeout !== null) {
-            $clientConfig['timeout'] = $config->timeout;
-        }
-        if (property_exists($config, 'connect_timeout') && $config->connect_timeout !== null) {
-            $clientConfig['connect_timeout'] = $config->connect_timeout;
-        }
-        if (property_exists($config, 'read_timeout') && $config->read_timeout !== null) {
-            $clientConfig['read_timeout'] = $config->read_timeout;
-        }
-        $this->client = new Client($clientConfig);
+            'timeout' => $config->timeout,
+            'connect_timeout' => $config->connect_timeout,
+            'read_timeout' => $config->read_timeout,
+        ]);
 
         $this->formatJson = $config->formatJson;
         $this->modelOptions = $config->modelOptions;
