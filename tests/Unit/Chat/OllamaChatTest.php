@@ -16,6 +16,21 @@ use LLPhant\Utility;
 use Psr\Http\Message\StreamInterface;
 use Tests\Integration\Chat\WeatherExample;
 
+it('not setting any timeout for HTTP client', function () {
+    $config = new OllamaConfig();
+    $config->model = 'test';
+    $chat = new OllamaChat($config);
+    expect($chat->client->getConfig('timeout'))->toBeNull();
+});
+
+it('is setting a timeout for HTTP client', function () {
+    $config = new OllamaConfig();
+    $config->model = 'test';
+    $config->timeout = 60;
+    $chat = new OllamaChat($config);
+    expect($chat->client->getConfig('timeout'))->toBe(60);
+});
+
 it('error when construct with no model', function () {
     $config = new OllamaConfig();
     $chat = new OllamaChat($config);
