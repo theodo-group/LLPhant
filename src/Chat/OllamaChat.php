@@ -45,7 +45,7 @@ class OllamaChat implements ChatInterface
         }
 
         $clientConfig = [
-            'base_uri' => $config->url
+            'base_uri' => $config->url,
         ];
         if (isset($this->config['timeout'])) {
             $clientConfig['timeout'] = $this->config['timeout'];
