@@ -14,11 +14,11 @@ class OllamaConfig
 
     public bool $formatJson = false;
 
-    public int $timeout;
+    public ?int $timeout = null;
 
-    public int $connect_timeout;
+    public ?int $connect_timeout = null;
 
-    public int $read_timeout;
+    public ?int $read_timeout = null;
 
     /**
      * model options, example:
