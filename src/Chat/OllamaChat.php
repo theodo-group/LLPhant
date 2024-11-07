@@ -47,14 +47,14 @@ class OllamaChat implements ChatInterface
         $clientConfig = [
             'base_uri' => $config->url,
         ];
-        if (isset($this->config['timeout'])) {
-            $clientConfig['timeout'] = $this->config['timeout'];
+        if (isset($config->timeout)) {
+            $clientConfig['timeout'] = $config->timeout;
         }
-        if (isset($this->config['connect_timeout'])) {
-            $clientConfig['connect_timeout'] = $this->config['connect_timeout'];
+        if (isset($config->connect_timeout)) {
+            $clientConfig['connect_timeout'] = $config->connect_timeout;
         }
-        if (isset($this->config['read_timeout'])) {
-            $clientConfig['read_timeout'] = $this->config['read_timeout'];
+        if (isset($config->read_timeout)) {
+            $clientConfig['read_timeout'] = $config->read_timeout;
         }
         $this->client = new Client($clientConfig);
 
