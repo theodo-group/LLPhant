@@ -37,7 +37,7 @@
         "pestphp/pest": "2.32.0",
         "pestphp/pest-plugin-arch": "^2.5.0",
         "pestphp/pest-plugin-type-coverage": "2.8.0",
-        "phpstan/phpstan": "1.10.55",
+        "phpstan/phpstan": "1.12.9",
         "predis/predis": "^2.2",
         "rector/rector": "^0.16.0",
         "symfony/cache": "^7.0",
