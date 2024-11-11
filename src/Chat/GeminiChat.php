@@ -196,6 +196,7 @@ class GeminiChat implements ChatInterface
 
     /**
      * @param Message[] $messages
+     * @return string The response from the Gemini API
      */
     public function generateChat(array $messages): string
     {
@@ -204,6 +205,7 @@ class GeminiChat implements ChatInterface
 
     /**
      * @param Message[] $messages
+     * @return ResponseContract The response from the Gemini API
      */
     private function createChatAnswer(array $messages): ResponseContract
     {
@@ -217,6 +219,7 @@ class GeminiChat implements ChatInterface
      * TODO: Gemini client does not support chat streaming, so currently implemented as a single response in a stream.
      *
      * @param Message[] $messages
+     * @return StreamInterface The streamed response
      */
     public function generateChatStream(array $messages): StreamInterface
     {
@@ -256,6 +259,7 @@ class GeminiChat implements ChatInterface
     /**
      * TODO: This method has not yet been implemented, as google-gemini-php/gemini does not support function calls.
      *
+     * @param ResponseContract $answer The response from the Gemini API
      * @return array<FunctionInfo>
      */
     private function getToolsToCall(ResponseContract $answer): array
@@ -265,6 +269,7 @@ class GeminiChat implements ChatInterface
 
     /**
      * @param string $message The system message to attach to the response
+     * @return void
      */
     public function setSystemMessage(string $message): void
     {
@@ -272,7 +277,8 @@ class GeminiChat implements ChatInterface
     }
 
     /**
-     * @param  FunctionInfo[]  $tools
+     * @param FunctionInfo[] $tools
+     * @return void
      */
     public function setTools(array $tools): void
     {
@@ -287,7 +293,7 @@ class GeminiChat implements ChatInterface
     /**
      * @deprecated Use setTools instead
      *
-     * @param  FunctionInfo[]  $functions
+     * @param FunctionInfo[] $functions
      */
     public function setFunctions(array $functions): void
     {
@@ -296,6 +302,8 @@ class GeminiChat implements ChatInterface
 
     /**
      * @deprecated Use addTool instead
+     *
+     * @param FunctionInfo $functionInfo The function to add
      */
     public function addFunction(FunctionInfo $functionInfo): void
     {

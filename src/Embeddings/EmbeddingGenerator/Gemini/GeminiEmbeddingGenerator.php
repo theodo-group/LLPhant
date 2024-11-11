@@ -28,6 +28,10 @@ final class GeminiEmbeddingGenerator implements EmbeddingGeneratorInterface
     /** @var string $model */
     private string $model;
 
+    /**
+     * @param GeminiConfig|null $config
+     * @throws Exception
+     */
     public function __construct(?GeminiConfig $config = null)
     {
         if ($config instanceof GeminiConfig && $config->client instanceof ClientContract) {

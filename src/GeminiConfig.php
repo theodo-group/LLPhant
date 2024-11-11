@@ -34,7 +34,7 @@ class GeminiConfig
      *
      * @see https://ai.google.dev/gemini-api/docs/models/generative-models#model-parameters
      *
-     * @var array<string, mixed>
+     * @var array<string, mixed> $modelOptions
      */
     public array $modelOptions = [];
 }
