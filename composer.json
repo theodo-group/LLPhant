@@ -1,7 +1,7 @@
 {
     "name": "theodo-group/llphant",
     "description": "LLPhant is a library to help you build Generative AI applications.",
-    "keywords": ["php", "openai", "GPT-4", "api", "language", "LLM", "vectorstore", "ollama", "anthropic", "mistral"],
+    "keywords": ["php", "openai", "GPT-4", "api", "language", "LLM", "vectorstore", "ollama", "anthropic", "mistral", "gemini"],
     "license": "MIT",
     "authors": [
         {
@@ -15,7 +15,8 @@
         "openai-php/client": "^v0.10.1",
         "phpoffice/phpword": "^1.3.0",
         "psr/http-message": "^2.0",
-        "smalot/pdfparser": "^2.7"
+        "smalot/pdfparser": "^2.7",
+        "google-gemini-php/client": "^1.0"
     },
     "suggest": {
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
