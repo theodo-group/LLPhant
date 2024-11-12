@@ -15,8 +15,7 @@
         "openai-php/client": "^v0.10.1",
         "phpoffice/phpword": "^1.3.0",
         "psr/http-message": "^2.0",
-        "smalot/pdfparser": "^2.7",
-        "google-gemini-php/client": "^1.0"
+        "smalot/pdfparser": "^2.7"
     },
     "suggest": {
         "doctrine/orm": "This is required for the DoctrineVectoreStore. This should be working with any version ^2.13.0",
@@ -25,7 +24,8 @@
         "predis/predis": "This is required for the RedisVectoreStore.",
         "elasticsearch/elasticsearch": "This is required for the ElasticsearchVectoreStore.",
         "codewithkyrian/chromadb-php": "This is required for the ChromaDBVectorStore.",
-        "opensearch-project/opensearch-php": "This is required for the OpenSearchVectorStore."
+        "opensearch-project/opensearch-php": "This is required for the OpenSearchVectorStore.",
+        "google-gemini-php/client": "^1.0"
     },
     "require-dev": {
         "codewithkyrian/chromadb-php": "^0.3.0",
