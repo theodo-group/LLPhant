@@ -437,6 +437,7 @@ There are currently these vectorStore classes:
 - MilvusVectorStore stores the embeddings in a [Milvus](https://milvus.io/) database.
 - ChromaDBVectorStore stores the embeddings in a [ChromaDB](https://www.trychroma.com/) database.
 - AstraDBVectorStore stores the embeddings in a [AstraDBB](https://docs.datastax.com/en/astra-db-serverless/index.html) database.
+- OpenSearchVectorStore stores the embeddings in a [OpenSearch](https://opensearch.org/) database, which is a fork of Elasticsearch.
 
 Example of usage with the `DoctrineVectorStore` class to store the embeddings in a database:
 

@@ -19,6 +19,7 @@
 | Memory                    |
 | Milvus                    |
 | Qdrant                    |
+| OpenSearch                |
 | Redis                     |
 
 # Supported embedding generators
