@@ -47,8 +47,8 @@ class OllamaChat implements ChatInterface
         $this->client = new Client([
             'base_uri' => $config->url,
             'timeout' => $config->timeout,
-            'connect_timeout' => $config->connect_timeout,
-            'read_timeout' => $config->read_timeout,
+            'connect_timeout' => $config->timeout,
+            'read_timeout' => $config->timeout,
         ]);
 
         $this->formatJson = $config->formatJson;
