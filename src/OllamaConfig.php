@@ -16,10 +16,6 @@ class OllamaConfig
 
     public ?int $timeout = null;
 
-    public ?int $connect_timeout = null;
-
-    public ?int $read_timeout = null;
-
     /**
      * model options, example:
      * - options
