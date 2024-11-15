@@ -29,7 +29,7 @@
     "require-dev": {
         "codewithkyrian/chromadb-php": "^0.3.0",
         "doctrine/orm": "^2.20.0",
-        "elasticsearch/elasticsearch": "^8.15",
+        "elasticsearch/elasticsearch": "^8.16",
         "hkulekci/qdrant": "^v0.5.7",
         "laravel/pint": "v1.15.3",
         "mockery/mockery": "^1.6.12",
