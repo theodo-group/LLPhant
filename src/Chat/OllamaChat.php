@@ -324,9 +324,14 @@ class OllamaChat implements ChatInterface
             ];
         }
         foreach ($messages as $msg) {
+            $images = [];
+            foreach ($msg->images as $image) {
+                $images[] = $image->getBase64($this->client);
+            }
             $response[] = [
                 'role' => $msg->role,
                 'content' => $msg->content,
+                'images' => $images
             ];
         }
 
