@@ -315,27 +315,31 @@ class OllamaChat implements ChatInterface
      */
     protected function prepareMessages(array $messages): array
     {
-        $response = [];
+        $responseMessages = [];
         // The system message is always the first
         if (isset($this->systemMessage->role)) {
-            $response[] = [
+            $responseMessages[] = [
                 'role' => $this->systemMessage->role,
                 'content' => $this->systemMessage->content,
             ];
         }
         foreach ($messages as $msg) {
-            $images = [];
-            foreach ($msg->images as $image) {
-                $images[] = $image->getBase64($this->client);
-            }
-            $response[] = [
+            $responseMessage = [
                 'role' => $msg->role,
                 'content' => $msg->content,
-                'images' => $images,
             ];
+
+            if ($msg->images) {
+                $responseMessage['images'] = [];
+                foreach ($msg->images as $image) {
+                    $responseMessage['images'][] = $image->getBase64($this->client);
+                }
+            }
+
+            $responseMessages[] = $responseMessage;
         }
 
-        return $response;
+        return $responseMessages;
     }
 
     /**
