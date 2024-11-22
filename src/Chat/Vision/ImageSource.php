@@ -8,6 +8,7 @@ use JsonSerializable;
 class ImageSource implements JsonSerializable
 {
     private readonly string $url;
+
     private ?string $base64 = null;
 
     public function __construct(string $urlOrBase64Image, private readonly ImageQuality $detail = ImageQuality::Auto)
@@ -36,7 +37,7 @@ class ImageSource implements JsonSerializable
     {
         if (is_null($this->base64)) {
             $response = $client->request('GET', $this->url);
-            $imageData = (string)$response->getBody();
+            $imageData = (string) $response->getBody();
             $this->base64 = base64_encode($imageData);
         }
 
