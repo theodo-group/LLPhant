@@ -331,7 +331,7 @@ class OllamaChat implements ChatInterface
             $response[] = [
                 'role' => $msg->role,
                 'content' => $msg->content,
-                'images' => $images
+                'images' => $images,
             ];
         }
 
