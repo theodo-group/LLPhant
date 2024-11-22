@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\Utils;
 use LLPhant\Chat\CalledFunction\CalledFunction;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
 use LLPhant\Chat\FunctionInfo\ToolFormatter;
+use LLPhant\Chat\Vision\VisionMessage;
 use LLPhant\Exception\HttpException;
 use LLPhant\Exception\MissingParameterException;
 use LLPhant\OllamaConfig;
@@ -329,7 +330,7 @@ class OllamaChat implements ChatInterface
                 'content' => $msg->content,
             ];
 
-            if ($msg->images) {
+            if ($msg instanceof VisionMessage) {
                 $responseMessage['images'] = [];
                 foreach ($msg->images as $image) {
                     $responseMessage['images'][] = $image->getBase64($this->client);
