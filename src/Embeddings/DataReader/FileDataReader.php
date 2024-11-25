@@ -15,7 +15,6 @@ final class FileDataReader implements DataReader
         private readonly array $extensions = []
     ) {
     }
-    
 
     public function getDocuments(): array
     {
@@ -54,6 +53,7 @@ final class FileDataReader implements DataReader
             }
             closedir($handle);
         }
+
         return $documents;
     }
 
@@ -61,7 +61,7 @@ final class FileDataReader implements DataReader
     {
         $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
 
-        if (!$this->validExtension($fileExtension)) {
+        if (! $this->validExtension($fileExtension)) {
             return false;
         }
 
@@ -101,19 +101,18 @@ final class FileDataReader implements DataReader
     public function extractMetadata(string $content): array
     {
         $metadata = [];
-    
+
         // Example logic: extract **Title** and **Category** from content
         if (preg_match('/\*\*Title:\*\* (.+)/', $content, $matches)) {
             $metadata['title'] = trim($matches[1]);
         }
-    
+
         if (preg_match('/\*\*Category:\*\* (.+)/', $content, $matches)) {
             $metadata['category'] = trim($matches[1]);
         }
-    
+
         return $metadata;
     }
-    
 
     private function validExtension(string $fileExtension): bool
     {

@@ -26,9 +26,6 @@ class Document
 
     /**
      * Add or update metadata fields.
-     *
-     * @param string $key
-     * @param mixed $value
      */
     public function addMetadata(string $key, mixed $value): void
     {

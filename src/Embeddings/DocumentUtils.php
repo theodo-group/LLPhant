@@ -9,11 +9,6 @@ class DocumentUtils
         return $document->sourceType.':'.$document->sourceName.':'.$document->chunkNumber;
     }
 
-    /**
-     * Qdrant needs to have uuid format for their ids.
-     * As we want deterministic IDs for idempotency, we use this barbaric function
-     * that has a *very* low probability of collision (50% chance every 2^64 inputs).
-     */
     public static function formatUUIDFromUniqueId(string $data): string
     {
         $hash = hash('sha256', $data);
@@ -46,6 +41,7 @@ class DocumentUtils
         foreach ($documentDataArray as $documentData) {
             $documents[] = self::createDocumentFromArray($documentData);
         }
+
         return $documents;
     }
 
