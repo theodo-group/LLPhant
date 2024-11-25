@@ -110,7 +110,12 @@ it('includes metadata in the document structure', function () {
     $content = "**Title:** Test Title\n**Category:** Test Category\nSample content.";
     $reader = new FileDataReader('path/to/nonexistent/file'); // Pass a dummy path
 
-    $document = $reader->getDocument($content, 'test.txt');
+    // Use Reflection to access the private method
+    $reflection = new ReflectionClass(FileDataReader::class);
+    $method = $reflection->getMethod('getDocument');
+    $method->setAccessible(true);
+    $document = $method->invokeArgs($reader, [$content, 'test.txt']);
+
     $documentArray = $document->toArray();
 
     expect($documentArray)
@@ -119,3 +124,4 @@ it('includes metadata in the document structure', function () {
         ->and($documentArray['metadata']['title'])->toEqual('Test Title')
         ->and($documentArray['metadata']['category'])->toEqual('Test Category');
 });
+
