@@ -96,28 +96,28 @@ it('can read docx preserving new lines', function () {
 });
 
 it('extracts metadata correctly from content', function () {
-    $filePath = __DIR__.'/FilesTestDirectory/data-pdf.pdf';
-    $reader = new FileDataReader($filePath, Document::class, ['pdf']);
-    $documents = $reader->getDocuments();
+    $content = "**Title:** Test Title\n**Category:** Test Category\nSample content.";
+    $reader = new FileDataReader('path/to/nonexistent/file'); // Pass a dummy path
+    $metadata = $reader->extractMetadata($content);
 
-    $metadata = $documents[0]->metadata;
-
-    // Assert the metadata includes expected keys and values
     expect($metadata)
         ->toHaveKeys(['title', 'category'])
-        ->and($metadata['title'])->toEqual('Expected Title') // Replace with the actual expected title
-        ->and($metadata['category'])->toEqual('Expected Category'); // Replace with the actual expected category
+        ->and($metadata['title'])->toEqual('Test Title')
+        ->and($metadata['category'])->toEqual('Test Category');
 });
 
-it('includes metadata in the document structure', function () {
-    $filePath = __DIR__.'/FilesTestDirectory/data.docx';
-    $reader = new FileDataReader($filePath, Document::class, ['docx']);
-    $documents = $reader->getDocuments();
 
-    $documentArray = $documents[0]->toArray();
+it('includes metadata in the document structure', function () {
+    $content = "**Title:** Test Title\n**Category:** Test Category\nSample content.";
+    $reader = new FileDataReader('path/to/nonexistent/file'); // Pass a dummy path
+
+    $document = $reader->getDocument($content, 'test.txt');
+    $documentArray = $document->toArray();
 
     expect($documentArray)
         ->toHaveKeys(['content', 'metadata'])
         ->and($documentArray['metadata'])->toBeArray()
-        ->and($documentArray['metadata']['title'])->toEqual('Expected Title'); // Replace with actual expected title
+        ->and($documentArray['metadata']['title'])->toEqual('Test Title')
+        ->and($documentArray['metadata']['category'])->toEqual('Test Category');
 });
+
