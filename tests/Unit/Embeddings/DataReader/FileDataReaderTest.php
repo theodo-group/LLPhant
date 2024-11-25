@@ -94,3 +94,30 @@ it('can read docx preserving new lines', function () {
     expect($documents)->toHaveCount(1)
         ->and($documents[0]->content)->toEqual($text);
 });
+
+it('extracts metadata correctly from content', function () {
+    $filePath = __DIR__.'/FilesTestDirectory/data-pdf.pdf';
+    $reader = new FileDataReader($filePath, Document::class, ['pdf']);
+    $documents = $reader->getDocuments();
+
+    $metadata = $documents[0]->metadata;
+
+    // Assert the metadata includes expected keys and values
+    expect($metadata)
+        ->toHaveKeys(['title', 'category'])
+        ->and($metadata['title'])->toEqual('Expected Title') // Replace with the actual expected title
+        ->and($metadata['category'])->toEqual('Expected Category'); // Replace with the actual expected category
+});
+
+it('includes metadata in the document structure', function () {
+    $filePath = __DIR__.'/FilesTestDirectory/data.docx';
+    $reader = new FileDataReader($filePath, Document::class, ['docx']);
+    $documents = $reader->getDocuments();
+
+    $documentArray = $documents[0]->toArray();
+
+    expect($documentArray)
+        ->toHaveKeys(['content', 'metadata'])
+        ->and($documentArray['metadata'])->toBeArray()
+        ->and($documentArray['metadata']['title'])->toEqual('Expected Title'); // Replace with actual expected title
+});
