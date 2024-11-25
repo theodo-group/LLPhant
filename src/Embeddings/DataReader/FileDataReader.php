@@ -13,11 +13,13 @@ final class FileDataReader implements DataReader
         public string $filePath,
         public readonly string $documentClassName = Document::class,
         private readonly array $extensions = []
-    ) {}
+    ) {
+    }
+    
 
     public function getDocuments(): array
     {
-        if (!file_exists($this->filePath)) {
+        if (! file_exists($this->filePath)) {
             return [];
         }
 
@@ -38,7 +40,7 @@ final class FileDataReader implements DataReader
         $documents = [];
         if ($handle = opendir($directory)) {
             while (($entry = readdir($handle)) !== false) {
-                $fullPath = $directory . '/' . $entry;
+                $fullPath = $directory.'/'.$entry;
                 if ($entry != '.' && $entry != '..') {
                     if (is_dir($fullPath)) {
                         $documents = [...$documents, ...$this->getDocumentsFromDirectory($fullPath)];

@@ -14,7 +14,6 @@ interface DataReader
     /**
      * Extract metadata from content.
      *
-     * @param string $content
      * @return array<string, mixed>
      */
     public function extractMetadata(string $content): array;
