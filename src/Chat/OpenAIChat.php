@@ -4,6 +4,7 @@ namespace LLPhant\Chat;
 
 use Exception;
 use GuzzleHttp\Psr7\Utils;
+use LLPhant\Chat\CalledFunction\CalledFunction;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
@@ -37,7 +38,8 @@ class OpenAIChat implements ChatInterface
     /** @var FunctionInfo[] */
     private array $tools = [];
 
-    public ?FunctionInfo $lastFunctionCalled = null;
+    /** @var CalledFunction[] */
+    public array $functionsCalled = [];
 
     public ?FunctionInfo $requiredFunction = null;
 
@@ -82,17 +84,19 @@ class OpenAIChat implements ChatInterface
 
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
-        $this->lastFunctionCalled = null;
+        $this->functionsCalled = [];
         $answer = $this->generate($prompt);
 
         $toolsToCall = $this->getToolsToCall($answer);
 
         foreach ($toolsToCall as $toolToCall) {
-            $this->lastFunctionCalled = $toolToCall;
+            $this->functionsCalled[] = $toolToCall;
         }
 
-        if ($this->lastFunctionCalled instanceof FunctionInfo) {
-            return $this->lastFunctionCalled;
+        if ($this->functionsCalled) {
+            $lastKey = array_key_last($this->functionsCalled);
+
+            return $this->functionsCalled[$lastKey]->definition;
         }
 
         return $this->responseToString($answer);
@@ -123,13 +127,15 @@ class OpenAIChat implements ChatInterface
 
         $toolsToCall = $this->getToolsToCall($answer);
 
-        $this->lastFunctionCalled = null;
+        $this->functionsCalled = [];
         foreach ($toolsToCall as $toolToCall) {
-            $this->lastFunctionCalled = $toolToCall;
+            $this->functionsCalled[] = $toolToCall;
         }
 
-        if ($this->lastFunctionCalled instanceof FunctionInfo) {
-            return $this->lastFunctionCalled;
+        if ($this->functionsCalled) {
+            $lastKey = array_key_last($this->functionsCalled);
+
+            return $this->functionsCalled[$lastKey]->definition;
         }
 
         return $this->responseToString($answer);
@@ -339,8 +345,8 @@ class OpenAIChat implements ChatInterface
     {
         $arguments = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
         $functionToCall = $this->getFunctionInfoFromName($functionName, $toolCallId);
-        $functionToCall->instance->{$functionToCall->name}(...$arguments);
-        $this->lastFunctionCalled = $functionToCall;
+        $return = $functionToCall->instance->{$functionToCall->name}(...$arguments);
+        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $return);
     }
 
     /**
