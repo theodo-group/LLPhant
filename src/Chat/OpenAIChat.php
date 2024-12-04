@@ -8,6 +8,7 @@ use LLPhant\Chat\CalledFunction\CalledFunction;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
+use LLPhant\Chat\FunctionInfo\ToolCall;
 use LLPhant\Chat\FunctionInfo\ToolFormatter;
 use LLPhant\OpenAIConfig;
 use OpenAI;
@@ -111,6 +112,21 @@ class OpenAIChat implements ChatInterface
     {
         $answer = $this->generateResponseFromMessages($messages);
         $this->handleTools($answer);
+
+        $toolsCalls = [];
+        $toolsOutput = [];
+        if ($this->functionsCalled) {
+            /** @var CalledFunction $functionCalled */
+            foreach ($this->functionsCalled as $functionCalled) {
+                $toolsOutput[] = Message::toolResult($functionCalled->return, $functionCalled->tool_call_id);
+                if ($functionCalled->tool_call_id) {
+                    $toolsCalls[] = new ToolCall($functionCalled->tool_call_id, $functionCalled->definition->name, json_encode($functionCalled->arguments, JSON_THROW_ON_ERROR));
+                }
+            }
+
+            $messages[] = Message::assistantAskingTools($toolsCalls);
+            $answer = $this->generateResponseFromMessages(array_merge($messages, $toolsOutput));
+        }
 
         return $this->responseToString($answer);
     }
@@ -313,7 +329,7 @@ class OpenAIChat implements ChatInterface
         $arguments = json_decode($arguments, true, 512, JSON_THROW_ON_ERROR);
         $functionToCall = $this->getFunctionInfoFromName($functionName, $toolCallId);
         $return = $functionToCall->instance->{$functionToCall->name}(...$arguments);
-        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $return);
+        $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $return, $toolCallId);
     }
 
     /**

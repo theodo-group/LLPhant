@@ -9,7 +9,7 @@ class CalledFunction
     /**
      * @param  array<string, mixed>  $arguments
      */
-    public function __construct(public FunctionInfo $definition, public array $arguments, public string $return)
+    public function __construct(public FunctionInfo $definition, public array $arguments, public string $return, public ?string $tool_call_id = null)
     {
     }
 }
