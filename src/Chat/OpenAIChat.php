@@ -39,6 +39,8 @@ class OpenAIChat implements ChatInterface
     /** @var FunctionInfo[] */
     private array $tools = [];
 
+    public ?FunctionInfo $lastFunctionCalled = null;
+
     /** @var CalledFunction[] */
     public array $functionsCalled = [];
 
@@ -86,6 +88,8 @@ class OpenAIChat implements ChatInterface
     public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
     {
         $this->functionsCalled = [];
+        $this->lastFunctionCalled = null;
+
         $answer = $this->generate($prompt);
         $this->handleTools($answer);
 
@@ -330,6 +334,7 @@ class OpenAIChat implements ChatInterface
         $functionToCall = $this->getFunctionInfoFromName($functionName, $toolCallId);
         $return = $functionToCall->instance->{$functionToCall->name}(...$arguments);
         $this->functionsCalled[] = new CalledFunction($functionToCall, $arguments, $return, $toolCallId);
+        $this->lastFunctionCalled = $functionToCall;
     }
 
     /**
