@@ -1,0 +1,16 @@
+services:
+    typesense:
+      container_name: typesense_llphant
+      image: typesense/typesense:27.1
+      ports:
+        - 8108:8108
+      environment:
+        TYPESENSE_API_KEY: ${TYPESENSE_API_KEY}
+        TYPESENSE_DATA_DIR: /data
+      volumes:
+        - typesense-data:/data
+
+volumes:
+    typesense-data:
+
+

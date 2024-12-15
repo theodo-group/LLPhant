@@ -21,6 +21,7 @@
 | Qdrant                    |
 | OpenSearch                |
 | Redis                     |
+| Typesense                 |
 
 # Supported embedding generators
 

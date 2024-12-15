@@ -390,6 +390,7 @@ There are currently these vectorStore classes:
 - ChromaDBVectorStore stores the embeddings in a [ChromaDB](https://www.trychroma.com/) database.
 - AstraDBVectorStore stores the embeddings in an [AstraDB](https://www.datastax.com/products/datastax-astra) database.
 - OpenSearchVectorStore stores the embeddings in a [OpenSearch](https://opensearch.org/) database, which is a fork of Elasticsearch.
+- TypesenseVectorStore stores the embeddings in a [Typesense](https://typesense.org/) database.
 
 Example of usage with the `DoctrineVectorStore` class to store the embeddings in a database:
 
@@ -541,7 +542,7 @@ Then create a new AstraDB vector store (`LLPhant\Embeddings\VectorStores\AstraDB
 ```php
 $vectorStore = new AstraDBVectorStore(new AstraDBClient(collectionName: 'my_collection')));
 
-// You can use any enbedding generator, but the embedding length must match what is defined for your collection
+// You can use any embedding generator, but the embedding length must match what is defined for your collection
 $embeddingGenerator = new OpenAI3SmallEmbeddingGenerator();
 
 $currentEmbeddingLength = $vectorStore->getEmbeddingLength();
@@ -554,6 +555,18 @@ if ($currentEmbeddingLength === 0) {
 ````
 
 You can now use this vector store as any other VectorStore.
+
+### Typesense VectorStore
+
+Prerequisites : Typesense server running (see [Chroma docs](https://docs.trychroma.com/)).
+You can run it locally using this [docker compose file](https://github.com/theodo-group/LLPhant/blob/main/devx/docker-compose-typesense.yml).
+Install the suggested Typesense client `typesense/typesense-php`.
+
+Then create a new TypesenseDB vector store (`LLPhant\Embeddings\VectorStores\TypeSense\TypesenseVectorStore`), for example:
+
+```php
+$vectorStore = new TypesenseVectorStore(apiKey: 'myKey', nodes: ['http://localhost:8108'], collectionName: 'my_collection');
+````
 
 ## Question Answering
 A popular use case of LLM is to create a chatbot that can answer questions over your private data.
