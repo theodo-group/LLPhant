@@ -2,31 +2,17 @@
 
 namespace LLPhant\Embeddings\VectorStores\Typesense;
 
-use Exception;
 use LLPhant\Embeddings\Document;
 use LLPhant\Embeddings\DocumentUtils;
 use LLPhant\Embeddings\VectorStores\VectorStoreBase;
-use Typesense\Client as TypesenseClient;
+use LLPhant\Exception\MissingParameterException;
 
 class TypesenseVectorStore extends VectorStoreBase
 {
     final public const TYPESENSE_VECTOR_NAME = 'embedding';
 
-    public TypesenseClient $client;
-
-    /**
-     * @param  string[]  $nodes
-     *
-     * @throws \Typesense\Exceptions\ConfigError
-     */
-    public function __construct(
-        string $apiKey,
-        array $nodes,
-        private readonly string $collectionName,
-        private readonly string $vectorName = self::TYPESENSE_VECTOR_NAME,
-    ) {
-        $configuration = new TypesenseConfiguration($apiKey, $nodes);
-        $this->client = new TypesenseClient($configuration->toArray());
+    public function __construct(private readonly string $collectionName, private readonly LLPhantTypesenseClient $client = new LLPhantTypesenseClient(), private readonly string $vectorName = self::TYPESENSE_VECTOR_NAME)
+    {
     }
 
     /**
@@ -34,7 +20,7 @@ class TypesenseVectorStore extends VectorStoreBase
      */
     public function createCollectionIfDoesNotExist(string $name, int $embeddingLength): bool
     {
-        if (! $this->client->collections[$name]->exists()) {
+        if (! $this->collectionExists($name)) {
             $this->createCollection($name, $embeddingLength);
 
             return false;
@@ -48,48 +34,20 @@ class TypesenseVectorStore extends VectorStoreBase
      */
     public function createCollection(string $name, int $embeddingLength): void
     {
-        $this->client->collections->create([
-            'name' => $name,
-            'fields' => [
-                [
-                    'name' => $this->vectorName,
-                    'type' => 'float[]',
-                    'num_dim' => $embeddingLength,
-                ],
-                [
-                    'name' => 'id',
-                    'type' => 'string',
-                ],
-                [
-                    'name' => 'content',
-                    'type' => 'string',
-                ],
-                [
-                    'name' => 'hash',
-                    'type' => 'string',
-                ],
-                [
-                    'name' => 'sourceName',
-                    'type' => 'string',
-                ],
-                [
-                    'name' => 'sourceType',
-                    'type' => 'string',
-                ],
-                [
-                    'name' => 'chunkNumber',
-                    'type' => 'int32',
-                ],
-            ],
-        ]);
+        $this->client->createCollection($name, $embeddingLength, $this->vectorName);
     }
 
+    /**
+     * @throws MissingParameterException
+     */
     public function addDocument(Document $document): void
     {
-        $this->client->collections[$this->collectionName]
-            ->documents->upsert($this->createPointFromDocument($document));
+        $this->client->upsert($this->collectionName, $this->createPointFromDocument($document));
     }
 
+    /**
+     * @throws MissingParameterException
+     */
     public function addDocuments(array $documents): void
     {
         foreach ($documents as $document) {
@@ -105,7 +63,7 @@ class TypesenseVectorStore extends VectorStoreBase
     {
         $vectorQuery = $this->vectorName.':(['.implode(',', $embedding).'], k:'.$k.')';
 
-        $response = $this->client->multiSearch->perform([
+        $response = $this->client->multiSearch([
             'searches' => [
                 [
                     'collection' => $this->collectionName,
@@ -114,7 +72,7 @@ class TypesenseVectorStore extends VectorStoreBase
                     'exclude_fields' => $this->vectorName,
                 ],
             ],
-        ], $additionalArguments);
+        ]);
 
         $results = $response['results'];
 
@@ -146,12 +104,12 @@ class TypesenseVectorStore extends VectorStoreBase
     /**
      * @return array<string, mixed>
      *
-     * @throws Exception
+     * @throws MissingParameterException
      */
     private function createPointFromDocument(Document $document): array
     {
         if ($document->embedding === null) {
-            throw new Exception('Impossible to save a document without its vectors. You need to call an embeddingGenerator: $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);');
+            throw new MissingParameterException('It is impossible to save a document without its vectors. You need to call an embeddingGenerator: $embededDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);');
         }
 
         return [
@@ -168,5 +126,10 @@ class TypesenseVectorStore extends VectorStoreBase
     protected function getId(Document $document): string
     {
         return \hash('sha256', $document->content.DocumentUtils::getUniqueId($document));
+    }
+
+    public function collectionExists(string $name): bool
+    {
+        return $this->client->collectionExists($name);
     }
 }

@@ -24,8 +24,7 @@
         "predis/predis": "This is required for the RedisVectoreStore.",
         "elasticsearch/elasticsearch": "This is required for the ElasticsearchVectoreStore.",
         "codewithkyrian/chromadb-php": "This is required for the ChromaDBVectorStore.",
-        "opensearch-project/opensearch-php": "This is required for the OpenSearchVectorStore.",
-        "typesense/typesense-php": "This is required for the TypesenseVectorStore."
+        "opensearch-project/opensearch-php": "This is required for the OpenSearchVectorStore."
     },
     "require-dev": {
         "codewithkyrian/chromadb-php": "^0.3.0",
@@ -42,9 +41,8 @@
         "predis/predis": "^2.2",
         "rector/rector": "^0.16.0",
         "symfony/cache": "^7.2",
-        "symfony/process": "^v7.1.8",
         "symfony/var-dumper": "^7.2",
-        "typesense/typesense-php": "^4.9.3"
+        "symfony/process": "^v7.1.8"
     },
     "autoload": {
         "psr-4": {
