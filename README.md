@@ -618,12 +618,12 @@ You can now use this vector store as any other VectorStore.
 
 Prerequisites : Typesense server running (see [Chroma docs](https://docs.trychroma.com/)).
 You can run it locally using this [docker compose file](https://github.com/theodo-group/LLPhant/blob/main/devx/docker-compose-typesense.yml).
-Install the suggested Typesense client `typesense/typesense-php`.
 
 Then create a new TypesenseDB vector store (`LLPhant\Embeddings\VectorStores\TypeSense\TypesenseVectorStore`), for example:
 
 ```php
-$vectorStore = new TypesenseVectorStore(apiKey: 'myKey', nodes: ['http://localhost:8108'], collectionName: 'my_collection');
+// Default connection properties come from env vars TYPESENSE_API_KEY and TYPESENSE_NODE
+$vectorStore = new TypesenseVectorStore('test_collection');
 ````
 
 ## Question Answering

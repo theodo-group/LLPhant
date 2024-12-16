@@ -12,12 +12,22 @@ use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3LargeEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Typesense\TypesenseVectorStore;
 use Tests\Integration\Embeddings\VectorStores\Doctrine\PlaceEntity;
 
+it('can create a brand new collection and does not fail if it tries to recreate it', function () {
+    $collectionName = 'test_collection'.\random_int(PHP_INT_MIN, PHP_INT_MAX);
+    $vectorStore = new TypesenseVectorStore($collectionName);
+
+    expect($vectorStore->collectionExists($collectionName))->toBe(false);
+
+    $vectorStore->createCollectionIfDoesNotExist($collectionName, 1024);
+    expect($vectorStore->collectionExists($collectionName))->toBe(true);
+
+    $vectorStore->createCollectionIfDoesNotExist($collectionName, 1024);
+    expect($vectorStore->collectionExists($collectionName))->toBe(true);
+});
+
 it('creates two documents with their embeddings and perform a similarity search', function () {
 
-    $vectorStore = new TypesenseVectorStore(
-        getenv('TYPESENSE_API_KEY'),
-        [getenv('TYPESENSE_NODE') ?: 'http://localhost:8108'],
-        'test_collection');
+    $vectorStore = new TypesenseVectorStore('test_collection');
 
     $embeddingGenerator = new OpenAI3LargeEmbeddingGenerator();
     $vectorStore->createCollectionIfDoesNotExist('test_collection', $embeddingGenerator->getEmbeddingLength());
@@ -52,10 +62,7 @@ it('tests a full embedding flow with Typesense', function () {
     $embeddingGenerator = new OpenAI3LargeEmbeddingGenerator();
     $embeddedDocuments = $embeddingGenerator->embedDocuments($formattedDocuments);
 
-    $vectorStore = new TypesenseVectorStore(
-        getenv('TYPESENSE_API_KEY'),
-        [getenv('TYPESENSE_NODE') ?: 'http://localhost:8108'],
-        'test_collection');
+    $vectorStore = new TypesenseVectorStore('test_collection');
 
     $vectorStore->addDocuments($embeddedDocuments);
 

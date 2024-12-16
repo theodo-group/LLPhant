@@ -1,0 +1,46 @@
+{
+    "results": [
+        {
+            "facet_counts": [],
+            "found": 2,
+            "hits": [
+                {
+                    "document": {
+                        "chunkNumber": 0,
+                        "content": "Anna lives in Rome",
+                        "hash": "",
+                        "id": "03a7d932c5a9d25cbc0588484a0e50c9049f4c1654b85aa4a7ef58a1a5d41a23",
+                        "sourceName": "manual",
+                        "sourceType": "manual"
+                    },
+                    "highlight": [],
+                    "highlights": [],
+                    "vector_distance": 0.1035953164100647
+                },
+                {
+                    "document": {
+                        "chunkNumber": 0,
+                        "content": "Anna reads Dante",
+                        "hash": "",
+                        "id": "977720b0d373be946b0fc2111f56779844a8d7128c13414a5e5843e568ea6b9e",
+                        "sourceName": "manual",
+                        "sourceType": "manual"
+                    },
+                    "highlight": [],
+                    "highlights": [],
+                    "vector_distance": 0.41451495885849
+                }
+            ],
+            "out_of": 12,
+            "page": 1,
+            "request_params": {
+                "collection_name": "test_collection",
+                "first_q": "*",
+                "per_page": 10,
+                "q": "*"
+            },
+            "search_cutoff": false,
+            "search_time_ms": 5
+        }
+    ]
+}
