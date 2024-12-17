@@ -616,7 +616,7 @@ You can now use this vector store as any other VectorStore.
 
 ### Typesense VectorStore
 
-Prerequisites : Typesense server running (see [Chroma docs](https://docs.trychroma.com/)).
+Prerequisites : Typesense server running (see [Typesense](https://typesense.org/)).
 You can run it locally using this [docker compose file](https://github.com/theodo-group/LLPhant/blob/main/devx/docker-compose-typesense.yml).
 
 Then create a new TypesenseDB vector store (`LLPhant\Embeddings\VectorStores\TypeSense\TypesenseVectorStore`), for example:
