@@ -25,5 +25,5 @@ abstract class VectorStoreBase
      * @param  array<string, string|int>|array<mixed[]>  $additionalArguments
      * @return Document[]
      */
-    abstract public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): array;
+    abstract public function similaritySearch(array $embedding, int $k = 4, array $additionalArguments = []): iterable;
 }
