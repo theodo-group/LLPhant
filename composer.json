@@ -28,7 +28,7 @@
     },
     "require-dev": {
         "codewithkyrian/chromadb-php": "^0.3.0",
-        "doctrine/orm": "^2.20.0",
+        "doctrine/orm": "^3.3.1",
         "elasticsearch/elasticsearch": "^8.15",
         "hkulekci/qdrant": "^v0.5.7",
         "laravel/pint": "v1.15.3",
