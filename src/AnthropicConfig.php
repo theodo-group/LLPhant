@@ -12,6 +12,8 @@ class AnthropicConfig
 
     final public const CLAUDE_3_5_SONNET = 'claude-3-5-sonnet-20240620';
 
+    final public const CLAUDE_3_5_SONNET_20241022 = 'claude-3-5-sonnet-20241022';
+
     final public const CLAUDE_3_SONNET = 'claude-3-sonnet-20240229';
 
     final public const CLAUDE_3_OPUS = 'claude-3-opus-20240229';
