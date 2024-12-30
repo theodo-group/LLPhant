@@ -5,7 +5,6 @@ namespace LLPhant\Experimental\Agent;
 use LLPhant\Chat\Enums\OpenAIChatModel;
 use LLPhant\Chat\FunctionInfo\FunctionBuilder;
 use LLPhant\Chat\FunctionInfo\FunctionInfo;
-use LLPhant\Chat\FunctionInfo\FunctionRunner;
 use LLPhant\Chat\OpenAIChat;
 use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
 use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
@@ -98,21 +97,7 @@ class AutoPHP
             ."Remaining tasks: {$unachievedTasks}."
             ."If the objective has been completed, give the exact answer to the objective {$this->objective}.";
 
-        $stringOrFunctionInfo = $model->generateTextOrReturnFunctionCalled($prompt);
-        if (! $stringOrFunctionInfo instanceof FunctionInfo) {
-            // Shouldn't be null as OPENAI should call the function
-            return null;
-        }
-
-        $objectiveData = FunctionRunner::run($stringOrFunctionInfo);
-        if (! is_array($objectiveData)) {
-            // The wrong function has probably been called, shouldn't happen
-            return null;
-        }
-
-        if ($objectiveData['objectiveCompleted']) {
-            return $objectiveData['answer'];
-        }
+        $model->generateTextOrReturnFunctionCalled($prompt);
 
         return null;
     }
