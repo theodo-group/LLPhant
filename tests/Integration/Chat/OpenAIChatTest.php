@@ -57,28 +57,6 @@ it('can call a function', function () {
     $chat->generateText('Who is Marie Curie in one line? My email is student@foo.com');
 });
 
-//it('can call a function while streaming', function () {
-//    $chat = new OpenAIChat();
-//
-//    $subject = new Parameter('subject', 'string', 'the subject of the mail');
-//    $body = new Parameter('body', 'string', 'the body of the mail');
-//    $email = new Parameter('email', 'string', 'the email adress');
-//
-//    $mockMailerExample = Mockery::mock(MailerExample::class);
-//    $mockMailerExample->shouldReceive('sendMail')->once()->andReturn('The email has been sent to..');
-//
-//    $function = new FunctionInfo(
-//        'sendMail',
-//        $mockMailerExample,
-//        'send a mail',
-//        [$subject, $body, $email]
-//    );
-//
-//    $chat->addTool($function);
-//    $chat->setSystemMessage('You are an AI that deliver information using the email system. When you have enough information to answer the question of the user you send a mail');
-//    $chat->generateStreamOfText('Who is Marie Curie in one line? My email is student@foo.com');
-//});
-
 it('can call a function without argument', function () {
     $chat = new OpenAIChat();
     $notifier = new NotificationExample();
@@ -130,18 +108,20 @@ it('can call a function and provide the result to the assistant', function () {
     $messages = [
         Message::user('What is the weather in Venice?'),
     ];
-    $functionInfo = $chat->generateChatOrReturnFunctionCalled($messages);
+    $toolsCalled = $chat->generateChatOrReturnFunctionCalled($messages);
 
-    expect($functionInfo->name)->toBe('currentWeatherForLocation');
+    $firstTool = $toolsCalled[0];
+
+    expect($firstTool->name)->toBe('currentWeatherForLocation');
 
     $firstRequestTokenUsage = $chat->getTotalTokens();
 
-    $arguments = json_decode($functionInfo->jsonArgs, true, 512, JSON_THROW_ON_ERROR);
-    $functionResult = $functionInfo->instance->{$functionInfo->name}(...$arguments);
+    $arguments = json_decode($firstTool->jsonArgs, true, 512, JSON_THROW_ON_ERROR);
+    $functionResult = $firstTool->instance->{$firstTool->name}(...$arguments);
 
     $messages[] = Message::functionResult(
         $functionResult,
-        $functionInfo->name
+        $firstTool->name
     );
 
     $response = $chat->generateChatOrReturnFunctionCalled($messages);
@@ -172,16 +152,17 @@ it('can call a tool and provide the result to the assistant', function () {
     $messages = [
         Message::user('What is the weather in Venice?'),
     ];
-    $functionInfo = $chat->generateChatOrReturnFunctionCalled($messages);
+    $toolsCalled = $chat->generateChatOrReturnFunctionCalled($messages);
+    $firstTool = $toolsCalled[0];
 
-    expect($functionInfo->name)->toBe('currentWeatherForLocation');
+    expect($firstTool->name)->toBe('currentWeatherForLocation');
 
     $firstRequestTokenUsage = $chat->getTotalTokens();
 
-    $toolCallId = $functionInfo->getToolCallId();
+    $toolCallId = $firstTool->getToolCallId();
     expect($toolCallId)->toBeString();
 
-    $messages = array_merge($messages, $functionInfo->callAndReturnAsOpenAIMessages());
+    $messages = array_merge($messages, $firstTool->callAndReturnAsOpenAIMessages());
 
     $response = $chat->generateChatOrReturnFunctionCalled($messages);
 
