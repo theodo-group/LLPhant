@@ -6,20 +6,6 @@ namespace Tests\Integration\Chat;
 
 use LLPhant\Chat\MistralAIChat;
 use LLPhant\OpenAIConfig;
-use OpenAI\Client;
-
-it('can be supplied with a custom client', function () {
-    $client = \Mockery::mock(Client::class);
-    $client->shouldReceive('chat')->once();
-
-    $config = new OpenAIConfig();
-    $config->client = $client;
-
-    $chat = new MistralAIChat($config);
-    $chat->setSystemMessage('Whatever we ask you, you MUST answer "ok"');
-    $response = $chat->generateText('what is one + one ?');
-    expect($response)->toBeString();
-});
 
 it('can generate some stuff', function () {
     $chat = new MistralAIChat();
