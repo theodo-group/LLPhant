@@ -54,7 +54,7 @@ class Message
     {
         $message = new self();
         $message->role = ChatRole::Assistant;
-        $message->content = $content;
+        $message->content = $content ?? '';
 
         return $message;
     }
@@ -63,17 +63,17 @@ class Message
     {
         $message = new self();
         $message->role = ChatRole::Function;
-        $message->content = $content;
+        $message->content = $content ?? '';
         $message->name = $name;
 
         return $message;
     }
 
-    public static function toolResult(string $content, ?string $toolCallId = null): self
+    public static function toolResult(?string $content, ?string $toolCallId = null): self
     {
         $message = new self();
         $message->role = ChatRole::Tool;
-        $message->content = $content;
+        $message->content = $content ?? '';
 
         if ($toolCallId !== null) {
             $message->tool_call_id = $toolCallId;

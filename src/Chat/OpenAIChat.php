@@ -135,15 +135,21 @@ class OpenAIChat implements ChatInterface
         return $this->responseToString($answer);
     }
 
-    public function generateChatOrReturnFunctionCalled(array $messages): string|FunctionInfo
+    /**
+     * This function exists to let the developer handle the tools calls on their own.
+     * It should not call the tools automatically.
+     *
+     * @param array $messages
+     * @return string|FunctionInfo[]
+     * @throws \JsonException
+     */
+    public function generateChatOrReturnFunctionCalled(array $messages): string|array
     {
         $answer = $this->generateResponseFromMessages($messages);
-        $this->handleTools($answer);
+        $tools = $this->getToolsToCall($answer);
 
-        if ($this->functionsCalled) {
-            $lastKey = array_key_last($this->functionsCalled);
-
-            return $this->functionsCalled[$lastKey]->definition;
+        if (!empty($tools)) {
+            return $tools;
         }
 
         return $this->responseToString($answer);
@@ -353,5 +359,26 @@ class OpenAIChat implements ChatInterface
     private function responseToString(CreateResponse $answer): string
     {
         return $answer->choices[0]->message->content ?? '';
+    }
+
+    /**
+     * @return array<FunctionInfo>
+     *
+     * @throws Exception
+     */
+    private function getToolsToCall(CreateResponse $answer): array
+    {
+        $functionInfos = [];
+        /** @var CreateResponseToolCall $toolCall */
+        foreach ($answer->choices[0]->message->toolCalls as $toolCall) {
+            $functionName = $toolCall->function->name;
+            $arguments = $toolCall->function->arguments;
+            $functionInfo = $this->getFunctionInfoFromName($functionName, $toolCall->id);
+            $functionInfo->jsonArgs = $arguments;
+
+            $functionInfos[] = $functionInfo;
+        }
+
+        return $functionInfos;
     }
 }
