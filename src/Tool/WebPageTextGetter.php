@@ -3,8 +3,8 @@
 namespace LLPhant\Tool;
 
 use Exception;
-use LLPhant\Experimental\Agent\Render\CLIOutputUtils;
-use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
+use LLPhant\Render\CLIOutputUtils;
+use LLPhant\Render\OutputAgentInterface;
 
 class WebPageTextGetter extends ToolBase
 {

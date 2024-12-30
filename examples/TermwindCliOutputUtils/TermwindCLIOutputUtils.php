@@ -2,8 +2,8 @@
 
 namespace TermWindCliOutputUtils;
 
-use LLPhant\Experimental\Agent\Render\OutputAgentInterface;
 use LLPhant\Experimental\Agent\Task;
+use LLPhant\Render\OutputAgentInterface;
 
 use function Termwind\{render};
 
