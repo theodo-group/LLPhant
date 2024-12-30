@@ -1,6 +1,6 @@
 <?php
 
-namespace LLPhant\Experimental\Agent\Render;
+namespace LLPhant\Render;
 
 class StringParser
 {

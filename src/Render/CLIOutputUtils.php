@@ -1,8 +1,6 @@
 <?php
 
-namespace LLPhant\Experimental\Agent\Render;
-
-use LLPhant\Experimental\Agent\Task;
+namespace LLPhant\Render;
 
 class CLIOutputUtils implements OutputAgentInterface
 {
@@ -38,39 +36,6 @@ class CLIOutputUtils implements OutputAgentInterface
     public function renderResult(string $result): void
     {
         $this->renderTitle('🏆️ Success! 🏆️ Result:', $result, true);
-    }
-
-    /**
-     * @param  Task[]  $tasks
-     */
-    public function printTasks(bool $verbose, array $tasks, ?Task $currentTask = null): void
-    {
-        $separator = '------------------'.PHP_EOL;
-        $liItems = $separator.'Tasks'.PHP_EOL;
-        foreach ($tasks as $task) {
-            if ($currentTask === $task) {
-                $liItems .= "\t⚙️ - {$task->name} ({$task->description})".PHP_EOL;
-
-                continue;
-            }
-
-            if (is_null($task->result)) {
-                $liItems .= "\t⚪️ - {$task->name} ({$task->description})".PHP_EOL;
-
-                continue;
-            }
-
-            $result = self::truncateString($verbose, $task->result, $task->name);
-
-            if ($task->wasSuccessful) {
-                $liItems .= "\t🟢 - {$task->name} ({$task->description}) - {$result}".PHP_EOL;
-            } else {
-                $liItems .= "\t🔴 - {$task->name} ({$task->description})".PHP_EOL;
-            }
-        }
-        $liItems .= $separator;
-
-        $this->render($liItems, $verbose);
     }
 
     private static function truncateString(bool $verbose, string $message, ?string $title = null): string
