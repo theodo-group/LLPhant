@@ -88,27 +88,39 @@ class OllamaChat implements ChatInterface
         return $json['response'];
     }
 
-    public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
+    /**
+     * @return string|FunctionInfo[]
+     */
+    public function generateTextOrReturnFunctionCalled(string $prompt): string|array
     {
         $answer = $this->generateText($prompt);
 
         if ($this->functionsCalled) {
-            $lastKey = array_key_last($this->functionsCalled);
+            $allFunctions = [];
+            foreach ($this->functionsCalled as $functionCalled) {
+                $allFunctions[] = $functionCalled->definition;
+            }
 
-            return $this->functionsCalled[$lastKey]->definition;
+            return $allFunctions;
         }
 
         return $answer;
     }
 
-    public function generateChatOrReturnFunctionCalled(array $messages): string|FunctionInfo
+    /**
+     * @return string|FunctionInfo[]
+     */
+    public function generateChatOrReturnFunctionCalled(array $messages): string|array
     {
         $answer = $this->generateChat($messages);
 
         if ($this->functionsCalled) {
-            $lastKey = array_key_last($this->functionsCalled);
+            $allFunctions = [];
+            foreach ($this->functionsCalled as $functionCalled) {
+                $allFunctions[] = $functionCalled->definition;
+            }
 
-            return $this->functionsCalled[$lastKey]->definition;
+            return $allFunctions;
         }
 
         return $answer;
