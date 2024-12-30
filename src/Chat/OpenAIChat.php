@@ -139,8 +139,8 @@ class OpenAIChat implements ChatInterface
      * This function exists to let the developer handle the tools calls on their own.
      * It should not call the tools automatically.
      *
-     * @param array $messages
      * @return string|FunctionInfo[]
+     *
      * @throws \JsonException
      */
     public function generateChatOrReturnFunctionCalled(array $messages): string|array
@@ -148,7 +148,7 @@ class OpenAIChat implements ChatInterface
         $answer = $this->generateResponseFromMessages($messages);
         $tools = $this->getToolsToCall($answer);
 
-        if (!empty($tools)) {
+        if (! empty($tools)) {
             return $tools;
         }
 
