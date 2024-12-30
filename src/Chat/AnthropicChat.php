@@ -109,12 +109,15 @@ class AnthropicChat implements ChatInterface
         return $this->generateChatStream([Message::user($prompt)]);
     }
 
-    public function generateChatOrReturnFunctionCalled(array $messages): string|FunctionInfo
+    /**
+     * @return string|FunctionInfo[]
+     */
+    public function generateChatOrReturnFunctionCalled(array $messages): string|array
     {
         $answer = $this->generateChat($messages);
 
         if ($this->lastFunctionCalled instanceof FunctionInfo) {
-            return $this->lastFunctionCalled;
+            return [$this->lastFunctionCalled];
         }
 
         return $answer;
@@ -129,7 +132,10 @@ class AnthropicChat implements ChatInterface
         return $this->decodeStreamOfChat($response);
     }
 
-    public function generateTextOrReturnFunctionCalled(string $prompt): string|FunctionInfo
+    /**
+     * @return string|FunctionInfo[]
+     */
+    public function generateTextOrReturnFunctionCalled(string $prompt): string|array
     {
         return $this->generateChatOrReturnFunctionCalled([Message::user($prompt)]);
     }

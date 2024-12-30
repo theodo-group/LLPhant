@@ -50,7 +50,7 @@ class Message
         return $message;
     }
 
-    public static function assistant(string $content): self
+    public static function assistant(?string $content): self
     {
         $message = new self();
         $message->role = ChatRole::Assistant;
@@ -59,7 +59,7 @@ class Message
         return $message;
     }
 
-    public static function functionResult(string $content, string $name): self
+    public static function functionResult(?string $content, string $name): self
     {
         $message = new self();
         $message->role = ChatRole::Function;
